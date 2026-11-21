@@ -864,7 +864,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
           <div class="kv"><span>保存した下書き</span><b id="dataDrafts">0 件</b></div>
           <div class="divider"></div>
           <div class="grid2">
-            <button class="btn ghost sm" id="btnDemo" style="min-height:46px">初期の8品目を追加する</button>
+            <button class="btn ghost sm" id="btnDemo" style="min-height:46px">初期の9品目を追加する</button>
             <button class="btn ghost sm" id="btnReset" style="min-height:46px;color:#A4553F;border-color:#EED7CE">すべて削除</button>
           </div>
         </div>
@@ -887,7 +887,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
       <div class="section">
         <div class="section-head"><h2>このアプリについて</h2></div>
         <div class="card">
-          <div class="kv"><span>バージョン</span><b>1.2.2</b></div>
+          <div class="kv"><span>バージョン</span><b>1.2.3</b></div>
           <div class="kv"><span>天気データ</span><b>Open-Meteo</b></div>
           <div class="kv"><span>保存先</span><b>この端末のブラウザ</b></div>
           <div class="divider"></div>
@@ -940,7 +940,8 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
    ========================================================= */
 
 var LS_KEY = 'my_saien_note_v1';
-var APP_VERSION = '1.2.2';
+var APP_VERSION = '1.2.3';
+var KIKU_FLAG_KEY = 'chiu_v123_kiku_added';
 
 /* ---------- tiny helpers ---------- */
 function $(sel, root) { return (root || document).querySelector(sel); }
@@ -1017,7 +1018,7 @@ var EMOJI_MAP = {
   'ゴーヤ': '🥒', '落花生': '🥜', 'そら豆': '🫘', 'スナップエンドウ': '🫛', 'さやえんどう': '🫛',
   'えんどう': '🫛', 'みょうが': '🌿', 'シソ': '🌿', 'しそ': '🌿', '大葉': '🌿', 'バジル': '🌿',
   'ローズマリー': '🌿', 'ミント': '🌿', 'タイム': '🌿', 'オレガノ': '🌿', 'パセリ': '🌿', 'ハーブ': '🌿',
-  'ニラ': '🌿', 'にら': '🌿', 'マリーゴールド': '🌼', 'ヒマワリ': '🌻', 'ひまわり': '🌻', 'チューリップ': '🌷',
+  'ニラ': '🌿', 'にら': '🌿', '菊': '🌼', 'キク': '🌼', 'きく': '🌼', '大菊': '🌼', 'マリーゴールド': '🌼', 'ヒマワリ': '🌻', 'ひまわり': '🌻', 'チューリップ': '🌷',
   '多肉植物': '🪴', '観葉植物': '🪴', 'ブルーベリー': '🫐', 'レモン': '🍋'
 };
 var EMOJI_CHOICES = ['🌱', '🍅', '🥬', '🥒', '🍆', '🫑', '🥕', '🧅', '🧄', '🍓', '🫛', '🫘', '🥔', '🍠', '🌽', '🎃', '🥦', '🌿', '🌼', '🪴', '🍋', '🫐'];
@@ -1190,7 +1191,8 @@ var PLANTING = {
       { n: '玉ねぎ', e: '🧅', f: '手入れ', t: '育苗・苗の準備', d: '植え付けは11月', tip: '苗の太さ6〜8mmが理想。太すぎる苗はとう立ちしやすい。' },
       { n: 'スナップエンドウ', e: '🫛', f: '種まき', t: '下旬〜11月', d: '収穫は5月', tip: '2粒ずつ点まき。鳥害があるので、支柱とネットでガードを。' },
       { n: 'そら豆', e: '🫘', f: '種まき', t: '下旬〜11月', d: '収穫は5〜6月', tip: 'お歯黒（黒い筋）を下にして、深さ3〜4cmに。' },
-      { n: 'ほうれん草・小松菜', e: '🥬', f: '種まき', t: '上〜中旬', d: '収穫は11〜12月', tip: '秋まきのラストチャンス。不織布をかけると寒さで育ちが止まりにくい。' }
+      { n: 'ほうれん草・小松菜', e: '🥬', f: '種まき', t: '上〜中旬', d: '収穫は11〜12月', tip: '秋まきのラストチャンス。不織布をかけると寒さで育ちが止まりにくい。' },
+      { n: '菊（大菊）', e: '🌼', f: '手入れ', t: '支柱・輪台・芽かき', d: '開花は10月下旬〜11月', tip: '蕾が見えたら支柱を立て、咲き始めたら輪台で花を支えます。色づき始めたら追肥は止め、水は鉢土が乾いてから。' }
     ]
   },
   11: {
@@ -1203,7 +1205,8 @@ var PLANTING = {
       { n: 'ほうれん草', e: '🥬', f: '種まき', t: '上〜中旬', d: '収穫は12〜2月', tip: '不織布のトンネルで保温。寒さに当たると甘みが増します。' },
       { n: 'にんにく', e: '🧄', f: '植え付け', t: '上〜中旬', d: '収穫は6月', tip: '遅れると根張りが弱く、球も小さくなります。まだ間に合うなら今月まで。' },
       { n: 'イチゴ', e: '🍓', f: '手入れ', t: 'マルチ・寒さ対策', d: '収穫は4〜5月', tip: '寒さにしっかり当てると花芽が付きます。11月は保温しすぎないこと。' },
-      { n: 'ハーブ（ローズマリー・タイム）', e: '🌿', f: '挿し木', t: '上〜下旬', d: '発根まで3〜4週間', tip: '室内の明るい窓辺で。乾かし気味に管理すると腐りません。' }
+      { n: 'ハーブ（ローズマリー・タイム）', e: '🌿', f: '挿し木', t: '上〜下旬', d: '発根まで3〜4週間', tip: '室内の明るい窓辺で。乾かし気味に管理すると腐りません。' },
+      { n: '菊（大菊）', e: '🌼', f: '手入れ', t: '花がら摘み・水やり控えめ', d: '開花中', tip: '開花中は追肥を休み、鉢土の表面が乾いてから朝にたっぷり。終わった花は早めに摘み、支柱と輪台で花を支えたままにします。' }
     ]
   },
   12: {
@@ -1215,7 +1218,8 @@ var PLANTING = {
       { n: 'スナップエンドウ', e: '🫛', f: '手入れ', t: '霜よけ・支柱', d: '収穫は5月', tip: '本葉3〜4枚で霜よけネット。寒さで傷んだ葉は取り除きます。' },
       { n: 'イチゴ', e: '🍓', f: '手入れ', t: '寒さ対策', d: '収穫は4〜5月', tip: '株元に敷きわらを。乾燥しすぎる日は午前中に軽く水やり。' },
       { n: 'にんにく・玉ねぎ', e: '🧄', f: '手入れ', t: '除草・霜対策', d: '収穫は5〜6月', tip: '霜で浮いた株は土を寄せて押さえる。マルチの破れも補修します。' },
-      { n: '土づくり', e: '🪴', f: '手入れ', t: '堆肥・石灰', d: '春まきの1か月前まで', tip: '堆肥を入れてよく耕し、冬の間に土を寝かせると春の生育が変わります。' }
+      { n: '土づくり', e: '🪴', f: '手入れ', t: '堆肥・石灰', d: '春まきの1か月前まで', tip: '堆肥を入れてよく耕し、冬の間に土を寝かせると春の生育が変わります。' },
+      { n: '菊（大菊）', e: '🌼', f: '手入れ', t: '切り戻し（12〜1月）', d: '冬至芽を育てる', tip: '花が終わったら株元から10〜15cm残して切り戻す。日当たりの良いベランダで水を控えめにすると、春に冬至芽が出ます。' }
     ]
   }
 };
@@ -1371,6 +1375,9 @@ function loadState() {
       places: places,
       harvestAt: c.harvestAt || null,
       note: c.note || '',
+      waterDays: c.waterDays > 0 ? c.waterDays : null,
+      feedDays: c.feedDays > 0 ? c.feedDays : null,
+      feedPauseUntil: c.feedPauseUntil || null,
       lastWateredAt: c.lastWateredAt || null,
       lastFedAt: c.lastFedAt || null,
       createdAt: c.createdAt || new Date().toISOString()
@@ -1389,7 +1396,7 @@ function saveState() {
   }
 }
 
-/* ---------- initial garden lineup (2026年11月時点で育てている8品目) ---------- */
+/* ---------- initial garden lineup (2026年11月時点で育てている9品目) ---------- */
 var INITIAL_CROPS = [
   {
     name: 'たまねぎ', emoji: '🧅', plantedAt: '2026-11-03', harvestAt: '2027-05-25',
@@ -1422,19 +1429,48 @@ var INITIAL_CROPS = [
   {
     name: 'レタス', emoji: '🥗', plantedAt: '2026-09-20', harvestAt: '2026-12-20',
     note: '白菜・キャベツと相性◎（害虫よけ）。冬の冷え込み時は不織布で防寒。'
+  },
+  {
+    name: '菊', emoji: '🌼', plantedAt: '2026-06-07', harvestAt: null,
+    places: ['ベランダ'], waterDays: 3, feedDays: 45, feedPauseUntil: '2027-01-31',
+    note: '開花中（鉢・プランター）。大菊が紫紅・黄・白で咲き、支柱と輪台で花を支えている。土の表面が乾いてから朝にたっぷり、開花期〜冬は乾かし気味に。開花中は追肥を休み（年内は与えない）、12〜1月に株元から10〜15cmで切り戻して冬至芽を育てる。日当たりの良いベランダで管理。'
   }
 ];
 
 /* 作物データだけを作る（過去の水やり・追肥の記録は作らない） */
-function initialCrops() {
+function cropFromSeed(c) {
   var now = new Date().toISOString();
-  return INITIAL_CROPS.map(function (c) {
-    return {
-      id: uid(), name: c.name, emoji: c.emoji, plantedAt: c.plantedAt,
-      place: '', places: [], harvestAt: c.harvestAt, note: c.note,
-      lastWateredAt: null, lastFedAt: null, createdAt: now
-    };
-  });
+  var places = Array.isArray(c.places) ? uniqPlaces(c.places) : [];
+  return {
+    id: uid(), name: c.name, emoji: c.emoji, plantedAt: c.plantedAt,
+    place: places.join('・'), places: places, harvestAt: c.harvestAt || null, note: c.note,
+    waterDays: c.waterDays > 0 ? c.waterDays : null,
+    feedDays: c.feedDays > 0 ? c.feedDays : null,
+    feedPauseUntil: c.feedPauseUntil || null,
+    lastWateredAt: null, lastFedAt: null, createdAt: now
+  };
+}
+function initialCrops() {
+  return INITIAL_CROPS.map(cropFromSeed);
+}
+
+/* v1.2.3 で加わった菊を、すでに保存データがある環境にも一度だけ足す。
+   chiu_v123_kiku_added が立っていたら二度と足さない（意図して削除した菊を復活させない）。 */
+function migrateKiku() {
+  var flagged = false;
+  try { flagged = localStorage.getItem(KIKU_FLAG_KEY) === '1'; } catch (e) { flagged = false; }
+  if (flagged) return 0;
+  var has = state.crops.some(function (c) { return c.name === '菊'; });
+  var added = 0;
+  if (!has) {
+    var seed = INITIAL_CROPS.filter(function (c) { return c.name === '菊'; })[0];
+    if (seed) {
+      state.crops = state.crops.concat([cropFromSeed(seed)]);
+      if (saveState()) added = 1;
+    }
+  }
+  try { localStorage.setItem(KIKU_FLAG_KEY, '1'); } catch (e) { }
+  return added;
 }
 
 function seedInitialCrops(append) {
@@ -1813,18 +1849,23 @@ function computeTasks() {
   var waterGap = state.settings.waterDays || 2;
   var feedGap = state.settings.feedDays || 21;
   var raining = rainToday();
+  var today = todayISO();
   state.crops.forEach(function (c) {
     var wDays = careSince(c.lastWateredAt);
     var fDays = careSince(c.lastFedAt);
     var plantedDays = daysSince(c.plantedAt);
-    if (!raining && (wDays === null ? (plantedDays >= 1) : wDays >= waterGap)) {
+    /* 作物ごとの間隔（菊など）があればそちらを優先 */
+    var wGap = c.waterDays > 0 ? c.waterDays : waterGap;
+    var fGap = c.feedDays > 0 ? c.feedDays : feedGap;
+    var feedPaused = !!(c.feedPauseUntil && today <= c.feedPauseUntil);
+    if (!raining && (wDays === null ? (plantedDays >= 1) : wDays >= wGap)) {
       list.push({
         kind: 'water', id: c.id, emoji: '💧', crop: c,
         title: c.name + 'に水やり',
         why: wDays === null ? 'まだ水やりの記録がありません' : '前回の水やりから' + wDays + '日'
       });
     }
-    if (fDays === null ? (plantedDays >= 21) : fDays >= feedGap) {
+    if (!feedPaused && (fDays === null ? (plantedDays >= 21) : fDays >= fGap)) {
       list.push({
         kind: 'feed', id: c.id, emoji: '🌱', crop: c,
         title: c.name + 'に追肥',
@@ -1859,7 +1900,7 @@ function renderGettingStarted() {
     + '<ol class="steps" style="list-style:none;padding:0;margin:0">'
     + '<li>「菜園管理」タブの「＋ 追加」から、植えた野菜やプランターを登録する</li>'
     + '<li>カードの「水やりした」「追肥した」「収穫記録」を1タップで記録する</li>'
-    + '<li>「設定」の「初期の8品目を追加する」から、いつでも入れ直せます</li>'
+    + '<li>「設定」の「初期の9品目を追加する」から、いつでも入れ直せます</li>'
     + '</ol>'
     + '<button class="btn block" data-add="1" style="margin-top:10px">＋ 最初の野菜を追加</button>'
     + '</div>';
@@ -2083,7 +2124,7 @@ function renderGarden() {
       + '<ol class="steps" style="list-style:none;padding:2px 4px 0;margin:0">'
       + '<li>「＋ 追加」から野菜の名前と植えた日を入れる</li>'
       + '<li>カードのボタン1つで水やり・追肥・収穫を記録</li>'
-      + '<li>「設定」の「初期の8品目を追加する」から、いつでも入れ直せます</li>'
+      + '<li>「設定」の「初期の9品目を追加する」から、いつでも入れ直せます</li>'
       + '</ol>'
       + '<button class="btn block" data-add="1" style="margin-top:10px">＋ 最初の野菜を追加</button></div>';
   } else {
@@ -2981,6 +3022,9 @@ function normalizeCrops(arr) {
       places: places,
       harvestAt: c.harvestAt || null,
       note: c.note || '',
+      waterDays: c.waterDays > 0 ? c.waterDays : null,
+      feedDays: c.feedDays > 0 ? c.feedDays : null,
+      feedPauseUntil: c.feedPauseUntil || null,
       lastWateredAt: c.lastWateredAt || null,
       lastFedAt: c.lastFedAt || null,
       createdAt: c.createdAt || new Date().toISOString()
@@ -3033,13 +3077,13 @@ function resetAll() {
 
 function addInitialCrops() {
   confirmSheet({
-    title: '初期の8品目を追加しますか？',
-    body: 'たまねぎ・スナップエンドウ豆・ツタンカーメン豆・ミニ白菜・普通の白菜・イチゴ・ニンニク・レタスの8品目を、お世話の記録なしで追加します。すでに登録してある品目は追加しません。',
+    title: '初期の9品目を追加しますか？',
+    body: 'たまねぎ・スナップエンドウ豆・ツタンカーメン豆・ミニ白菜・普通の白菜・イチゴ・ニンニク・レタス・菊（ベランダ）の9品目を、お世話の記録なしで追加します。すでに登録してある品目は追加しません。',
     ok: '追加する',
     onOk: function () {
       var added = seedInitialCrops(true);
       renderAll();
-      toast(added ? added + '品目を追加しました' : '8品目ともすでに登録されています', '🌱');
+      toast(added ? added + '品目を追加しました' : '9品目ともすでに登録されています', '🌱');
     }
   });
 }
@@ -3270,8 +3314,10 @@ function upgradeManifest() {
 }
 
 function init() {
-  /* はじめて開いたとき（保存データがないとき）は、育てている8品目を記録なしで登録する */
+  /* はじめて開いたとき（保存データがないとき）は、育てている9品目を記録なしで登録する */
   if (!STATE_WAS_STORED) seedInitialCrops(false);
+  /* 既存の保存データにも菊（ベランダ）を一度だけ追加する */
+  migrateKiku();
   bindStatic();
   renderAll();
   upgradeManifest();
