@@ -873,7 +873,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
       <div class="section">
         <div class="section-head"><h2>このアプリについて</h2></div>
         <div class="card">
-          <div class="kv"><span>バージョン</span><b>1.2.0</b></div>
+          <div class="kv"><span>バージョン</span><b>1.2.1</b></div>
           <div class="kv"><span>天気データ</span><b>Open-Meteo</b></div>
           <div class="kv"><span>保存先</span><b>この端末のブラウザ</b></div>
           <div class="divider"></div>
@@ -926,7 +926,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
    ========================================================= */
 
 var LS_KEY = 'my_saien_note_v1';
-var APP_VERSION = '1.2.0';
+var APP_VERSION = '1.2.1';
 
 /* ---------- tiny helpers ---------- */
 function $(sel, root) { return (root || document).querySelector(sel); }
@@ -1295,6 +1295,34 @@ function normalizePlaces(list) {
   });
 }
 
+/* 場所は複数選べる。「1番・3番」のように「・」でつないだ文字列が基本形 */
+function splitPlaces(txt) {
+  return String(txt == null ? '' : txt).split(/[・、,]/).map(function (s) { return s.trim(); }).filter(Boolean);
+}
+function joinPlaces(list) {
+  return (Array.isArray(list) ? list : splitPlaces(list)).filter(Boolean).join('・');
+}
+/* 作物の場所を配列で返す（新: places / 旧: place 文字列のどちらでも動く） */
+function cropPlaces(c) {
+  if (!c) return [];
+  if (Array.isArray(c.places) && c.places.length) {
+    return uniqPlaces(c.places);
+  }
+  return splitPlaces(c.place);
+}
+function cropPlaceText(c) {
+  return cropPlaces(c).join('・');
+}
+/* 並びを保ったまま重複を除く */
+function uniqPlaces(list) {
+  var seen = {}, out = [];
+  (list || []).forEach(function (p) {
+    var v = String(p == null ? '' : p).trim();
+    if (v && !seen[v]) { seen[v] = 1; out.push(v); }
+  });
+  return out;
+}
+
 var STATE_WAS_STORED = false;
 var state = loadState();
 var weatherLoading = false;
@@ -1319,12 +1347,14 @@ function loadState() {
   s.logs = Array.isArray(s.logs) ? s.logs : [];
   s.drafts = Array.isArray(s.drafts) ? s.drafts : [];
   s.crops = s.crops.map(function (c) {
+    var places = cropPlaces(c);
     return {
       id: c.id || uid(),
       name: c.name || '野菜',
       emoji: c.emoji || guessEmoji(c.name),
       plantedAt: c.plantedAt || todayISO(),
-      place: c.place || '',
+      place: places.join('・'),
+      places: places,
       harvestAt: c.harvestAt || null,
       note: c.note || '',
       lastWateredAt: c.lastWateredAt || null,
@@ -1387,7 +1417,7 @@ function initialCrops() {
   return INITIAL_CROPS.map(function (c) {
     return {
       id: uid(), name: c.name, emoji: c.emoji, plantedAt: c.plantedAt,
-      place: '', harvestAt: c.harvestAt, note: c.note,
+      place: '', places: [], harvestAt: c.harvestAt, note: c.note,
       lastWateredAt: null, lastFedAt: null, createdAt: now
     };
   });
@@ -1983,12 +2013,13 @@ function ddayHTML(c) {
 function cropCard(c) {
   var planted = daysSince(c.plantedAt);
   var hCount = state.logs.filter(function (l) { return l.cropId === c.id && l.type === 'harvest'; }).length;
+  var placeText = cropPlaceText(c);
   return '<div class="card crop" data-crop="' + esc(c.id) + '">'
     + '<div class="crop-top">'
     + '<div class="crop-emoji" aria-hidden="true">' + esc(c.emoji || '🌱') + '</div>'
     + '<div class="crop-id">'
     + '<div class="crop-name">' + esc(c.name) + '</div>'
-    + (c.place ? '<div class="crop-place"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg>' + esc(c.place) + '</div>' : '')
+    + (placeText ? '<div class="crop-place"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg>' + esc(placeText) + '</div>' : '')
     + '</div>'
     + ddayHTML(c)
     + '</div>'
@@ -2079,37 +2110,46 @@ function placeOptions() {
   return normalizePlaces(state.settings.places).concat([OTHER_PLACE]);
 }
 
-/* 場所を選ぶチップ。今の場所が選択肢にない場合は「その他」＋入力欄にいれる */
+/* 場所を選ぶチップ（複数選択可）。リストにない場所は「その他」＋入力欄にいれる */
 function placePickerHTML(current) {
-  var cur = String(current || '').trim();
   var opts = placeOptions();
-  var custom = !!cur && opts.indexOf(cur) < 0;
-  var selected = custom ? OTHER_PLACE : cur;
+  var names = normalizePlaces(state.settings.places);
+  var cur = uniqPlaces(Array.isArray(current) ? current : splitPlaces(current));
+  var customs = cur.filter(function (p) { return names.indexOf(p) < 0 && p !== OTHER_PLACE; });
+  var otherOn = customs.length > 0 || cur.indexOf(OTHER_PLACE) >= 0;
   var chips = opts.map(function (p) {
-    var on = p === selected;
+    var on = p === OTHER_PLACE ? otherOn : cur.indexOf(p) >= 0;
     return '<button type="button" class="chip' + (on ? ' on' : '') + '" data-place="' + esc(p) + '" aria-pressed="' + (on ? 'true' : 'false') + '" style="min-height:40px">' + esc(p) + '</button>';
   }).join('');
-  return '<div class="form-row"><label class="form-label">植える場所</label>'
+  return '<div class="form-row"><label class="form-label">植える場所（複数OK）</label>'
     + '<div class="chip-row chip-wrap" id="placeRow">' + chips + '</div>'
-    + '<p class="hint" style="margin-top:8px">選んだ場所をもう一度おすと、場所なしに戻せます。</p>'
-    + '<div id="placeCustomWrap" style="margin-top:6px"' + (custom ? '' : ' hidden') + '>'
-    + '<input class="field" id="fPlaceCustom" type="text" maxlength="20" autocomplete="off" placeholder="例: 東の畝" value="' + esc(custom ? cur : '') + '">'
-    + '<p class="hint" style="margin-top:6px">空のままなら「その他」で保存します。</p>'
+    + '<p class="hint" style="margin-top:8px">複数の場所に植えているときは、続けておして選べます。選んだ場所をもう一度おすと、その場所だけ外れます。</p>'
+    + '<div id="placeCustomWrap" style="margin-top:6px"' + (otherOn ? '' : ' hidden') + '>'
+    + '<input class="field" id="fPlaceCustom" type="text" maxlength="40" autocomplete="off" placeholder="例: 東の畝" value="' + esc(customs.join('・')) + '">'
+    + '<p class="hint" style="margin-top:6px">空のままなら「その他」で保存します。複数は「・」で区切れます。</p>'
     + '</div>'
     + '</div>';
 }
 
+function pickedPlaces(wrap) {
+  var out = [];
+  $$('#placeRow .chip.on', wrap).forEach(function (b) {
+    var v = b.getAttribute('data-place') || '';
+    if (!v) return;
+    if (v === OTHER_PLACE) {
+      var inp = $('#fPlaceCustom', wrap);
+      var t = inp ? String(inp.value || '').trim() : '';
+      if (t) out = out.concat(splitPlaces(t));
+      else out.push(OTHER_PLACE);
+    } else {
+      out.push(v);
+    }
+  });
+  return uniqPlaces(out);
+}
+
 function pickedPlace(wrap) {
-  var on = $('#placeRow .chip.on', wrap);
-  if (!on) return '';
-  var v = on.getAttribute('data-place') || '';
-  if (v === OTHER_PLACE) {
-    var t = '';
-    var inp = $('#fPlaceCustom', wrap);
-    if (inp) t = String(inp.value || '').trim();
-    return t || OTHER_PLACE;
-  }
-  return v;
+  return pickedPlaces(wrap).join('・');
 }
 
 function openCropSheet(id) {
@@ -2134,7 +2174,7 @@ function openCropSheet(id) {
     + '<div class="form-row"><label class="form-label">アイコン</label>'
     + '<div class="chip-row" id="emojiRow">' + emojis + '</div></div>'
     + '<div class="form-row"><label class="form-label" for="fPlanted">植えた日</label><input class="field" id="fPlanted" type="date" value="' + esc(planted) + '"></div>'
-    + placePickerHTML(c ? c.place : '')
+    + placePickerHTML(c ? cropPlaces(c) : [])
     + '<div class="form-row"><label class="form-label">収穫の目安</label>'
     + '<div class="chip-row" style="margin-bottom:8px">'
     + '<button type="button" class="chip on" data-mode="days">日数で入力</button>'
@@ -2172,18 +2212,13 @@ function openCropSheet(id) {
   });
   $$('#placeRow [data-place]', wrap).forEach(function (b) {
     b.addEventListener('click', function () {
-      var wasOn = b.classList.contains('on');
-      $$('#placeRow [data-place]', wrap).forEach(function (x) {
-        x.classList.remove('on');
-        x.setAttribute('aria-pressed', 'false');
-      });
+      var on = !b.classList.contains('on');
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      if (b.getAttribute('data-place') !== OTHER_PLACE) return;
       var customWrap = $('#placeCustomWrap', wrap);
-      if (wasOn) { if (customWrap) customWrap.hidden = true; return; }
-      b.classList.add('on');
-      b.setAttribute('aria-pressed', 'true');
-      var isOther = b.getAttribute('data-place') === OTHER_PLACE;
-      if (customWrap) customWrap.hidden = !isOther;
-      if (isOther) {
+      if (customWrap) customWrap.hidden = !on;
+      if (on) {
         var inp = $('#fPlaceCustom', wrap);
         if (inp) { try { inp.focus({ preventScroll: true }); } catch (e) { } }
       }
@@ -2219,11 +2254,13 @@ function openCropSheet(id) {
     } else {
       harvest = $('#fDate', wrap).value || null;
     }
+    var places = pickedPlaces(wrap);
     var data = {
       name: name,
       emoji: sheetEmoji,
       plantedAt: p,
-      place: pickedPlace(wrap),
+      places: places,
+      place: places.join('・'),
       harvestAt: harvest,
       note: $('#fNote', wrap).value.trim()
     };
@@ -2274,7 +2311,7 @@ function openLogSheet(id) {
     : '<div class="empty"><span class="big">📖</span>まだ記録がありません。</div>';
 
   openSheet('<div class="sheet-head"><div style="flex:1"><h3>' + esc(c.emoji || '🌱') + ' ' + esc(c.name) + ' の記録</h3>'
-    + '<p>' + esc(c.place || '場所未設定') + ' ・ 植えた日 ' + fmtMD(c.plantedAt) + '</p></div>'
+    + '<p>' + esc(cropPlaceText(c) || '場所未設定') + ' ・ 植えた日 ' + fmtMD(c.plantedAt) + '</p></div>'
     + '<button class="sheet-close" aria-label="閉じる">' + CLOSE_SVG + '</button></div>'
     + body, c.name + ' の記録');
   $$('[data-logdel]', $('#sheetWrap')).forEach(function (b) {
@@ -2478,7 +2515,7 @@ function getMoneyCtx() {
     price: price,
     memo: memo,
     note: memo || (crop ? (crop.note || '') : ''),
-    place: crop ? (crop.place || '') : '',
+    place: crop ? cropPlaceText(crop) : '',
     days: crop ? daysSince(crop.plantedAt) : null,
     harvests: logs.filter(function (l) { return l.type === 'harvest'; }).length,
     waterCount: logs.filter(function (l) { return l.type === 'water'; }).length,
@@ -2824,8 +2861,17 @@ function savePlaceNames() {
   }
   var moved = 0;
   state.crops.forEach(function (c) {
-    var idx = old.indexOf(c.place);
-    if (idx >= 0 && next[idx] !== old[idx]) { c.place = next[idx]; moved++; }
+    var list = cropPlaces(c);
+    var changed = false;
+    var mapped = list.map(function (p) {
+      var idx = old.indexOf(p);
+      if (idx >= 0 && next[idx] !== old[idx]) { changed = true; return next[idx]; }
+      return p;
+    });
+    var dedup = uniqPlaces(mapped);
+    if (changed) moved++;
+    c.places = dedup;
+    c.place = dedup.join('・');
   });
   state.settings.places = next;
   saveState();
@@ -2898,12 +2944,14 @@ function exportData() {
 
 function normalizeCrops(arr) {
   return (arr || []).map(function (c) {
+    var places = cropPlaces(c);
     return {
       id: c.id || uid(),
       name: c.name || '野菜',
       emoji: c.emoji || guessEmoji(c.name),
       plantedAt: c.plantedAt || todayISO(),
-      place: c.place || '',
+      place: places.join('・'),
+      places: places,
       harvestAt: c.harvestAt || null,
       note: c.note || '',
       lastWateredAt: c.lastWateredAt || null,
