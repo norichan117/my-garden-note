@@ -747,14 +747,14 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
           <div class="grid2 form-row">
             <div>
               <label class="form-label" for="setLat">緯度</label>
-              <input class="field" id="setLat" type="number" step="0.0001" inputmode="decimal" placeholder="34.78">
+              <input class="field" id="setLat" type="number" step="0.0001" inputmode="decimal" placeholder="34.770">
             </div>
             <div>
               <label class="form-label" for="setLon">経度</label>
-              <input class="field" id="setLon" type="number" step="0.0001" inputmode="decimal" placeholder="135.16">
+              <input class="field" id="setLon" type="number" step="0.0001" inputmode="decimal" placeholder="135.187">
             </div>
           </div>
-          <p class="hint">初期値は神戸市北区（34.78, 135.16）。Open-Meteo の無料予報を使うのでAPIキーは不要です。</p>
+          <p class="hint">初期値は神戸市北区（34.770, 135.187）。Open-Meteo の無料予報を使うのでAPIキーは不要です。</p>
           <div class="sheet-actions" style="margin-top:12px">
             <button class="btn" id="btnSavePlace">この場所で保存</button>
           </div>
@@ -1238,7 +1238,7 @@ var MERCARI = [
 
 /* ---------- state ---------- */
 var DEFAULT_SETTINGS = {
-  place: '神戸市北区', lat: 34.78, lon: 135.16,
+  place: '神戸市北区', lat: 34.770, lon: 135.187,
   waterDays: 2, feedDays: 21, gardenName: '我が家の菜園', lastBackup: null
 };
 
@@ -2568,7 +2568,7 @@ function openDraft(id) {
    設定
    ========================================================= */
 var PLACES = [
-  ['神戸市北区', 34.78, 135.16],
+  ['神戸市北区', 34.770, 135.187],
   ['神戸市東灘区', 34.72, 135.27],
   ['神戸市垂水区', 34.63, 135.06],
   ['明石市', 34.65, 134.99],
