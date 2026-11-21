@@ -567,6 +567,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
       <div class="hero" id="hero"></div>
       <div id="weatherWrap" style="margin-top:12px"></div>
       <div class="alerts" id="alertWrap"></div>
+      <div id="gettingStarted"></div>
 
       <div class="section">
         <div class="section-head">
@@ -784,7 +785,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
       <div class="section">
         <div class="section-head"><h2>バックアップ（JSON）</h2></div>
         <div class="card">
-          <p class="section-note" style="margin:0 0 12px">機種変更やブラウザのデータ消去に備えて、ときどき書き出しておくと安心です。ファイルは奥さんのスマホに送っておくのもおすすめ。</p>
+          <p class="section-note" style="margin:0 0 12px">機種変更やブラウザのデータ消去に備えて、ときどき書き出しておくと安心です。書き出したファイルは、別の端末やクラウドにも保存しておくのがおすすめです。</p>
           <div class="grid2">
             <button class="btn ghost" id="btnExport">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg>
@@ -809,7 +810,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
           <div class="kv"><span>保存した下書き</span><b id="dataDrafts">0 件</b></div>
           <div class="divider"></div>
           <div class="grid2">
-            <button class="btn ghost sm" id="btnDemo" style="min-height:46px">サンプルを入れ直す</button>
+            <button class="btn ghost sm" id="btnDemo" style="min-height:46px">サンプルを追加する</button>
             <button class="btn ghost sm" id="btnReset" style="min-height:46px;color:#A4553F;border-color:#EED7CE">すべて削除</button>
           </div>
         </div>
@@ -1680,6 +1681,24 @@ function computeTasks() {
   return list;
 }
 
+function renderGettingStarted() {
+  var host = $('#gettingStarted');
+  if (!host) return;
+  if (state.crops.length) { host.innerHTML = ''; return; }
+  host.innerHTML = '<div class="card" style="margin-top:12px;padding:16px 15px">'
+    + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">'
+    + '<span style="font-size:20px" aria-hidden="true">🌱</span>'
+    + '<b style="font-size:14px;color:var(--ink)">はじめかた（3ステップ）</b></div>'
+    + '<p class="section-note" style="margin:4px 0 6px">まだ野菜が登録されていません。まずは1つ登録すると、お世話のタイミングをお知らせします。</p>'
+    + '<ol class="steps" style="list-style:none;padding:0;margin:0">'
+    + '<li>「菜園管理」タブの「＋ 追加」から、植えた野菜やプランターを登録する</li>'
+    + '<li>カードの「水やりした」「追肥した」「収穫記録」を1タップで記録する</li>'
+    + '<li>サンプルを見たいときは「設定」の「サンプルを追加する」からいつでも入れられます</li>'
+    + '</ol>'
+    + '<button class="btn block" data-add="1" style="margin-top:10px">＋ 最初の野菜を追加</button>'
+    + '</div>';
+}
+
 function renderTasks() {
   var host = $('#taskList');
   if (!host) return;
@@ -1692,7 +1711,7 @@ function renderTasks() {
   var cnt = $('#taskCount');
   if (cnt) cnt.textContent = tasks.length ? tasks.length + '件' : '';
   if (!state.crops.length) {
-    host.innerHTML = '<div class="task-empty"><span class="big">🌱</span>まだ野菜が登録されていません。<br>「菜園管理」から1つ追加すると、<br>水やりや収穫のタイミングをお知らせします。</div>';
+    host.innerHTML = '<div class="task-empty"><span class="big">🌱</span>まだ野菜が登録されていません。<br>カードの「＋ 最初の野菜を追加」または<br>「菜園管理」から1つ追加してみましょう。</div>';
     return;
   }
   if (!tasks.length) {
@@ -1800,6 +1819,7 @@ function renderRecent() {
 }
 
 function renderHome() {
+  renderGettingStarted();
   renderHero();
   renderWeather();
   renderAlerts();
@@ -1872,8 +1892,14 @@ function renderGarden() {
   var cnt = $('#cropCount');
   if (cnt) cnt.textContent = state.crops.length ? state.crops.length + '品目' : '';
   if (!state.crops.length) {
-    host.innerHTML = '<div class="card"><div class="empty"><span class="big">🪴</span>まだ野菜がいません。<br>「追加」から、植えた野菜やプランターを<br>登録してみましょう。</div>'
-      + '<button class="btn block" data-add="1">＋ 最初の野菜を追加</button></div>';
+    host.innerHTML = '<div class="card">'
+      + '<div class="empty" style="padding:20px 12px 6px"><span class="big">🪴</span>まだ野菜がいません。<br>植えた野菜やプランターを登録してみましょう。</div>'
+      + '<ol class="steps" style="list-style:none;padding:2px 4px 0;margin:0">'
+      + '<li>「＋ 追加」から野菜の名前と植えた日を入れる</li>'
+      + '<li>カードのボタン1つで水やり・追肥・収穫を記録</li>'
+      + '<li>サンプルを見たいときは「設定」の「サンプルを追加する」から</li>'
+      + '</ol>'
+      + '<button class="btn block" data-add="1" style="margin-top:10px">＋ 最初の野菜を追加</button></div>';
   } else {
     host.innerHTML = state.crops.map(cropCard).join('');
   }
@@ -2901,8 +2927,6 @@ function upgradeManifest() {
 }
 
 function init() {
-  var firstRun = !state.crops.length && !state.logs.length;
-  if (firstRun) seedSamples(false);
   bindStatic();
   renderAll();
   upgradeManifest();
