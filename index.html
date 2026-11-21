@@ -810,7 +810,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
           <div class="kv"><span>保存した下書き</span><b id="dataDrafts">0 件</b></div>
           <div class="divider"></div>
           <div class="grid2">
-            <button class="btn ghost sm" id="btnDemo" style="min-height:46px">サンプルを追加する</button>
+            <button class="btn ghost sm" id="btnDemo" style="min-height:46px">初期の8品目を追加する</button>
             <button class="btn ghost sm" id="btnReset" style="min-height:46px;color:#A4553F;border-color:#EED7CE">すべて削除</button>
           </div>
         </div>
@@ -886,7 +886,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
    ========================================================= */
 
 var LS_KEY = 'my_saien_note_v1';
-var APP_VERSION = '1.0.0';
+var APP_VERSION = '1.1.0';
 
 /* ---------- tiny helpers ---------- */
 function $(sel, root) { return (root || document).querySelector(sel); }
@@ -1242,6 +1242,7 @@ var DEFAULT_SETTINGS = {
   waterDays: 2, feedDays: 21, gardenName: '我が家の菜園', lastBackup: null
 };
 
+var STATE_WAS_STORED = false;
 var state = loadState();
 var weatherLoading = false;
 var weatherError = '';
@@ -1250,7 +1251,10 @@ function loadState() {
   var s = null;
   try {
     var raw = localStorage.getItem(LS_KEY);
-    if (raw) s = JSON.parse(raw);
+    if (raw) {
+      s = JSON.parse(raw);
+      STATE_WAS_STORED = !!(s && typeof s === 'object');
+    }
   } catch (e) { s = null; }
   if (!s || typeof s !== 'object') s = {};
   s.version = s.version || 1;
@@ -1285,58 +1289,68 @@ function saveState() {
   }
 }
 
-/* ---------- sample data ---------- */
-function sampleCrops() {
-  var t = todayISO();
-  return [
-    {
-      id: uid(), name: 'スナップエンドウ', emoji: '🫛', plantedAt: addDays(t, -18),
-      place: '南側ベランダ プランターB', harvestAt: addDays(t, 170),
-      note: '10cm間隔で2粒まき。12月に支柱と霜よけネットを立てる。',
-      lastWateredAt: addDays(t, -1), lastFedAt: null, createdAt: new Date().toISOString()
-    },
-    {
-      id: uid(), name: 'ほうれん草', emoji: '🥬', plantedAt: addDays(t, -32),
-      place: '畑 うね1', harvestAt: addDays(t, 13),
-      note: '不織布のトンネルで保温中。葉が6枚になったら外葉から収穫。',
-      lastWateredAt: addDays(t, -2), lastFedAt: addDays(t, -20), createdAt: new Date().toISOString()
-    },
-    {
-      id: uid(), name: 'イチゴ', emoji: '🍓', plantedAt: addDays(t, -13),
-      place: 'ベランダ 鉢（8号）', harvestAt: addDays(t, 150),
-      note: 'ランナー苗を植え付け。クラウンを埋めないように。寒さに当てて花芽を促す。',
-      lastWateredAt: addDays(t, -3), lastFedAt: null, createdAt: new Date().toISOString()
-    }
-  ];
-}
-
-function sampleLogs(crops) {
-  var t = todayISO();
-  var now = Date.now();
-  function at(daysAgo, hour) {
-    var d = new Date(now - daysAgo * 86400000);
-    d.setHours(hour || 8, 30, 0, 0);
-    return d.toISOString();
+/* ---------- initial garden lineup (2026年11月時点で育てている8品目) ---------- */
+var INITIAL_CROPS = [
+  {
+    name: 'たまねぎ', emoji: '🧅', plantedAt: '2026-11-03', harvestAt: '2027-05-25',
+    note: '冬越し中。春に追肥。水はけを保つ。'
+  },
+  {
+    name: 'スナップエンドウ豆', emoji: '🫛', plantedAt: '2026-11-10', harvestAt: '2027-04-20',
+    note: 'つるあり・寒さ対策に不織布や笹竹を。'
+  },
+  {
+    name: 'ツタンカーメン豆', emoji: '🫛', plantedAt: '2026-11-10', harvestAt: '2027-05-10',
+    note: '紫のさやが美しい固定種エンドウ。豆ごはんに◎（自家採種しやすい）。'
+  },
+  {
+    name: 'ミニ白菜', emoji: '🥬', plantedAt: '2026-09-20', harvestAt: '2026-12-15',
+    note: '寒さに当てると甘みアップ。外葉で防寒縛りも◎。'
+  },
+  {
+    name: '普通の白菜', emoji: '🥬', plantedAt: '2026-09-20', harvestAt: '2026-12-25',
+    note: '結球中は水切れに注意。アブラムシ・ヨトウムシ点検。'
+  },
+  {
+    name: 'イチゴ', emoji: '🍓', plantedAt: '2026-11-08', harvestAt: '2027-05-05',
+    note: 'ニンニクと相性◎（コンパニオンプランツ）。冬の乾燥・霜よけ注意。'
+  },
+  {
+    name: 'ニンニク', emoji: '🧄', plantedAt: '2026-10-25', harvestAt: '2027-05-30',
+    note: 'イチゴの近くに植えると害虫よけに◎。春に追肥。'
+  },
+  {
+    name: 'レタス', emoji: '🥗', plantedAt: '2026-09-20', harvestAt: '2026-12-20',
+    note: '白菜・キャベツと相性◎（害虫よけ）。冬の冷え込み時は不織布で防寒。'
   }
-  return [
-    { id: uid(), cropId: crops[0].id, type: 'water', at: at(1, 7), note: '' },
-    { id: uid(), cropId: crops[1].id, type: 'water', at: at(2, 7), note: '' },
-    { id: uid(), cropId: crops[1].id, type: 'feed', at: at(20, 16), note: '液肥を薄めて' },
-    { id: uid(), cropId: crops[2].id, type: 'memo', at: at(13, 10), note: 'ランナー苗を植え付け' }
-  ];
+];
+
+/* 作物データだけを作る（過去の水やり・追肥の記録は作らない） */
+function initialCrops() {
+  var now = new Date().toISOString();
+  return INITIAL_CROPS.map(function (c) {
+    return {
+      id: uid(), name: c.name, emoji: c.emoji, plantedAt: c.plantedAt,
+      place: '', harvestAt: c.harvestAt, note: c.note,
+      lastWateredAt: null, lastFedAt: null, createdAt: now
+    };
+  });
 }
 
-function seedSamples(append) {
-  var crops = sampleCrops();
-  var logs = sampleLogs(crops);
+function seedInitialCrops(append) {
+  var crops = initialCrops();
   if (append) {
+    var have = {};
+    state.crops.forEach(function (c) { have[c.name] = true; });
+    crops = crops.filter(function (c) { return !have[c.name]; });
+    if (!crops.length) return 0;
     state.crops = state.crops.concat(crops);
-    state.logs = state.logs.concat(logs);
   } else {
     state.crops = crops;
-    state.logs = logs;
+    state.logs = [];
   }
   saveState();
+  return crops.length;
 }
 
 /* =========================================================
@@ -1693,7 +1707,7 @@ function renderGettingStarted() {
     + '<ol class="steps" style="list-style:none;padding:0;margin:0">'
     + '<li>「菜園管理」タブの「＋ 追加」から、植えた野菜やプランターを登録する</li>'
     + '<li>カードの「水やりした」「追肥した」「収穫記録」を1タップで記録する</li>'
-    + '<li>サンプルを見たいときは「設定」の「サンプルを追加する」からいつでも入れられます</li>'
+    + '<li>「設定」の「初期の8品目を追加する」から、いつでも入れ直せます</li>'
     + '</ol>'
     + '<button class="btn block" data-add="1" style="margin-top:10px">＋ 最初の野菜を追加</button>'
     + '</div>';
@@ -1897,7 +1911,7 @@ function renderGarden() {
       + '<ol class="steps" style="list-style:none;padding:2px 4px 0;margin:0">'
       + '<li>「＋ 追加」から野菜の名前と植えた日を入れる</li>'
       + '<li>カードのボタン1つで水やり・追肥・収穫を記録</li>'
-      + '<li>サンプルを見たいときは「設定」の「サンプルを追加する」から</li>'
+      + '<li>「設定」の「初期の8品目を追加する」から、いつでも入れ直せます</li>'
       + '</ol>'
       + '<button class="btn block" data-add="1" style="margin-top:10px">＋ 最初の野菜を追加</button></div>';
   } else {
@@ -2716,15 +2730,15 @@ function resetAll() {
   });
 }
 
-function addSamples() {
+function addInitialCrops() {
   confirmSheet({
-    title: 'サンプルの野菜を追加しますか？',
-    body: 'スナップエンドウ・ほうれん草・イチゴの3品目と、お世話の記録を追加します。今ある記録はそのまま残ります。',
+    title: '初期の8品目を追加しますか？',
+    body: 'たまねぎ・スナップエンドウ豆・ツタンカーメン豆・ミニ白菜・普通の白菜・イチゴ・ニンニク・レタスの8品目を、お世話の記録なしで追加します。すでに登録してある品目は追加しません。',
     ok: '追加する',
     onOk: function () {
-      seedSamples(true);
+      var added = seedInitialCrops(true);
       renderAll();
-      toast('サンプルを追加しました', '🌱');
+      toast(added ? added + '品目を追加しました' : '8品目ともすでに登録されています', '🌱');
     }
   });
 }
@@ -2892,7 +2906,7 @@ function bindStatic() {
   }
 
   var demo = $('#btnDemo');
-  if (demo) demo.addEventListener('click', addSamples);
+  if (demo) demo.addEventListener('click', addInitialCrops);
 
   var reset = $('#btnReset');
   if (reset) reset.addEventListener('click', resetAll);
@@ -2927,6 +2941,8 @@ function upgradeManifest() {
 }
 
 function init() {
+  /* はじめて開いたとき（保存データがないとき）は、育てている8品目を記録なしで登録する */
+  if (!STATE_WAS_STORED) seedInitialCrops(false);
   bindStatic();
   renderAll();
   upgradeManifest();
