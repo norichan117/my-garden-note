@@ -163,9 +163,17 @@ main{padding:14px 15px calc(var(--tabbar-h) + var(--safe-b) + 26px)}
 .hero p{font-size:12.5px;color:#D9E7CD;line-height:1.65;position:relative;z-index:1}
 .hero-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
 .hero-chip{
-  font-size:11.5px;color:#EAF3E0;background:rgba(255,255,255,.10);
+  display:inline-flex;align-items:center;gap:2px;
+  font-family:inherit;font-size:11.5px;line-height:1.6;color:#EAF3E0;background:rgba(255,255,255,.10);
   border:1px solid rgba(255,255,255,.16);padding:5px 10px;border-radius:999px;
+  cursor:pointer;-webkit-appearance:none;appearance:none;
+  transition:background .15s ease,transform .15s ease,border-color .15s ease;
 }
+.hero-chip:hover{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.28)}
+.hero-chip:active{transform:scale(.96);background:rgba(255,255,255,.22)}
+.hero-chip:focus-visible{outline-color:#EAF3E0}
+.hero-chip .chev{opacity:.6;margin-left:2px;font-size:12px;line-height:1}
+#tasksSection{scroll-margin-top:calc(56px + var(--safe-t) + 10px)}
 
 /* ========== weather ========== */
 .wx{padding:0;overflow:hidden}
@@ -569,7 +577,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
       <div class="alerts" id="alertWrap"></div>
       <div id="gettingStarted"></div>
 
-      <div class="section">
+      <div class="section" id="tasksSection">
         <div class="section-head">
           <h2>今日やること</h2>
           <span class="spacer"></span>
@@ -1772,8 +1780,11 @@ function renderHero() {
     + '</div>'
     + '<h1>' + greet + '。<br>' + title + '</h1>'
     + '<p>' + esc(state.settings.place) + 'の家庭菜園 ・ ' + (monthInfo ? esc(monthInfo.theme) : '') + '</p>'
-    + '<div class="hero-chips"><span class="hero-chip">' + chip1 + '</span><span class="hero-chip">' + chip2 + '</span>'
-    + (chip3 ? '<span class="hero-chip">' + esc(chip3) + '</span>' : '') + '</div>';
+    + '<div class="hero-chips">'
+    + '<button type="button" class="hero-chip" data-nav="garden" aria-label="栽培中 ' + state.crops.length + '品目。菜園管理を開く">' + chip1 + '<span class="chev" aria-hidden="true">›</span></button>'
+    + '<button type="button" class="hero-chip" data-scroll="tasks" aria-label="今日やることへ移動">' + chip2 + '<span class="chev" aria-hidden="true">›</span></button>'
+    + (chip3 ? '<button type="button" class="hero-chip" data-nav="season" aria-label="今月の種まき・植え付けを開く">' + esc(chip3) + '<span class="chev" aria-hidden="true">›</span></button>' : '')
+    + '</div>';
 }
 
 function renderStats() {
@@ -2765,6 +2776,18 @@ function switchTab(name) {
   if (name === 'season') setTimeout(scrollMonthIntoView, 30);
 }
 
+function scrollToTasks() {
+  var wasHome = currentView === 'home';
+  if (!wasHome) switchTab('home');
+  var run = function () {
+    var sec = $('#tasksSection');
+    if (!sec) return;
+    try { sec.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    catch (e) { sec.scrollIntoView(true); }
+  };
+  if (wasHome) run(); else setTimeout(run, 60);
+}
+
 function renderAll() {
   renderHome();
   renderGarden();
@@ -2780,6 +2803,13 @@ function handleClick(e) {
 
   var navEl = t.closest('[data-nav]');
   if (navEl) { e.preventDefault(); switchTab(navEl.getAttribute('data-nav')); return; }
+
+  var scrollEl = t.closest('[data-scroll]');
+  if (scrollEl) {
+    e.preventDefault();
+    if (scrollEl.getAttribute('data-scroll') === 'tasks') scrollToTasks();
+    return;
+  }
 
   var addEl = t.closest('[data-add]');
   if (addEl) { openCropSheet(null); return; }
