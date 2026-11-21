@@ -127,6 +127,8 @@ main{padding:14px 15px calc(var(--tabbar-h) + var(--safe-b) + 26px)}
 }
 .section-head h2::before{content:"";width:6px;height:6px;border-radius:2px;background:var(--green-3);transform:rotate(45deg);flex:0 0 6px}
 .section-head .count{font-size:11.5px;color:var(--ink-3);font-weight:400}
+.task-badge{display:inline-flex;align-items:center;justify-content:center;min-width:21px;height:21px;padding:0 8px;border-radius:999px;background:var(--clay);color:#fff;font-size:10.5px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.task-badge[hidden]{display:none}
 .section-head .spacer{flex:1}
 .section-note{font-size:12px;color:var(--ink-3);line-height:1.6;margin:-4px 2px 10px}
 .page-title{font-family:var(--serif);font-size:22px;line-height:1.35;letter-spacing:.02em;margin:6px 2px 2px}
@@ -201,6 +203,18 @@ main{padding:14px 15px calc(var(--tabbar-h) + var(--safe-b) + 26px)}
 .wx-day .t{font-size:11px;font-variant-numeric:tabular-nums;color:var(--ink-2)}
 .wx-day .t b{color:var(--ink);font-weight:600}
 .wx-day .p{font-size:10px;color:var(--water);margin-top:1px}
+.wx-hours-head{display:flex;align-items:baseline;gap:7px;padding:10px 16px 4px;border-top:1px solid var(--line-2);background:var(--card-2)}
+.wx-hours-head b{font-size:11.5px;font-weight:600;color:var(--ink-2)}
+.wx-hours-head span{font-size:10px;color:var(--ink-3)}
+.wx-hours{display:flex;overflow-x:auto;background:var(--card-2);scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.wx-hours::-webkit-scrollbar{display:none}
+.wx-hour{flex:0 0 62px;padding:4px 2px 10px;text-align:center;border-right:1px solid var(--line-2)}
+.wx-hour:last-child{border-right:0}
+.wx-hour .h{font-size:10.5px;color:var(--ink-3);letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.wx-hour.now .h{color:var(--green);font-weight:700}
+.wx-hour .e{font-size:17px;line-height:1.35;margin:1px 0}
+.wx-hour .t{font-size:11px;font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600}
+.wx-hour .p{font-size:10px;color:var(--water);margin-top:1px;font-variant-numeric:tabular-nums}
 .wx-foot{display:flex;align-items:center;gap:8px;padding:9px 14px;border-top:1px solid var(--line-2);background:#FFFDF9}
 .wx-foot .note{font-size:10.5px;color:var(--ink-3);line-height:1.5}
 .wx-foot .btn-mini{margin-left:auto}
@@ -275,6 +289,7 @@ main{padding:14px 15px calc(var(--tabbar-h) + var(--safe-b) + 26px)}
 .chip:active{transform:scale(.97)}
 .chip-row{display:flex;gap:7px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none}
 .chip-row::-webkit-scrollbar{display:none}
+.chip-wrap{flex-wrap:wrap;overflow:visible;margin:0}
 .tag{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;padding:2px 8px;border-radius:999px;background:var(--green-wash);color:#3A6134;letter-spacing:.02em}
 .tag.warm{background:var(--clay-wash);color:#8E4F2C}
 .tag.blue{background:var(--water-wash);color:#2C5878}
@@ -573,18 +588,22 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
     <!-- ============ ホーム ============ -->
     <section class="view active" id="view-home" data-view="home" aria-labelledby="tab-home">
       <div class="hero" id="hero"></div>
-      <div id="weatherWrap" style="margin-top:12px"></div>
       <div class="alerts" id="alertWrap"></div>
-      <div id="gettingStarted"></div>
 
       <div class="section" id="tasksSection">
         <div class="section-head">
           <h2>今日やること</h2>
           <span class="spacer"></span>
-          <span class="count" id="taskCount"></span>
+          <span class="task-badge" id="taskCount" hidden></span>
         </div>
         <div class="card" id="taskList" style="padding:12px 14px"></div>
       </div>
+
+      <div class="section">
+        <div id="weatherWrap"></div>
+      </div>
+
+      <div id="gettingStarted"></div>
 
       <div class="section">
         <div class="stats" id="homeStats"></div>
@@ -742,6 +761,19 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
       </div>
 
       <div class="section">
+        <div class="section-head"><h2>植える場所の名前</h2></div>
+        <div class="card">
+          <p class="section-note" style="margin:0 0 12px">「野菜を追加」のときに出る場所の選択肢です。畑の呼び名に合わせて変えられます（例: 1番 → 東の畝）。</p>
+          <div id="placeNameList"></div>
+          <p class="hint">名前を変えて保存すると、その場所を使っている野菜の表示も新しい名前にそろえます。「その他」はいつでも選べます。</p>
+          <div class="grid2" style="margin-top:12px">
+            <button class="btn ghost" id="btnResetPlaces">初期値に戻す</button>
+            <button class="btn" id="btnSavePlaces">保存する</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
         <div class="section-head"><h2>天気の場所</h2></div>
         <div class="card">
           <div class="form-row">
@@ -841,7 +873,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
       <div class="section">
         <div class="section-head"><h2>このアプリについて</h2></div>
         <div class="card">
-          <div class="kv"><span>バージョン</span><b>1.1.0</b></div>
+          <div class="kv"><span>バージョン</span><b>1.2.0</b></div>
           <div class="kv"><span>天気データ</span><b>Open-Meteo</b></div>
           <div class="kv"><span>保存先</span><b>この端末のブラウザ</b></div>
           <div class="divider"></div>
@@ -894,7 +926,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
    ========================================================= */
 
 var LS_KEY = 'my_saien_note_v1';
-var APP_VERSION = '1.1.0';
+var APP_VERSION = '1.2.0';
 
 /* ---------- tiny helpers ---------- */
 function $(sel, root) { return (root || document).querySelector(sel); }
@@ -1245,10 +1277,23 @@ var MERCARI = [
 ];
 
 /* ---------- state ---------- */
+var DEFAULT_PLACES = ['1番', '2番', '3番', '家の中', 'ベランダ'];
+var OTHER_PLACE = 'その他';
+
 var DEFAULT_SETTINGS = {
   place: '神戸市北区', lat: 34.770, lon: 135.187,
-  waterDays: 2, feedDays: 21, gardenName: 'チウ農園', lastBackup: null
+  waterDays: 2, feedDays: 21, gardenName: 'チウ農園', lastBackup: null,
+  places: DEFAULT_PLACES.slice()
 };
+
+/* 保存データに場所の名前がない（旧バージョン）ときは初期値を使う */
+function normalizePlaces(list) {
+  if (!Array.isArray(list) || list.length !== DEFAULT_PLACES.length) return DEFAULT_PLACES.slice();
+  return DEFAULT_PLACES.map(function (d, i) {
+    var v = String(list[i] == null ? '' : list[i]).trim();
+    return v || d;
+  });
+}
 
 var STATE_WAS_STORED = false;
 var state = loadState();
@@ -1267,6 +1312,7 @@ function loadState() {
   if (!s || typeof s !== 'object') s = {};
   s.version = s.version || 1;
   s.settings = Object.assign({}, DEFAULT_SETTINGS, s.settings || {});
+  s.settings.places = normalizePlaces(s.settings.places);
   /* 旧アプリ名の初期値が保存されている場合は新しい名前に揃える */
   if (s.settings.gardenName === '我が家の菜園') s.settings.gardenName = 'チウ農園';
   s.crops = Array.isArray(s.crops) ? s.crops : [];
@@ -1431,10 +1477,13 @@ function weatherURL() {
   return 'https://api.open-meteo.com/v1/forecast?latitude=' + encodeURIComponent(s.lat)
     + '&longitude=' + encodeURIComponent(s.lon)
     + '&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,windspeed_10m_max'
+    + '&hourly=weathercode,temperature_2m,precipitation_probability,windspeed_10m&forecast_hours=24'
     + '&timezone=Asia%2FTokyo&forecast_days=7&current_weather=true';
 }
 function isWeatherStale(mins) {
   if (!state.weather || !state.weather.at || !state.weather.days || !state.weather.days.length) return true;
+  /* 時間ごとの予報が保存されていない古いキャッシュは取り直す */
+  if (!state.weather.hourly || !state.weather.hourly.length) return true;
   return (Date.now() - new Date(state.weather.at).getTime()) > mins * 60000;
 }
 
@@ -1480,7 +1529,20 @@ function fetchWeather(force) {
             prob: num(d.precipitation_probability_max, i),
             wind: num(d.windspeed_10m_max, i)
           };
-        })
+        }),
+        hourly: (function () {
+          var h = j.hourly;
+          if (!h || !h.time) return [];
+          return h.time.map(function (t, i) {
+            return {
+              time: t,
+              code: h.weathercode ? h.weathercode[i] : 3,
+              temp: num(h.temperature_2m, i),
+              prob: num(h.precipitation_probability, i),
+              wind: num(h.windspeed_10m, i)
+            };
+          });
+        })()
       };
       weatherLoading = false;
       weatherError = '';
@@ -1510,6 +1572,41 @@ function rainToday() {
 function nextDays(n) {
   var arr = (state.weather && state.weather.days) ? state.weather.days.slice(0, n) : [];
   return arr;
+}
+
+/* 東京の「今の時」を 2026-11-21T09 の形で返す（時刻文字列の比べに使う） */
+function tokyoHourKey() {
+  var t = new Date(Date.now() + 9 * 3600000);
+  return t.getUTCFullYear() + '-' + pad2(t.getUTCMonth() + 1) + '-' + pad2(t.getUTCDate()) + 'T' + pad2(t.getUTCHours());
+}
+
+function hourlyAhead(n) {
+  var list = (state.weather && state.weather.hourly) ? state.weather.hourly : [];
+  var key = tokyoHourKey();
+  return list.filter(function (h) {
+    return h && h.time && String(h.time).slice(0, 13) >= key;
+  }).slice(0, n || 24);
+}
+
+/* 時間ごとの予報（横スクロール）。古いキャッシュに hourly がなければ何も出さない */
+function hourStripHTML() {
+  var items = hourlyAhead(24);
+  if (!items.length) return '';
+  var key = tokyoHourKey();
+  var cells = items.map(function (h) {
+    var k = String(h.time).slice(0, 13);
+    var isNow = k === key;
+    var label = isNow ? '今' : parseInt(String(h.time).slice(11, 13), 10) + '時';
+    var ii = wx(h.code);
+    return '<div class="wx-hour' + (isNow ? ' now' : '') + '">'
+      + '<div class="h">' + label + '</div>'
+      + '<div class="e" role="img" aria-label="' + esc(ii.label) + '">' + ii.emoji + '</div>'
+      + '<div class="t">' + (h.temp == null ? '—' : Math.round(h.temp) + '°') + '</div>'
+      + '<div class="p">' + (h.prob == null ? '—' : Math.round(h.prob) + '%') + '</div>'
+      + '</div>';
+  }).join('');
+  return '<div class="wx-hours-head"><b>時間ごとの予報</b><span>この先24時間・横にスクロール</span></div>'
+    + '<div class="wx-hours">' + cells + '</div>';
 }
 
 function dayAlerts(day, isToday) {
@@ -1628,6 +1725,7 @@ function renderWeather() {
     + '</div>'
     + (weatherLoading ? '<div class="wx-loading" style="padding:0 16px 8px;font-size:11.5px"><span class="spinner" style="width:14px;height:14px;flex:0 0 14px"></span>最新の予報に更新中…</div>' : wxFactRow(d0))
     + '<div class="wx-strip">' + strip + '</div>'
+    + hourStripHTML()
     + '<div class="wx-foot">'
     + '<span class="note">' + (weatherLoading ? '更新しています…' : (weatherError ? '通信できませんでした。表示は保存済みの予報です。' : 'Open-Meteo の予報（30分以上たつと自動で更新）')) + '</span>'
     + '<button class="btn-mini" data-wx="retry">更新</button>'
@@ -1729,11 +1827,14 @@ function renderTasks() {
   var tasks = computeTasks();
   var badge = $('#tabBadge');
   if (badge) {
-    if (tasks.length) { badge.hidden = false; badge.textContent = tasks.length > 9 ? '9+' : tasks.length; }
+    if (tasks.length) { badge.hidden = false; badge.textContent = tasks.length > 99 ? '99+' : tasks.length; }
     else badge.hidden = true;
   }
   var cnt = $('#taskCount');
-  if (cnt) cnt.textContent = tasks.length ? tasks.length + '件' : '';
+  if (cnt) {
+    if (tasks.length) { cnt.hidden = false; cnt.textContent = tasks.length + '件'; }
+    else { cnt.hidden = true; cnt.textContent = ''; }
+  }
   if (!state.crops.length) {
     host.innerHTML = '<div class="task-empty"><span class="big">🌱</span>まだ野菜が登録されていません。<br>カードの「＋ 最初の野菜を追加」または<br>「菜園管理」から1つ追加してみましょう。</div>';
     return;
@@ -1974,6 +2075,43 @@ function recordCare(type, cropId) {
 /* ---------- crop sheet ---------- */
 var sheetEmoji = '🌱';
 
+function placeOptions() {
+  return normalizePlaces(state.settings.places).concat([OTHER_PLACE]);
+}
+
+/* 場所を選ぶチップ。今の場所が選択肢にない場合は「その他」＋入力欄にいれる */
+function placePickerHTML(current) {
+  var cur = String(current || '').trim();
+  var opts = placeOptions();
+  var custom = !!cur && opts.indexOf(cur) < 0;
+  var selected = custom ? OTHER_PLACE : cur;
+  var chips = opts.map(function (p) {
+    var on = p === selected;
+    return '<button type="button" class="chip' + (on ? ' on' : '') + '" data-place="' + esc(p) + '" aria-pressed="' + (on ? 'true' : 'false') + '" style="min-height:40px">' + esc(p) + '</button>';
+  }).join('');
+  return '<div class="form-row"><label class="form-label">植える場所</label>'
+    + '<div class="chip-row chip-wrap" id="placeRow">' + chips + '</div>'
+    + '<p class="hint" style="margin-top:8px">選んだ場所をもう一度おすと、場所なしに戻せます。</p>'
+    + '<div id="placeCustomWrap" style="margin-top:6px"' + (custom ? '' : ' hidden') + '>'
+    + '<input class="field" id="fPlaceCustom" type="text" maxlength="20" autocomplete="off" placeholder="例: 東の畝" value="' + esc(custom ? cur : '') + '">'
+    + '<p class="hint" style="margin-top:6px">空のままなら「その他」で保存します。</p>'
+    + '</div>'
+    + '</div>';
+}
+
+function pickedPlace(wrap) {
+  var on = $('#placeRow .chip.on', wrap);
+  if (!on) return '';
+  var v = on.getAttribute('data-place') || '';
+  if (v === OTHER_PLACE) {
+    var t = '';
+    var inp = $('#fPlaceCustom', wrap);
+    if (inp) t = String(inp.value || '').trim();
+    return t || OTHER_PLACE;
+  }
+  return v;
+}
+
 function openCropSheet(id) {
   var c = id ? state.crops.filter(function (x) { return x.id === id; })[0] : null;
   var mode = 'days';
@@ -1995,10 +2133,8 @@ function openCropSheet(id) {
     + '<p class="hint" id="nameErr" style="color:#A4553F" hidden>名前を入れてください</p></div>'
     + '<div class="form-row"><label class="form-label">アイコン</label>'
     + '<div class="chip-row" id="emojiRow">' + emojis + '</div></div>'
-    + '<div class="grid2 form-row">'
-    + '<div><label class="form-label" for="fPlanted">植えた日</label><input class="field" id="fPlanted" type="date" value="' + esc(planted) + '"></div>'
-    + '<div><label class="form-label" for="fPlace">場所・プランター名</label><input class="field" id="fPlace" type="text" placeholder="例: 畑 うね1" value="' + esc(c ? c.place : '') + '"></div>'
-    + '</div>'
+    + '<div class="form-row"><label class="form-label" for="fPlanted">植えた日</label><input class="field" id="fPlanted" type="date" value="' + esc(planted) + '"></div>'
+    + placePickerHTML(c ? c.place : '')
     + '<div class="form-row"><label class="form-label">収穫の目安</label>'
     + '<div class="chip-row" style="margin-bottom:8px">'
     + '<button type="button" class="chip on" data-mode="days">日数で入力</button>'
@@ -2032,6 +2168,25 @@ function openCropSheet(id) {
       b.classList.add('on');
       $('#modeDays', wrap).hidden = mode !== 'days';
       $('#modeDate', wrap).hidden = mode !== 'date';
+    });
+  });
+  $$('#placeRow [data-place]', wrap).forEach(function (b) {
+    b.addEventListener('click', function () {
+      var wasOn = b.classList.contains('on');
+      $$('#placeRow [data-place]', wrap).forEach(function (x) {
+        x.classList.remove('on');
+        x.setAttribute('aria-pressed', 'false');
+      });
+      var customWrap = $('#placeCustomWrap', wrap);
+      if (wasOn) { if (customWrap) customWrap.hidden = true; return; }
+      b.classList.add('on');
+      b.setAttribute('aria-pressed', 'true');
+      var isOther = b.getAttribute('data-place') === OTHER_PLACE;
+      if (customWrap) customWrap.hidden = !isOther;
+      if (isOther) {
+        var inp = $('#fPlaceCustom', wrap);
+        if (inp) { try { inp.focus({ preventScroll: true }); } catch (e) { } }
+      }
     });
   });
   var nameEl = $('#fName', wrap);
@@ -2068,7 +2223,7 @@ function openCropSheet(id) {
       name: name,
       emoji: sheetEmoji,
       plantedAt: p,
-      place: $('#fPlace', wrap).value.trim(),
+      place: pickedPlace(wrap),
       harvestAt: harvest,
       note: $('#fNote', wrap).value.trim()
     };
@@ -2624,11 +2779,68 @@ function renderSettings() {
   if ($('#setWaterDays')) $('#setWaterDays').value = s.waterDays;
   if ($('#setFeedDays')) $('#setFeedDays').value = s.feedDays;
   if ($('#setGardenName')) $('#setGardenName').value = s.gardenName || '';
+  renderPlaceNames();
   if ($('#lastBackup')) $('#lastBackup').textContent = s.lastBackup ? fmtStamp(s.lastBackup) : 'まだありません';
   if ($('#dataCrops')) $('#dataCrops').textContent = state.crops.length + ' 件';
   if ($('#dataLogs')) $('#dataLogs').textContent = state.logs.length + ' 件';
   if ($('#dataDrafts')) $('#dataDrafts').textContent = state.drafts.length + ' 件';
   if ($('#brandSub')) $('#brandSub').textContent = s.place + 'の家庭菜園';
+}
+
+function renderPlaceNames() {
+  var host = $('#placeNameList');
+  if (!host) return;
+  var names = normalizePlaces(state.settings.places);
+  if (!host.getAttribute('data-built')) {
+    host.innerHTML = DEFAULT_PLACES.map(function (d, i) {
+      return '<div class="form-row"><label class="form-label" for="placeName' + i + '">場所 ' + (i + 1) + '</label>'
+        + '<input class="field" id="placeName' + i + '" data-place-idx="' + i + '" type="text" maxlength="12" autocomplete="off" placeholder="' + esc(d) + '"></div>';
+    }).join('');
+    host.setAttribute('data-built', '1');
+  }
+  DEFAULT_PLACES.forEach(function (d, i) {
+    var el = $('#placeName' + i, host);
+    if (el && document.activeElement !== el) el.value = names[i];
+  });
+}
+
+function savePlaceNames() {
+  var host = $('#placeNameList');
+  if (!host) return;
+  var old = normalizePlaces(state.settings.places);
+  var next = old.slice();
+  DEFAULT_PLACES.forEach(function (d, i) {
+    var el = $('#placeName' + i, host);
+    var v = el ? String(el.value || '').trim() : '';
+    next[i] = v || d;
+  });
+  for (var i = 0; i < next.length; i++) {
+    if (next[i] === OTHER_PLACE) { toast('「その他」は場所の名前には使えません', '⚠️'); return; }
+  }
+  for (var a = 0; a < next.length; a++) {
+    for (var b = a + 1; b < next.length; b++) {
+      if (next[a] === next[b]) { toast('同じ名前が2つあります。別の名前にしてください', '⚠️'); return; }
+    }
+  }
+  var moved = 0;
+  state.crops.forEach(function (c) {
+    var idx = old.indexOf(c.place);
+    if (idx >= 0 && next[idx] !== old[idx]) { c.place = next[idx]; moved++; }
+  });
+  state.settings.places = next;
+  saveState();
+  renderAll();
+  toast(moved ? '場所の名前を保存し、' + moved + '品目の表示も変えました' : '場所の名前を保存しました', '🏷️');
+}
+
+function resetPlaceNames() {
+  var host = $('#placeNameList');
+  if (!host) return;
+  DEFAULT_PLACES.forEach(function (d, i) {
+    var el = $('#placeName' + i, host);
+    if (el) el.value = d;
+  });
+  toast('初期の名前に戻しました。「保存する」で確定します', '↩️');
 }
 
 function savePlace() {
@@ -2714,6 +2926,7 @@ function importFile(file) {
       ok: '読み込む',
       onOk: function () {
         state.settings = Object.assign({}, DEFAULT_SETTINGS, data.settings || {});
+        state.settings.places = normalizePlaces(state.settings.places);
         state.crops = normalizeCrops(data.crops);
         state.logs = Array.isArray(data.logs) ? data.logs : [];
         state.drafts = Array.isArray(data.drafts) ? data.drafts : [];
@@ -2897,6 +3110,12 @@ function bindStatic() {
 
   var sp = $('#btnSavePlace');
   if (sp) sp.addEventListener('click', savePlace);
+
+  var spn = $('#btnSavePlaces');
+  if (spn) spn.addEventListener('click', savePlaceNames);
+
+  var rpn = $('#btnResetPlaces');
+  if (rpn) rpn.addEventListener('click', resetPlaceNames);
 
   var gn = $('#setGardenName');
   if (gn) {
