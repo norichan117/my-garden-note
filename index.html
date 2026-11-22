@@ -2288,7 +2288,7 @@ function renamePlot(one, rawValue) {
   if (!one) return;
   var v = String(rawValue == null ? '' : rawValue).trim();
   if (!v) { toast('区画の名前を入れてください', '✏️'); return; }
-  if (v === one.label) { toast('名前はまだ変わっていません', '✏️'); return; }
+  if (v === one.label) return;   /* 名前が変わっていないときは何もしない（入力欄の確定とボタンの二重発火を静かに扱う） */
   var map = mapFor(mapPlace);
   var clash = mapPlots(map).filter(function (p) { return p.idx !== one.idx && p.label === v; });
   if (clash.length) { toast('同じ名前の区画があります。別の名前にしてください', '⚠️'); return; }
