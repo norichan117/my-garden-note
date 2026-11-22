@@ -109,7 +109,7 @@ a:active{opacity:.7}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ========== layout ========== */
-main{padding:14px 15px calc(var(--tabbar-h) + var(--safe-b) + 26px)}
+main{padding:14px 15px calc(var(--tabbar-h) + var(--safe-b) + 78px)}
 .view{display:none}
 .view.active{display:block;animation:viewIn .28s cubic-bezier(.2,.7,.3,1)}
 @keyframes viewIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
@@ -544,7 +544,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
 
 /* toast */
 .toast{
-  position:fixed;left:50%;bottom:calc(var(--tabbar-h) + var(--safe-b) + 16px);z-index:90;
+  position:fixed;left:50%;bottom:calc(var(--tabbar-h) + var(--safe-b) + 74px);z-index:90;
   transform:translate(-50%,14px);opacity:0;pointer-events:none;
   background:#22302A;color:#F5F8F1;font-size:12.5px;line-height:1.5;
   padding:10px 16px;border-radius:999px;box-shadow:0 12px 26px -14px rgba(20,35,25,.9);
@@ -656,6 +656,90 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
 .map-cell.okfam{border-color:#CFE0BC;background:linear-gradient(160deg,#F5FAEE,#EDF4E2)}
 .rot-warn-line.ok{background:var(--green-wash);border-color:#DCE8CC;color:#33582E}
 .cell-tag{display:inline-flex;align-items:center;font-size:9.5px;font-weight:700;letter-spacing:.03em;padding:1px 5px;border-radius:5px;background:#EFEAD9;color:#7A705B;border:1px solid #E4DDC8;margin-left:3px;vertical-align:1px}
+
+/* ========== AI相談 ========== */
+.fab{
+  position:fixed;z-index:60;
+  right:max(14px,calc((100vw - 560px)/2 + 14px));
+  bottom:calc(var(--tabbar-h) + var(--safe-b) + 14px);
+  display:inline-flex;align-items:center;gap:7px;
+  min-height:44px;padding:0 14px 0 12px;border-radius:999px;
+  background:linear-gradient(150deg,#3B6E45,#2F5D3A);color:#F7FAF2;
+  font-size:12px;font-weight:700;letter-spacing:.02em;
+  border:1px solid #2A5333;
+  box-shadow:0 10px 22px -12px rgba(39,80,51,.85),0 2px 6px rgba(39,80,51,.16);
+  transition:transform .14s ease,filter .14s ease;
+}
+.fab:active{transform:scale(.95);filter:brightness(1.05)}
+.fab .fab-ico{font-size:16px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.18))}
+.ai-crop-btn{
+  display:flex;width:100%;align-items:center;justify-content:center;gap:5px;margin-top:9px;
+  min-height:38px;border-radius:10px;border:1px dashed #C9DDB4;background:var(--green-wash);
+  color:#33582E;font-size:11.5px;font-weight:600;letter-spacing:.01em;
+}
+.ai-crop-btn:active{background:#E2EED5}
+.ai-ctx{display:flex;gap:10px;align-items:flex-start;background:var(--green-wash);border:1px solid #DCE8CC;border-radius:13px;padding:10px 11px;margin-bottom:10px}
+.ai-ctx .e{font-size:23px;line-height:1.2;flex:0 0 auto}
+.ai-ctx .t{flex:1;min-width:0}
+.ai-ctx b{display:block;font-size:13px;font-weight:700;letter-spacing:.01em;line-height:1.45}
+.ai-ctx small{display:block;font-size:10.5px;color:#4A6B41;line-height:1.6;margin-top:2px}
+.ai-ctx .tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.ai-log{display:flex;flex-direction:column;gap:9px;max-height:42vh;max-height:42dvh;overflow-y:auto;padding:2px 2px 4px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.sheet-ai{display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;max-height:88dvh}
+.sheet-ai>*{flex:0 0 auto}
+.sheet-ai .ai-log{flex:1 1 auto;min-height:88px;max-height:none;overflow-y:auto}
+.sheet-ai .sheet-head{margin-bottom:10px}
+.sheet-ai .ai-src{margin-top:7px;flex:0 0 auto}
+.ai-msg{display:flex;gap:7px;align-items:flex-start}
+.ai-msg .av{flex:0 0 24px;width:24px;height:24px;border-radius:8px;display:grid;place-items:center;font-size:12px;background:var(--green-wash);border:1px solid #DCE8CC;margin-top:1px}
+.ai-msg .bub{max-width:86%;background:var(--card-2);border:1px solid var(--line-2);border-radius:4px 14px 14px 14px;padding:9px 11px;font-size:12.5px;line-height:1.78;white-space:pre-wrap;word-break:break-word;color:var(--ink)}
+.ai-msg.user{flex-direction:row-reverse}
+.ai-msg.user .av{background:var(--clay-wash);border-color:#F0DCCB}
+.ai-msg.user .bub{background:var(--green);color:#FBFDF7;border-color:#2A5333;border-radius:14px 4px 14px 14px;font-weight:500}
+.ai-msg.err .bub{background:var(--red-wash);border-color:#EFCEC4;color:#8E3628}
+.ai-msg.err .av{background:var(--red-wash);border-color:#EFCEC4}
+.ai-empty{padding:10px 4px 6px;font-size:12px;color:var(--ink-2);line-height:1.8}
+.ai-empty b{display:block;font-size:12.5px;color:var(--ink);margin-bottom:2px}
+.ai-empty ul{display:grid;gap:2px;margin-top:4px}
+.ai-empty li{position:relative;padding-left:12px;font-size:11.5px;color:var(--ink-2)}
+.ai-empty li::before{content:"・";position:absolute;left:0;color:var(--green-3)}
+.ai-chips{margin-top:10px}
+.ai-input-row{display:flex;gap:7px;align-items:flex-end;margin-top:9px}
+.ai-input-row textarea{
+  flex:1;min-width:0;min-height:46px;max-height:118px;padding:11px 12px;border-radius:13px;line-height:1.5;resize:none;overflow-y:auto;
+}
+.mic-btn{
+  width:46px;height:46px;flex:0 0 46px;border-radius:14px;display:grid;place-items:center;
+  font-size:19px;line-height:1;background:var(--card-2);border:1px solid var(--line);color:var(--ink-2);
+  transition:transform .12s ease,background .15s ease;
+}
+.mic-btn:active{transform:scale(.95)}
+.mic-btn.rec{background:var(--red);border-color:#8E3628;color:#fff;animation:micPulse 1.35s ease-out infinite}
+@keyframes micPulse{0%{box-shadow:0 0 0 0 rgba(176,74,58,.45)}70%{box-shadow:0 0 0 12px rgba(176,74,58,0)}100%{box-shadow:0 0 0 0 rgba(176,74,58,0)}}
+.ai-send{
+  width:46px;height:46px;flex:0 0 46px;border-radius:14px;display:grid;place-items:center;
+  background:var(--green);color:#FBFDF7;border:1px solid #2A5333;
+  box-shadow:0 8px 16px -12px rgba(39,80,51,.9);
+}
+.ai-send:active{transform:scale(.95)}
+.ai-send svg{width:19px;height:19px}
+.ai-send[disabled]{opacity:.55}
+.ai-voice-note{font-size:10.5px;color:var(--ink-3);line-height:1.6;margin-top:7px;display:none;background:var(--card-2);border:1px solid var(--line-2);border-radius:9px;padding:7px 9px}
+.ai-voice-note.on{display:block}
+.ai-voice-note.warn{color:#8E3628;background:var(--red-wash);border-color:#EFCEC4}
+.ai-voice-note.live{color:#2F5E86;background:var(--water-wash);border-color:#D3E3EF}
+.ai-foot{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.ai-foot .btn-mini{min-height:32px}
+.ai-src{font-size:10px;color:var(--ink-3);line-height:1.6;margin-top:9px}
+.ai-src b{color:var(--ink-2);font-weight:600}
+.ai-retry{display:flex;gap:6px;margin:-2px 0 0 31px;flex-wrap:wrap}
+.ai-retry button{font-size:11px;font-weight:600;min-height:32px;padding:0 11px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-2)}
+.ai-retry button:first-child{color:var(--green);border-color:#CBDCBF;background:var(--green-wash)}
+.typing{display:inline-flex;align-items:center;gap:3px;height:16px}
+.typing i{width:5px;height:5px;border-radius:50%;background:#93A093;animation:blink 1s infinite}
+.typing i:nth-child(2){animation-delay:.16s}
+.typing i:nth-child(3){animation-delay:.32s}
+@keyframes blink{0%,60%,100%{opacity:.28;transform:translateY(0)}30%{opacity:1;transform:translateY(-2px)}}
 
 /* misc */
 .sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
@@ -972,6 +1056,31 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
       </div>
 
       <div class="section">
+        <div class="section-head"><h2>AI相談のAPIキー設定（任意）</h2></div>
+        <div class="card">
+          <p class="section-note" style="margin:0 0 12px">入れなくても、アプリ内蔵の菜園アドバイザーが畑のデータと天気を見て答えます。本物のAI（Gemini / OpenAI）と話したいときだけ、ご自分のAPIキーを入れてください。</p>
+          <div class="form-row">
+            <label class="form-label" for="setAiProvider">プロバイダ</label>
+            <select class="field" id="setAiProvider">
+              <option value="gemini">Gemini（Google AI Studio）</option>
+              <option value="openai">OpenAI（ChatGPT API）</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label class="form-label" for="setAiKey">APIキー</label>
+            <input class="field" id="setAiKey" type="password" autocomplete="off" spellcheck="false" placeholder="AIza… / sk-…">
+            <p class="hint">キーはこの端末のブラウザ（localStorage）にだけ保存します。HTMLやバックアップのJSONには入りません。入力したキーは画面にも再表示しません。</p>
+          </div>
+          <div id="aiKeyStatus" class="note-box" style="margin-top:10px" aria-live="polite"></div>
+          <div class="grid2" style="margin-top:12px">
+            <button class="btn ghost" id="btnAiKeyClear">キーを削除</button>
+            <button class="btn" id="btnAiKeySave">この端末に保存</button>
+          </div>
+          <p class="hint" style="margin-top:10px">キーはご自身で取得したものを使ってください（Gemini は Google AI Studio、OpenAI は API キーのページから）。同じ端末・同じブラウザでのみ有効です。</p>
+        </div>
+      </div>
+
+      <div class="section">
         <div class="section-head"><h2>バックアップ（JSON）</h2></div>
         <div class="card">
           <p class="section-note" style="margin:0 0 12px">機種変更やブラウザのデータ消去に備えて、ときどき書き出しておくと安心です。書き出したファイルは、別の端末やクラウドにも保存しておくのがおすすめです。</p>
@@ -1023,11 +1132,11 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
       <div class="section">
         <div class="section-head"><h2>このアプリについて</h2></div>
         <div class="card">
-          <div class="kv"><span>バージョン</span><b>1.4.0</b></div>
+          <div class="kv"><span>バージョン</span><b id="appVersionRow">1.5.0</b></div>
           <div class="kv"><span>天気データ</span><b>Open-Meteo</b></div>
           <div class="kv"><span>保存先</span><b>この端末のブラウザ</b></div>
           <div class="divider"></div>
-          <p class="hint" style="margin:0">「チウ農園」は、家庭菜園の記録・季節の段取り・種苗づくりの発信までをひとつにまとめたノートです。栽培の判断は、実際の土の様子と天気を見ながら行ってください。</p>
+          <p class="hint" style="margin:0">「チウ農園」は、家庭菜園の記録・季節の段取り・種苗づくりの発信までをひとつにまとめたノートです。AI相談コーナーは、畑の記録・連作履歴・天気をもとに答えます。栽培の判断は、実際の土の様子と天気を見ながら行ってください。</p>
         </div>
       </div>
 
@@ -1062,6 +1171,10 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
     </div>
   </nav>
 
+  <button class="fab" id="aiFab" type="button" data-ai-chat="1" aria-label="AIに相談する">
+    <span class="fab-ico" aria-hidden="true">💬</span>AIに相談
+  </button>
+
 </div>
 
 <div id="sheetRoot"></div>
@@ -1076,7 +1189,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
    ========================================================= */
 
 var LS_KEY = 'my_saien_note_v1';
-var APP_VERSION = '1.4.0';
+var APP_VERSION = '1.5.0';
 var KIKU_FLAG_KEY = 'chiu_v123_kiku_added';
 
 /* ---------- tiny helpers ---------- */
@@ -2426,6 +2539,7 @@ function openSheet(html, label) {
   }, 140);
 }
 function closeSheet() {
+  if (typeof aiChat !== 'undefined' && aiChat.listening) aiStopVoice();
   var w = $('#sheetWrap');
   if (w && w.parentNode) w.parentNode.removeChild(w);
   document.body.style.overflow = '';
@@ -3004,6 +3118,7 @@ function cropCard(c) {
     + '<span><i>収穫</i> ' + hCount + '回</span>'
     + '</div>'
     + (c.note ? '<div class="crop-note">' + esc(c.note) + '</div>' : '')
+    + '<button class="ai-crop-btn" data-ai-crop="' + esc(c.id) + '"><span aria-hidden="true">💬</span>この野菜についてAIに聞く</button>'
     + '<div class="crop-actions">'
     + '<button class="care water" data-care="water" data-id="' + esc(c.id) + '"><i aria-hidden="true">💧</i>水やりした</button>'
     + '<button class="care feed" data-care="feed" data-id="' + esc(c.id) + '"><i aria-hidden="true">🌱</i>追肥した</button>'
@@ -3176,6 +3291,7 @@ function openCropSheet(id, opt) {
     + '</div>'
     + '<div class="form-row"><label class="form-label" for="fNote">メモ</label>'
     + '<textarea class="field" id="fNote" rows="3" placeholder="例: 10cm間隔で2粒まき。12月に支柱を立てる。">' + esc(c ? c.note : '') + '</textarea></div>'
+    + (c ? '<button type="button" class="ai-crop-btn" data-ai-crop="' + esc(c.id) + '"><span aria-hidden="true">💬</span>この野菜についてAIに聞く</button>' : '')
     + '<div class="sheet-actions">'
     + '<button class="btn ghost" data-cx="cancel">キャンセル</button>'
     + '<button class="btn" id="cropSave">' + (c ? '保存する' : '追加する') + '</button>'
@@ -4115,6 +4231,8 @@ function renderSettings() {
   if ($('#dataHistory')) $('#dataHistory').textContent = allHistory().length + ' 件';
   if ($('#dataDrafts')) $('#dataDrafts').textContent = state.drafts.length + ' 件';
   if ($('#brandSub')) $('#brandSub').textContent = s.place + 'の家庭菜園';
+  if ($('#appVersionRow')) $('#appVersionRow').textContent = APP_VERSION;
+  renderAiKeyStatus();
 }
 
 function renderPlaceNames() {
@@ -4322,11 +4440,12 @@ function importFile(file) {
 function resetAll() {
   confirmSheet({
     title: 'すべてのデータを削除しますか？',
-    body: '作物・記録・下書き・設定がすべて消えます。元に戻せません。先に「書き出す」でバックアップを取っておくと安心です。',
+    body: '作物・記録・下書き・設定（AI相談のAPIキーも含む）がすべて消えます。元に戻せません。先に「書き出す」でバックアップを取っておくと安心です。',
     ok: 'すべて削除',
     onOk: function () {
       state = { version: 1, settings: Object.assign({}, DEFAULT_SETTINGS), crops: [], logs: [], drafts: [], rotationHistory: [], maps: {}, weather: null };
       try { localStorage.removeItem(LS_KEY); } catch (e) { }
+      aiClearKey();
       saveState();
       renderAll();
       toast('データを削除しました', '🗑️');
@@ -4343,6 +4462,1072 @@ function addInitialCrops() {
       var added = seedInitialCrops(true);
       renderAll();
       toast(added ? added + '品目を追加しました' : '9品目ともすでに登録されています', '🌱');
+    }
+  });
+}
+
+/* =========================================================
+   AI相談コーナー（内蔵アドバイザー ＋ 任意のAPIキー連携）
+   ========================================================= */
+/* APIキーは state とは別の localStorage キーにだけ置く。
+   JSONバックアップ（state.settings 等）には絶対に入らない。 */
+var AI_KEY_LS = 'chiu_ai_key_v1';
+var AI_MODELS = { gemini: ['gemini-2.5-flash', 'gemini-2.0-flash'], openai: ['gpt-4o-mini', 'gpt-4.1-mini'] };
+var AI_CHIPS = ['水やり・追肥のコツ', '次に何を植えたらいい？', '葉が黄色い・虫対策', '収穫のタイミング'];
+var aiChat = {
+  cropId: null, messages: [], busy: false, lastError: '',
+  rec: null, listening: false, voiceBase: '', voiceFinal: ''
+};
+
+function aiStore() {
+  try {
+    var raw = localStorage.getItem(AI_KEY_LS);
+    var o = raw ? JSON.parse(raw) : null;
+    if (!o || typeof o !== 'object' || !o.key) return { provider: 'gemini', key: '' };
+    return { provider: o.provider === 'openai' ? 'openai' : 'gemini', key: String(o.key) };
+  } catch (e) { return { provider: 'gemini', key: '' }; }
+}
+function aiSaveKey(provider, key) {
+  try {
+    localStorage.setItem(AI_KEY_LS, JSON.stringify({
+      provider: provider === 'openai' ? 'openai' : 'gemini',
+      key: String(key), savedAt: new Date().toISOString()
+    }));
+    return true;
+  } catch (e) { return false; }
+}
+function aiClearKey() { try { localStorage.removeItem(AI_KEY_LS); } catch (e) { } }
+function aiProviderLabel(p) { return p === 'openai' ? 'OpenAI' : 'Gemini'; }
+function aiMaskKey(k) {
+  var s = String(k || '');
+  return s.length <= 4 ? '••••' : '••••' + s.slice(-4);
+}
+
+/* ---------- 野菜ごとの手入れの知識（内蔵アドバイザーの材料） ---------- */
+var CROP_KNOW = [
+  {
+    keys: ['たまねぎ', '玉ねぎ', 'タマネギ'],
+    water: '冬は乾かし気味で大丈夫。春に球がふくらむ時期だけ土を乾かさず、収穫の2週間前からは水を止めます。',
+    feed: '追肥は12月と2月の2回。チッ素を控えめ、カリを多めにすると保存性が上がります。3月からは与えません（止め肥）。',
+    pest: '多湿でべと病・白色疫病が出やすいので風通しを良く。ネギアザミウマは葉の白いかすり跡で分かります。',
+    harvest: '葉が7〜8割倒れたら収穫。晴れた日に抜いて畑で2〜3日乾かし、葉付きのまま吊るすと長持ちします。'
+  },
+  {
+    keys: ['スナップエンドウ', 'エンドウ', 'えんどう', 'ツタンカーメン', 'そら豆', 'ソラマメ', '枝豆', 'エダマメ', 'えだまめ', 'インゲン', '落花生', '豆'],
+    water: '花が咲くまでは乾かし気味にして根を張らせ、花が咲いて莢がふくらむ時期に水を切らさないのがコツです。',
+    feed: '元肥は少なめに。チッ素が多いとつるボケして花が付きません。花が咲き始めたら軽く追肥します。',
+    pest: 'アブラムシが新芽に群がります。早めにテープで取り、風通しを確保。うどんこ病も出やすいので葉裏を見てください。',
+    harvest: '莢がふっくらして中の豆が透けて見えたら食べごろ。毎日見て、遅れずに採ると株が疲れません。'
+  },
+  {
+    keys: ['白菜'],
+    water: '結球が始まったら水切れ厳禁。株元にたっぷり、朝にあげます。水のムラは玉割れや尻腐れの原因になります。',
+    feed: '植え付け2週間後と、結球が始まる頃の2回。結球の後半は追肥を止めます。',
+    pest: 'アブラムシ・ヨトウムシ・コナガ。葉裏と芯を毎朝見て、卵や小さい幼虫のうちに。軟腐病は傷と多湿から入ります。',
+    harvest: '頭を押して固く締まり、外葉が開いてきたら収穫。霜が降りる前に採ります。'
+  },
+  {
+    keys: ['イチゴ', 'いちご', '苺'],
+    water: '乾燥に弱いので冬も土を乾かさないこと。ただし実が色づき始めたら水を控えめにすると甘みが乗ります。',
+    feed: '花芽が付く前にリン酸、収穫中は薄い液肥を週1回。チッ素が多いと葉ばかり茂ります。',
+    pest: 'ハダニ（葉裏の白い点々）、アブラムシ、多湿での灰色かび病。マルチで実を土から離すと病気が減ります。',
+    harvest: 'ヘタの近くまで赤く色づき、香りが立ったら朝の涼しいうちに採ります。'
+  },
+  {
+    keys: ['ニンニク', 'にんにく'],
+    water: '乾かし気味が基本。春の生育期に土を乾かしすぎない程度で、収穫の2週間前から水を止めます。',
+    feed: '3月に1回だけ。チッ素が多いと球が割れやすくなります。',
+    pest: 'さび病（葉に橙の斑点）と葉枯病。多湿を避け、収穫後はよく乾燥させてください。',
+    harvest: '葉が半分以上黄ばんで倒れ始めたら。晴天の日に抜いて2〜3日乾かし、吊るして保存します。'
+  },
+  {
+    keys: ['ねぎ', 'ネギ', 'ニラ', 'にら', 'ラッキョウ'],
+    water: '乾いたらたっぷりでOK。夏の乾燥期だけは土を乾かしすぎないようにします。',
+    feed: '収穫のたびに軽い追肥。葉の色が薄くなったらあげどきです。',
+    pest: 'ネギアザミウマ（白いかすり跡）とさび病。風通しを良くし、込み合った葉を間引きます。',
+    harvest: '葉が30cm以上になったら外側から。根元2〜3cmを残すとまた伸びてきます。'
+  },
+  {
+    keys: ['レタス', 'サニーレタス', 'リーフレタス'],
+    water: '乾燥に弱く、生育期は毎朝たっぷり。結球レタスは水切れで玉が緩みます。',
+    feed: '植え付け2週間後に薄い追肥を1回だけ。それ以上は葉が柔らかくなりすぎます。',
+    pest: 'アブラムシ、ナメクジ、ヨトウムシ。ナメクジは夜と雨の後に見回り、白い卵の粒を見つけたら潰します。',
+    harvest: '結球種は玉がふくらんで押すと弾力が出たら。リーフは外葉から。朝の涼しい時間に採ります。'
+  },
+  {
+    keys: ['菊', 'キク', 'きく', '大菊'],
+    water: '土の表面が乾いてから朝にたっぷり。開花期から冬は乾かし気味にして根を休めます。',
+    feed: '開花中は追肥を休む時期。12〜1月に切り戻したあと、春の芽出しから月1回の置き肥で十分です。',
+    pest: 'アブラムシ（新芽）、ヨトウムシ、白さび病。風通しを良くし、咲き終わった花は早めに摘みます。',
+    harvest: '花は開ききる少し前（八分咲き）に切ると持ちが良いです。切り戻しは12〜1月、株元から10〜15cmで。'
+  },
+  {
+    keys: ['トマト', 'ミニトマト'],
+    water: '土が乾いてからたっぷり。実が色づき始めたら水を控えると甘みが出ます。水のムラは裂果の原因です。',
+    feed: '第1花房の実が色づき始めたら追肥を開始し、その後は2週間おき。',
+    pest: '疫病・うどんこ病・アブラムシ・コナジラミ。下葉を間引いて風通しを良くし、わき芽は早めに摘みます。',
+    harvest: 'ヘタの周りまで赤く色づいたら。朝に採ると日持ちします。'
+  },
+  {
+    keys: ['ナス', 'なす', '茄子'],
+    water: '水が命。夏は朝晩、株元にたっぷり。乾くと実が硬くなります。',
+    feed: '収穫が始まったら2週間おきに追肥。葉の色が薄いときは少し多めに。',
+    pest: 'アブラムシ、ハダニ、テントウムシダマシ。葉裏を見て、見つけたら捕ります。',
+    harvest: '実がつやつやして張りがあり、ヘタのトゲが痛いくらいが食べごろです。'
+  },
+  {
+    keys: ['キュウリ', 'きゅうり', '胡瓜', 'ゴーヤ', 'ズッキーニ', 'カボチャ', 'スイカ', 'メロン'],
+    water: '乾燥に弱く水をよく吸います。朝に株元へたっぷり、夕方に葉がしおれていたら追加します。',
+    feed: '収穫が始まったら2週間おきに追肥。実付きが悪くなったら肥料切れを疑ってください。',
+    pest: 'うどんこ病・べと病（多湿）、アブラムシ。下葉を整理して風を通すとぐんと減ります。',
+    harvest: '朝採りが一番みずみずしい。大きくなりすぎる前に採ります。'
+  },
+  {
+    keys: ['ピーマン', 'パプリカ', 'シシトウ'],
+    water: '乾いたらたっぷり。極端な乾湿で落花しやすいので、土の乾きをこまめに見ます。',
+    feed: '収穫が始まったら2週間おき。チッ素が多いと葉ばかりになります。',
+    pest: 'アブラムシ、ハダニ、ヨトウムシ。新芽と葉裏を重点的に見てください。',
+    harvest: 'ツヤがあり、ヘタが緑で張っているもの。早めに採ると次が続きます。'
+  },
+  {
+    keys: ['ジャガイモ', 'じゃがいも'],
+    water: '芽出しから生育期は適度に。収穫前は水を控えると腐りにくくなります。',
+    feed: '芽かきのあとに追肥して土寄せ。これをするとイモが大きく育ちます。',
+    pest: '疫病（多湿・低温）、アブラムシ。下葉が黒く傷んだら早めに切って持ち出します。',
+    harvest: '茎葉が黄化して倒れてから。晴天の日に掘り、1日乾かしてから保存します。'
+  },
+  {
+    keys: ['ほうれん草', 'ホウレンソウ', 'ほうれんそう', '小松菜', 'こまつな', '水菜', 'みずな', 'ラディッシュ', '青梗菜', 'チンゲンサイ', '春菊', 'シュンギク'],
+    water: '乾燥に弱いので、発芽までは土を乾かさないこと。生育期も朝のうちに水やりします。',
+    feed: '薄い液肥を1週間おき。チッ素が多いとえぐみが出ます。',
+    pest: 'コナガ・アブラムシ・ヨトウムシ。防虫ネットをかけるのが一番確実です。',
+    harvest: '草丈20cm前後で外葉から。朝に採るとみずみずしいです。'
+  },
+  {
+    keys: ['大根', 'ダイコン', 'だいこん', 'カブ', 'かぶ'],
+    water: '発芽と根の肥大期に水を切らさないこと。急にたくさんあげると裂根します。',
+    feed: '元肥中心で、追肥は葉色が薄いときだけ。',
+    pest: 'アブラナ科の虫（コナガ・アブラムシ）。防虫ネットとこまめな見回りが効きます。',
+    harvest: '首が土から出て張ってきたら。引き抜いてすぐ洗うと辛みが少ないです。'
+  },
+  {
+    keys: ['ニンジン', 'にんじん', '人参'],
+    water: '発芽まで土を乾かさないのが最重要。発芽後は乾いたらたっぷりです。',
+    feed: '元肥中心。追肥は2回までにして、やりすぎないこと。',
+    pest: 'アブラムシ、キアゲハの幼虫。葉が丸坊主になる前に見つけて捕ります。',
+    harvest: '肩が土から出て直径5cm前後が目安。太りすぎると割れます。'
+  },
+  {
+    keys: ['キャベツ', 'ブロッコリー', 'カリフラワー', 'ケール'],
+    water: '株が大きくなるほど水を必要とします。結球・花蕾ができ始めたら水切れ注意。',
+    feed: '植え付け2週間後と、結球（花蕾）が始まる頃の2回。',
+    pest: 'アブラナ科の虫（コナガ・ヨトウムシ・アブラムシ）。葉裏の卵をこまめに潰してください。',
+    harvest: 'キャベツは玉が固く締まったら。ブロッコリーは花蕾がきっちり詰まり、つぼみが開く前に。'
+  },
+  {
+    keys: ['とうもろこし', 'トウモロコシ', 'コーン'],
+    water: '特に雌穂が出る時期は水を切らさないこと。朝に株元へたっぷりです。',
+    feed: '植え付け3週間後と、雌穂が出る頃に追肥して土寄せします。',
+    pest: 'アワノメイガ（茎に穴）、アブラムシ。雄穂を早めに切ると被害が減ります。',
+    harvest: '絹糸が茶色に枯れ、実を押すと乳白色の汁が出たら。朝採りが甘いです。'
+  },
+  {
+    keys: ['サツマイモ', 'さつまいも', '薩摩芋'],
+    water: '植え付け直後だけ水をやり、あとは乾かし気味で育てると甘くなります。',
+    feed: '元肥だけ。追肥はツルボケの原因になるので基本的に不要です。',
+    pest: 'イモゾウムシ、アブラムシ。ツルが伸びすぎたら1回返して根を切ります。',
+    harvest: '植え付けから120〜140日、葉が黄ばんできたら晴天の日に掘ります。'
+  },
+  {
+    keys: ['オクラ'],
+    water: '乾燥に強いですが、実を付けている時期は水を切らさないこと。',
+    feed: '収穫開始後は2週間おきに追肥。',
+    pest: 'アブラムシ、ハダニ、ワタノメイガ。葉裏を見て早めに対処します。',
+    harvest: '実が6〜8cmの柔らかいうちに。大きくなると筋っぽくなります。'
+  },
+  {
+    keys: ['シソ', 'しそ', '大葉', 'バジル', 'ミント', 'ローズマリー', 'タイム', 'オレガノ', 'パセリ'],
+    water: '乾いたらたっぷり。鉢は乾きやすいので夏は毎朝見ます。',
+    feed: '月1回の薄い液肥で十分。香りを楽しむなら肥料は控えめに。',
+    pest: 'アブラムシとヨトウムシ。花芽を摘むと葉が長く採れます。',
+    harvest: '上の若い葉から。花が咲くと葉が固くなるので、蕾は早めに摘みます。'
+  }
+];
+
+function aiKnow(name) {
+  var n = String(name || '').trim();
+  if (!n) return null;
+  var best = null, bestLen = 0;
+  CROP_KNOW.forEach(function (k) {
+    k.keys.forEach(function (key) {
+      if (n.indexOf(key) >= 0 && key.length > bestLen) { bestLen = key.length; best = k; }
+    });
+  });
+  return best;
+}
+
+var AI_PEST_TIPS = [
+  { re: /アブラムシ|油虫|ありんこ/, t: 'アブラムシは新芽や葉裏にびっしり付きます。テープでそっと取り、牛乳を10倍に薄めたスプレーや木酢液で流すと抑えられます。近くにバジルやマリーゴールドを置くのも手です。' },
+  { re: /ヨトウ|青虫|コナガ|毛虫|いも虫|芋虫|幼虫/, t: '青虫・ヨトウムシは葉の裏や株元の土の中に隠れます。朝と夕方に見回り、見つけたら捕るのが一番確実。防虫ネットをかけると卵を産ませません。' },
+  { re: /うどんこ|白い粉|かび|カビ/, t: 'うどんこ病は葉に白い粉。風通しを良くし、かかった葉は早めに切って畑の外へ持ち出します。重曹スプレー（水1Lに重曹小さじ1）も補助になります。' },
+  { re: /ナメクジ|なめくじ/, t: 'ナメクジは夜と雨の後に出ます。鉢の下や株元を見回り、白い卵の粒を見つけたら潰します。鉢の下に砂や銅テープを敷くと入りにくくなります。' },
+  { re: /ハダニ|ダニ|かすれ|白い点/, t: 'ハダニは葉裏の小さな点々。葉がかすれたら疑ってください。葉裏に強めの水をかけて洗い流し、乾燥を避けると増えにくくなります。' },
+  { re: /黄色|黄ば|きいろ|色が変|変色/, t: '下の葉1〜2枚が黄色いのは自然な入れ替わり。上の葉まで黄色いときは、水のやりすぎ（根腐れ）か肥料切れ、日照不足が原因です。土がいつも湿っていれば水を控えて、乾いてからたっぷりに。' },
+  { re: /枯|しおれ|元気がない|萎|ぐったり/, t: 'しおれは水切れか根の傷み。朝しおれて夕方に戻れば水切れ、一日中しおれていれば根が傷んでいる可能性があります。指で土の中の湿り気を確認してください。' },
+  { re: /虫|害虫/, t: '虫はまず「どこに・何がいるか」を特定すること。葉裏、新芽、株元の土を見て、アブラムシはテープで取り、青虫は捕り、卵は潰す。見つけた葉は畑の外へ持ち出してください。' }
+];
+
+function aiCropById(id) {
+  return state.crops.filter(function (c) { return c.id === id; })[0] || null;
+}
+
+function aiCropInfo(c) {
+  var fam = c.family || guessFamily(c.name) || '';
+  var plantedDays = daysSince(c.plantedAt);
+  return {
+    id: c.id,
+    name: c.name,
+    emoji: c.emoji || guessEmoji(c.name),
+    family: fam,
+    familyLabel: familyText(fam),
+    places: cropPlaces(c),
+    placeText: cropPlaceDetail(c),
+    plantedAt: c.plantedAt || '',
+    days: plantedDays == null ? 0 : plantedDays,
+    harvestAt: c.harvestAt || null,
+    toHarvest: c.harvestAt ? diffDays(todayISO(), c.harvestAt) : null,
+    note: c.note || '',
+    lastWateredAt: c.lastWateredAt || null,
+    lastFedAt: c.lastFedAt || null,
+    wateredDays: c.lastWateredAt ? daysSince(c.lastWateredAt) : null,
+    fedDays: c.lastFedAt ? daysSince(c.lastFedAt) : null,
+    waterGap: c.waterDays > 0 ? c.waterDays : (state.settings.waterDays || 2),
+    feedGap: c.feedDays > 0 ? c.feedDays : (state.settings.feedDays || 21),
+    feedPauseUntil: c.feedPauseUntil || null
+  };
+}
+
+function aiDaysText(d) {
+  if (d == null) return '記録なし';
+  return d === 0 ? '今日' : d + '日前';
+}
+
+function aiContext(cropId) {
+  var crop = cropId ? aiCropById(cropId) : null;
+  var ci = crop ? aiCropInfo(crop) : null;
+  var places = ci ? ci.places : [];
+  return {
+    crop: crop,
+    cropInfo: ci,
+    places: places,
+    weather: {
+      place: state.settings.place,
+      at: state.weather && state.weather.at ? state.weather.at : null,
+      today: todayWeather(),
+      days: nextDays(4)
+    },
+    month: new Date().getMonth() + 1,
+    crops: state.crops.map(aiCropInfo)
+  };
+}
+
+/* ---------- 文章づくり ---------- */
+function aiWeatherLine(ctx) {
+  var t = ctx.weather.today;
+  if (!t) return '天気データはまだ取れていません（ホーム右上の🔄で更新できます）。';
+  var w = wx(t.code);
+  var lo = (t.tmin != null) ? Math.round(t.tmin) : '—';
+  var hi = (t.tmax != null) ? Math.round(t.tmax) : '—';
+  var s = '今日の' + (ctx.weather.place || '菜園') + 'は' + w.label + '、' + lo + '〜' + hi + '℃';
+  if (t.prob != null) s += '・降水確率' + Math.round(t.prob) + '%';
+  var d2 = ctx.weather.days[1];
+  if (d2) s += '。明日は' + wx(d2.code).label + (d2.prob != null ? '・降水' + Math.round(d2.prob) + '%' : '');
+  return s + '。';
+}
+
+function aiWaterStatus(ci) {
+  if (!ci.lastWateredAt) return '水やりの記録はまだありません。今日1回目を記録しておくと、次のお知らせが正確になります。';
+  var d = ci.wateredDays;
+  if (d === 0) return '今日はもう水やり済み（' + fmtMD(ci.lastWateredAt) + '）です。';
+  var s = '前回の水やりは' + d + '日前（' + fmtMD(ci.lastWateredAt) + '）、目安は' + ci.waterGap + '日おき。';
+  if (d >= ci.waterGap) s += 'そろそろ土を確認して、乾いていればあげどきです。';
+  else s += 'あと' + (ci.waterGap - d) + '日ほど余裕があります。';
+  return s;
+}
+
+function aiFeedShort(ci) {
+  if (ci.feedPauseUntil && todayISO() <= ci.feedPauseUntil) return '休み中（' + fmtMD(ci.feedPauseUntil) + 'まで）';
+  if (!ci.lastFedAt) return '記録なし（目安' + ci.feedGap + '日おき）';
+  return '前回から' + ci.fedDays + '日（目安' + ci.feedGap + '日おき）';
+}
+
+function aiSectionWater(ctx) {
+  var L = ['💧 水やり'];
+  var ci = ctx.cropInfo;
+  var t = ctx.weather.today;
+  if (t) {
+    var rain = (t.prob != null && t.prob >= 60) || (t.sum != null && t.sum >= 8);
+    var d2 = ctx.weather.days[1];
+    var rain2 = d2 && ((d2.prob != null && d2.prob >= 60) || (d2.sum != null && d2.sum >= 8));
+    L.push('・' + aiWeatherLine(ctx));
+    if (rain) L.push('・今日は雨の見込みなので、畑の水やりは雨のあとで大丈夫。鉢・ベランダは屋根があるぶん、別に見てください。');
+    else if (rain2) L.push('・明日は雨の予報。今日は軽めにして、明日の雨を待つのがおすすめです。');
+    else L.push('・しばらく雨は少なめ。土が乾いている株には今朝たっぷりあげましょう。');
+  }
+  if (ci) {
+    var kn = aiKnow(ci.name);
+    if (kn && kn.water) L.push('・' + ci.name + 'は' + kn.water);
+    L.push('・' + aiWaterStatus(ci));
+  } else {
+    L.push('・土の表面2〜3cmが乾いたら、朝にたっぷり。鉢は底から流れ出るくらいたっぷりが基本です。');
+    var dry = ctx.crops.filter(function (x) { return x.wateredDays != null && x.wateredDays >= x.waterGap + 1; });
+    if (dry.length) L.push('・' + dry.slice(0, 3).map(function (x) { return x.name + '（' + x.wateredDays + '日前）'; }).join('・') + ' は間が空いています。');
+  }
+  return L;
+}
+
+function aiSectionFeed(ctx) {
+  var L = ['🌱 追肥'];
+  var ci = ctx.cropInfo;
+  if (ci) {
+    if (ci.feedPauseUntil && todayISO() <= ci.feedPauseUntil) {
+      L.push('・' + ci.name + 'は今は追肥を休む時期（' + fmtMD(ci.feedPauseUntil) + 'まで）。開花中に肥料を入れると花持ちが悪くなるので、このまま様子を見てください。');
+    } else if (ci.lastFedAt) {
+      L.push('・前回の追肥は' + ci.fedDays + '日前（' + fmtMD(ci.lastFedAt) + '）。目安は' + ci.feedGap + '日おきで、' + (ci.fedDays >= ci.feedGap ? 'そろそろ追肥どきです。' : 'あと' + (ci.feedGap - ci.fedDays) + '日ほど待って大丈夫。'));
+    } else {
+      L.push('・追肥の記録はまだありません。目安は' + ci.feedGap + '日おきです。');
+    }
+    var kn = aiKnow(ci.name);
+    if (kn && kn.feed) L.push('・' + kn.feed);
+  } else {
+    L.push('・元肥から2〜3週間たったら、月1〜2回の追肥が目安。葉物は薄い液肥、実ものはリン酸・カリを多めに。');
+    var due = ctx.crops.filter(function (x) { return x.fedDays != null && x.fedDays >= x.feedGap; });
+    if (due.length) L.push('・' + due.slice(0, 3).map(function (x) { return x.name + '（' + x.fedDays + '日前）'; }).join('・') + ' が追肥の時期です。');
+  }
+  return L;
+}
+
+function aiSectionNext(ctx) {
+  var L = ['🔄 次に植えるなら'];
+  var ci = ctx.cropInfo;
+  var fam = ci ? ci.family : '';
+  var places = ci ? ctx.places : [];
+  var cands = nextFamilies(fam);
+  if (fam) L.push('・' + fam + 'のあとは ' + cands.join('・') + ' が向きます。' + (NEXT_NOTE[fam] || NEXT_NOTE_DEFAULT));
+  else L.push('・' + NEXT_NOTE_DEFAULT + '科を続けないことが、連作障害を避ける一番のコツです。');
+  var m = ctx.month, m2 = (m % 12) + 1;
+  var picks = [];
+  [m, m2].forEach(function (mm) {
+    (PLANTING[mm] ? PLANTING[mm].items : []).forEach(function (it) {
+      if (['種まき', '植え付け', '育苗', '挿し木', '準備'].indexOf(it.f) < 0) return;
+      String(it.n).split('・').forEach(function (nm) {
+        if (!nm || picks.indexOf(nm) >= 0) return;
+        if (cands.indexOf(guessFamily(nm)) < 0) return;
+        picks.push(nm);
+      });
+    });
+  });
+  if (picks.length) L.push('・今月（' + m + '月）から来月にまける・植えられるのは：' + picks.slice(0, 6).join('、') + '。');
+  if (places.length) {
+    var hs = [];
+    places.forEach(function (p) {
+      historyForPlace(p).slice(0, 3).forEach(function (h) {
+        hs.push(p + ' ' + historyYearText(h) + '：' + h.name + '（' + familyText(h.family || guessFamily(h.name)) + '）');
+      });
+    });
+    L.push(hs.length ? '・これまでの栽培：' + hs.join(' ／ ') : '・' + places.join('・') + 'にはまだ履歴がありません。今年の分から記録しておくと来年ラクです。');
+    var ready = [], wait = [];
+    cands.forEach(function (f) {
+      var need = familyRest(f)[0];
+      var least = null;
+      places.forEach(function (p) {
+        historyForPlace(p).forEach(function (h) {
+          if ((h.family || guessFamily(h.name)) !== f) return;
+          var y = yearsSinceMonth(h.endedAt);
+          if (y == null) return;
+          if (least === null || y < least) least = y;
+        });
+      });
+      if (least === null) ready.push(f + '（履歴なし）');
+      else if (least >= need) ready.push(f + '（' + Math.floor(least) + '年あいた）');
+      else wait.push(f + 'はあと約' + Math.max(1, Math.ceil(need - least)) + '年');
+    });
+    if (ready.length) L.push('・この場所で今すぐOK：' + ready.join('・'));
+    if (wait.length) L.push('・待つのが安心：' + wait.join('、'));
+  } else {
+    L.push('・「菜園管理 → 畑マップ」で区画をタップすると、その場所の連作に合わせた候補が出ます。');
+  }
+  return L;
+}
+
+function aiSectionPest(ctx, q) {
+  var L = ['🐛 葉の色・虫の対策'];
+  var hit = 0;
+  AI_PEST_TIPS.forEach(function (x) {
+    if (hit < 2 && x.re.test(String(q || ''))) { L.push('・' + x.t); hit++; }
+  });
+  var ci = ctx.cropInfo;
+  var kn = ci ? aiKnow(ci.name) : null;
+  if (kn && kn.pest) L.push('・' + ci.name + 'で気をつけたいのは ' + kn.pest);
+  if (!hit) L.push('・葉の表と裏、株元を見て、虫・卵・斑点の場所を特定するのが第一歩。見つけた虫は捕り、かかった葉は切って畑の外へ。');
+  L.push('・薬を使うときは必ずラベルの希釈と回数を守り、収穫前日数の表示を確認してください。');
+  return L;
+}
+
+function aiSectionHarvest(ctx) {
+  var L = ['🍅 収穫のタイミング'];
+  var ci = ctx.cropInfo;
+  if (ci && ci.harvestAt) {
+    var u = ci.toHarvest;
+    if (u > 5) L.push('・' + ci.name + 'の収穫目安は' + fmtMD(ci.harvestAt) + '（あと' + u + '日）。' + ci.days + '日育てています。');
+    else if (u > 0) L.push('・' + ci.name + 'は収穫目安まであと' + u + '日。もう見ごろが近いです。');
+    else if (u === 0) L.push('・' + ci.name + 'は今日が収穫目安です。');
+    else L.push('・' + ci.name + 'は目安を' + (-u) + '日過ぎています。採り遅れると株が疲れるので、今日見てみましょう。');
+  } else if (ci) {
+    L.push('・' + ci.name + 'は収穫日の目安が未設定です。カードの「編集」から入れておくと、お知らせが出ます。');
+  }
+  var kn = ci ? aiKnow(ci.name) : null;
+  if (kn && kn.harvest) L.push('・' + kn.harvest);
+  var t = ctx.weather.today;
+  if (t && t.prob != null && t.prob >= 60) L.push('・雨の前に採っておくと、病害や裂果を防げます。');
+  return L;
+}
+
+function aiSectionPlant(ctx) {
+  var L = ['🌱 今月の種まき・植え付け'];
+  var info = PLANTING[ctx.month];
+  if (info) {
+    L.push('・' + ctx.month + '月の関西の目安：' + info.theme + '。');
+    L.push('・' + info.items.slice(0, 4).map(function (it) { return it.n + '（' + it.f + ' ' + it.t + '）'; }).join('、') + '。');
+  }
+  L.push('・種まきのあとは土を乾かさないこと。発芽までは新聞紙や不織布で保湿すると揃います。');
+  return L;
+}
+
+function aiSectionWeather(ctx) {
+  var L = ['🌦️ 天気と菜園'];
+  L.push('・' + aiWeatherLine(ctx));
+  var t = ctx.weather.today;
+  if (t) {
+    if (t.tmin != null && t.tmin <= 3) L.push('・朝が一桁前半まで冷えます。霜よけや不織布があると安心です。');
+    if (t.tmax != null && t.tmax >= 30) L.push('・日中は30℃以上。水やりは朝か夕方の涼しい時間にしてください。');
+    if (t.wind != null && t.wind >= 25) L.push('・風が強め。支柱のゆるみと、鉢の倒れに気をつけて。');
+    if (t.prob != null && t.prob >= 60) L.push('・雨の日は水やりを休み、畑が乾いてから次の水やりに。');
+  }
+  L.push('・天気はホームの天気カードの🔄でいつでも更新できます。');
+  return L;
+}
+
+function aiSectionGeneral(ctx) {
+  var L = [];
+  var ci = ctx.cropInfo;
+  if (ci) {
+    L.push('🌱 ' + ci.name + '（' + ci.familyLabel + '・' + (ci.placeText || '場所未設定') + '）');
+    L.push('・植えてから' + ci.days + '日目' + (ci.toHarvest != null ? '、収穫目安まで' + (ci.toHarvest >= 0 ? ci.toHarvest + '日' : 'もう' + (-ci.toHarvest) + '日すぎ') : '、収穫目安は未設定') + '。');
+    if (ci.note) L.push('・メモ：' + ci.note);
+    L.push('・' + aiWaterStatus(ci));
+    L.push('・追肥：' + aiFeedShort(ci) + '。');
+    L.push('・' + aiWeatherLine(ctx));
+    if (PLANTING[ctx.month]) L.push('・今月の手入れ：' + PLANTING[ctx.month].tasks.slice(0, 2).join('／'));
+    L.push('・「水やりは？」「葉が黄色い」「次は何を植える？」のように具体的に聞くと、さらに絞って答えます。');
+  } else {
+    L.push('🌿 今の菜園');
+    L.push('・栽培中は' + state.crops.length + '品目：' + (ctx.crops.length ? ctx.crops.slice(0, 6).map(function (x) { return x.name; }).join('・') : 'まだ登録がありません') + '。');
+    L.push('・' + aiWeatherLine(ctx));
+    if (PLANTING[ctx.month]) L.push('・今月の主な作業：' + PLANTING[ctx.month].tasks.join('／'));
+    L.push('・下のボタンから「水やり・追肥のコツ」「次に何を植えたらいい？」などを1タップで聞けます。');
+  }
+  return L;
+}
+
+function aiTopicsOf(q) {
+  var s = String(q || '');
+  var t = [];
+  if (/次|後作|あとさき|何を植|なにを植|植えたら|ローテ|連作|回す|おすすめの野菜/.test(s)) t.push('next');
+  if (/水|みず|乾|しおれ|しんなり/.test(s)) t.push('water');
+  if (/追肥|肥料|元肥|養分|肥やし|つるボケ/.test(s)) t.push('feed');
+  if (/虫|アブラムシ|ヨトウ|青虫|コナガ|毛虫|ダニ|ナメクジ|病気|うどんこ|疫病|軟腐|斑点|黄色|黄ば|きいろ|白い粉|枯|元気がない/.test(s)) t.push('pest');
+  if (/収穫|採る|とる|食べごろ|食べ頃|タイミング|いつ頃/.test(s)) t.push('harvest');
+  if (/種まき|まく|蒔く|種|苗|植え付け|植え時|植える/.test(s)) t.push('plant');
+  if (/天気|雨|台風|霜|寒さ|暑さ|気温|風|雪|猛暑/.test(s)) t.push('weather');
+  if (t.indexOf('next') >= 0) t = t.filter(function (x) { return x !== 'plant'; });
+  return t;
+}
+
+function builtinAnswer(q, ctx) {
+  var topics = aiTopicsOf(q);
+  var blocks = [];
+  var budget = 2;
+  topics.forEach(function (tp) {
+    if (budget <= 0) return;
+    var b = null;
+    if (tp === 'next') b = aiSectionNext(ctx);
+    else if (tp === 'water') b = aiSectionWater(ctx);
+    else if (tp === 'feed') b = aiSectionFeed(ctx);
+    else if (tp === 'pest') b = aiSectionPest(ctx, q);
+    else if (tp === 'harvest') b = aiSectionHarvest(ctx);
+    else if (tp === 'plant') b = aiSectionPlant(ctx);
+    else if (tp === 'weather') b = aiSectionWeather(ctx);
+    if (b && b.length) { blocks.push(b.join('\n')); budget--; }
+  });
+  if (!blocks.length) blocks.push(aiSectionGeneral(ctx).join('\n'));
+  return blocks.join('\n\n');
+}
+
+/* ---------- データの文章化（API用・コピー用） ---------- */
+function aiDataText(ctx) {
+  var L = [];
+  L.push('■ 日付：' + fmtYMDow(todayISO()));
+  L.push('■ 菜園の場所：' + state.settings.place + '（緯度' + state.settings.lat + ', 経度' + state.settings.lon + '）');
+  L.push('■ 天気：' + aiWeatherLine(ctx));
+  L.push('■ 栽培中（' + ctx.crops.length + '品目）');
+  if (!ctx.crops.length) L.push('・なし（新規）');
+  ctx.crops.forEach(function (ci) {
+    var line = '・' + ci.name + '｜' + ci.familyLabel + '｜' + (ci.placeText || '場所未設定')
+      + '｜植えた日 ' + (ci.plantedAt ? fmtMD(ci.plantedAt) : '不明') + '（' + ci.days + '日目）'
+      + '｜収穫目安 ' + (ci.harvestAt ? fmtMD(ci.harvestAt) + '（' + (ci.toHarvest >= 0 ? 'あと' + ci.toHarvest + '日' : '目安を' + (-ci.toHarvest) + '日超過') + '）' : '未設定')
+      + '｜水やり ' + aiDaysText(ci.wateredDays) + '（目安' + ci.waterGap + '日）'
+      + '｜追肥 ' + aiDaysText(ci.fedDays) + '（目安' + ci.feedGap + '日）';
+    if (ci.feedPauseUntil) line += '｜追肥休み ' + fmtMD(ci.feedPauseUntil) + 'まで';
+    if (ci.note) line += '｜メモ：' + ci.note;
+    L.push(line);
+  });
+  L.push('■ 場所ごとの栽培履歴（連作防止）');
+  var anyH = false;
+  normalizePlaces(state.settings.places).forEach(function (p) {
+    var hs = historyForPlace(p);
+    if (!hs.length) return;
+    anyH = true;
+    L.push('・' + p + '：' + hs.slice(0, 6).map(function (h) {
+      return historyYearText(h) + ' ' + h.name + '（' + familyText(h.family || guessFamily(h.name)) + '）' + (h.cell ? ' ' + h.cell : '');
+    }).join('／'));
+  });
+  if (!anyH) L.push('・まだ履歴はありません');
+  if (ctx.cropInfo) {
+    var ci2 = ctx.cropInfo;
+    L.push('■ いま相談中の野菜：' + ci2.name + '（' + ci2.familyLabel + '・' + (ci2.placeText || '場所未設定') + '・' + ci2.days + '日目）');
+  }
+  if (PLANTING[ctx.month]) {
+    L.push('■ 今月（' + ctx.month + '月・関西）の目安：' + PLANTING[ctx.month].theme);
+    L.push('　作業：' + PLANTING[ctx.month].tasks.join('、'));
+    L.push('　まける・植えられる野菜：' + PLANTING[ctx.month].items.slice(0, 6).map(function (it) { return it.n; }).join('、'));
+  }
+  return L.join('\n');
+}
+
+function aiPromptText(q) {
+  var ctx = aiContext(aiChat.cropId);
+  return '家庭菜園アプリ「チウ農園」の相談です。次のデータを見て、日本語で具体的に答えてください。\n\n'
+    + aiDataText(ctx)
+    + '\n\n■ 聞きたいこと\n' + (q || (ctx.cropInfo ? '「' + ctx.cropInfo.name + '」の今の状態で、次に何をすればいい？' : '今の菜園で、次に何をすればいい？'));
+}
+
+function aiSystemPrompt(ctx) {
+  var L = [];
+  L.push('あなたは日本の家庭菜園に詳しい、やさしい菜園アドバイザーです。関西（神戸市北区）の気候を前提にします。');
+  L.push('相手は家庭菜園を楽しむ方です。専門用語はかみくだいて説明してください。');
+  L.push('答えは日本語で200〜350字。短い段落と「・」の箇条書きを使います。');
+  L.push('与えられた畑データの具体的な数字（日数・場所・科・履歴・天気）を1つ以上引用してください。');
+  L.push('最後に「今日やること」を1つだけ提案してください。');
+  L.push('農薬を使う場合は必ずラベルの用法を守るよう一言添えてください。');
+  L.push('データにないことは推測と分かるように書き、断定的な診断は避けてください。');
+  L.push('');
+  L.push('【畑データ】');
+  L.push(aiDataText(ctx));
+  return L.join('\n');
+}
+
+/* ---------- API呼び出し ---------- */
+function aiFetchJson(url, opts, ms) {
+  var ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+  var timer = null;
+  if (ctrl) {
+    opts.signal = ctrl.signal;
+    timer = setTimeout(function () { try { ctrl.abort(); } catch (e) { } }, ms || 30000);
+  }
+  return fetch(url, opts).then(function (r) {
+    if (timer) clearTimeout(timer);
+    return r.text().then(function (txt) {
+      var j = null;
+      try { j = txt ? JSON.parse(txt) : null; } catch (e) { j = null; }
+      if (!r.ok) {
+        var msg = (j && j.error && (j.error.message || j.error.status)) || ('HTTP ' + r.status);
+        var err = new Error(String(msg));
+        err.status = r.status;
+        throw err;
+      }
+      if (!j) throw new Error('応答を読み取れませんでした');
+      return j;
+    });
+  }).catch(function (e) {
+    if (timer) clearTimeout(timer);
+    throw e;
+  });
+}
+
+function aiCallGemini(key, system, msgs, idx) {
+  var models = AI_MODELS.gemini;
+  var model = models[idx] || models[models.length - 1];
+  var contents = msgs.filter(function (m) { return m.role !== 'system'; }).map(function (m) {
+    return { role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: String(m.text) }] };
+  });
+  var body = {
+    system_instruction: { parts: [{ text: system }] },
+    contents: contents,
+    generationConfig: { temperature: 0.65, maxOutputTokens: 1024, topP: 0.9 }
+  };
+  var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent?key=' + encodeURIComponent(key);
+  return aiFetchJson(url, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+  }).then(function (j) {
+    var cand = j && j.candidates && j.candidates[0];
+    var parts = cand && cand.content && cand.content.parts;
+    var txt = (parts || []).map(function (p) { return p.text || ''; }).join('').trim();
+    if (!txt) throw new Error('AIから空の回答が返りました');
+    return txt;
+  }).catch(function (err) {
+    if (err && (err.status === 404 || (err.status === 400 && /model/i.test(String(err.message || '')))) && idx + 1 < models.length) return aiCallGemini(key, system, msgs, idx + 1);
+    throw err;
+  });
+}
+
+function aiCallOpenAI(key, system, msgs, idx) {
+  var models = AI_MODELS.openai;
+  var model = models[idx] || models[models.length - 1];
+  var arr = [{ role: 'system', content: system }].concat(msgs.map(function (m) {
+    return { role: m.role === 'assistant' ? 'assistant' : 'user', content: String(m.text) };
+  }));
+  return aiFetchJson('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + key },
+    body: JSON.stringify({ model: model, messages: arr, temperature: 0.65, max_tokens: 1024 })
+  }).then(function (j) {
+    var c = j && j.choices && j.choices[0];
+    var txt = c && c.message && c.message.content ? String(c.message.content).trim() : '';
+    if (!txt) throw new Error('AIから空の回答が返りました');
+    return txt;
+  }).catch(function (err) {
+    if (err && err.status === 404 && idx + 1 < models.length) return aiCallOpenAI(key, system, msgs, idx + 1);
+    throw err;
+  });
+}
+
+function aiErrorText(err) {
+  var s = (err && err.message) ? String(err.message) : '通信エラー';
+  var st = err && err.status;
+  if (st === 401 || st === 403) return '🔑 APIキーが受け付けられませんでした。設定の「AI相談のAPIキー設定」でキーをもう一度確認してください。';
+  if (st === 429) return '⏳ APIの利用上限（レート制限）に達しました。少し時間をおくか、無料枠の残りを確認してください。';
+  if (st === 400) return '📝 リクエストが受け付けられませんでした（' + s + '）。キーの種類と、選んでいるプロバイダを確認してください。';
+  if (st === 404) return '🤖 指定のモデルが見つかりませんでした（' + s + '）。';
+  if (/abort/i.test(s)) return '⏱️ 応答が返ってきませんでした（時間切れ）。電波の良い場所でもう一度お試しください。';
+  if (/Failed to fetch|NetworkError|load failed|Network request failed/i.test(s)) return '📡 通信できませんでした（オフラインか、APIがブラウザからの通信を止めている可能性があります）。';
+  return '⚠️ 回答を受け取れませんでした：' + s;
+}
+
+/* ---------- 相談シート ---------- */
+function aiSubTitle() {
+  var st = aiStore();
+  if (st.key) return aiProviderLabel(st.provider) + ' と会話中。畑のデータを毎回わたして聞きます。';
+  return '内蔵の菜園アドバイザーが、畑の記録・連作履歴・天気を見て答えます。';
+}
+
+function aiEmptyHTML() {
+  var c = aiChat.cropId ? aiCropById(aiChat.cropId) : null;
+  return '<div class="ai-empty"><b>' + (c ? esc('「' + c.name + '」のことを聞けます') : '菜園のことを何でも聞けます') + '</b>'
+    + '<ul>'
+    + '<li>' + (c ? '水やり・追肥の間隔と、いまの状況' : '水やり・追肥のタイミング') + '</li>'
+    + '<li>' + (c ? '次に同じ場所へ植えるなら何がいいか' : '次に植える野菜の選び方') + '</li>'
+    + '<li>葉が黄色い・虫がついたときの対処</li>'
+    + '<li>収穫の見きわめ方</li>'
+    + '</ul>'
+    + '<span style="display:block;margin-top:6px;color:var(--ink-3);font-size:11px">下のボタンからも、1タップで聞けます。</span></div>';
+}
+
+function openAiChat(cropId) {
+  var id = cropId || null;
+  if (aiChat.cropId !== id) {
+    aiChat.cropId = id;
+    aiChat.messages = [];
+    aiChat.lastError = '';
+  }
+  renderAiSheet();
+}
+
+function renderAiSheet() {
+  var ctx = aiContext(aiChat.cropId);
+  var ci = ctx.cropInfo;
+  var ctxHTML = '';
+  if (ci) {
+    ctxHTML = '<div class="ai-ctx"><span class="e" aria-hidden="true">' + esc(ci.emoji) + '</span>'
+      + '<span class="t"><b>' + esc(ci.name) + ' について聞いています</b>'
+      + '<small>' + esc(ci.familyLabel) + '・' + esc(ci.placeText || '場所未設定') + '・植えてから' + ci.days + '日</small>'
+      + '<small>水やり ' + (ci.wateredDays == null ? '記録なし' : ci.wateredDays + '日前') + '／追肥 ' + (ci.feedPauseUntil && todayISO() <= ci.feedPauseUntil ? '休み中' : (ci.fedDays == null ? '記録なし' : ci.fedDays + '日前')) + (ci.harvestAt ? '／収穫目安 ' + fmtMD(ci.harvestAt) : '') + '</small>'
+      + (ci.note ? '<small style="color:#5E7A52">メモ：' + esc(ci.note.length > 46 ? ci.note.slice(0, 46) + '…' : ci.note) + '</small>' : '')
+      + '</span></div>';
+  }
+  openSheet(
+    '<div class="sheet-head"><div style="flex:1"><h3>AIに相談</h3><p id="aiSub">' + esc(aiSubTitle()) + '</p></div>'
+    + '<button class="sheet-close" aria-label="閉じる">' + CLOSE_SVG + '</button></div>'
+    + ctxHTML
+    + '<div class="ai-log" id="aiLog" role="log" aria-live="polite" aria-label="相談のやりとり"></div>'
+    + '<div class="chip-row chip-wrap ai-chips" id="aiChips">'
+    + AI_CHIPS.map(function (c, i) {
+      return '<button type="button" class="chip" data-ai-chip="' + i + '" style="min-height:33px;font-size:11.5px">' + esc(c) + '</button>';
+    }).join('')
+    + '</div>'
+    + '<div class="ai-input-row">'
+    + '<textarea class="field" id="aiInput" rows="1" aria-label="聞きたいことを入力" placeholder="' + esc(ci ? ci.name + 'について聞く（例：水やりは？）' : '例：白菜の葉が黄色い。どうしたらいい？') + '"></textarea>'
+    + '<button type="button" class="mic-btn" id="aiMic" aria-label="音声で入力" aria-pressed="false" title="音声で入力">🎤</button>'
+    + '<button type="button" class="ai-send" id="aiSend" aria-label="送信"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12h15"/><path d="M13 5.5 19.5 12 13 18.5"/></svg></button>'
+    + '</div>'
+    + '<p class="ai-voice-note" id="aiVoiceNote"></p>'
+    + '<div class="ai-foot">'
+    + '<button type="button" class="btn-mini" id="aiCopy">📋 今の畑データ付きで質問文をコピー</button>'
+    + '<button type="button" class="btn-mini" id="aiReset">↩️ 会話をリセット</button>'
+    + '</div>'
+    + '<p class="ai-src" id="aiSrc"></p>',
+    'AIに相談');
+
+  var wrap = $('#sheetWrap');
+  var sheetEl = $('.sheet', wrap);
+  if (sheetEl) sheetEl.classList.add('sheet-ai');
+  var inp = $('#aiInput', wrap);
+  var sendBtn = $('#aiSend', wrap);
+  var micBtn = $('#aiMic', wrap);
+
+  $$('#aiChips [data-ai-chip]', wrap).forEach(function (b) {
+    b.addEventListener('click', function () {
+      var i = parseInt(b.getAttribute('data-ai-chip'), 10);
+      aiSend(AI_CHIPS[i] || '');
+    });
+  });
+  if (sendBtn) sendBtn.addEventListener('click', aiSendInput);
+  if (inp) {
+    inp.addEventListener('input', function () { aiAutoGrow(inp); });
+    inp.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); aiSendInput(); }
+    });
+  }
+  if (micBtn) micBtn.addEventListener('click', aiToggleVoice);
+  var copyBtn = $('#aiCopy', wrap);
+  if (copyBtn) copyBtn.addEventListener('click', aiCopyPrompt);
+  var resetBtn = $('#aiReset', wrap);
+  if (resetBtn) resetBtn.addEventListener('click', aiResetChat);
+  var log = $('#aiLog', wrap);
+  if (log) {
+    log.addEventListener('click', function (e) {
+      var t = e.target;
+      if (!t || !t.closest) return;
+      if (t.closest('[data-ai-retry]')) { aiRetry(); return; }
+      if (t.closest('[data-ai-builtin]')) { aiFallback(); return; }
+    });
+  }
+  aiRenderLog();
+  aiMicUI();
+  aiUpdateSource();
+  aiUpdateVoiceHint();
+  if (inp) setTimeout(function () { try { aiAutoGrow(inp); } catch (e) { } }, 60);
+}
+
+function aiRenderLog() {
+  var log = $('#aiLog');
+  if (!log) return;
+  var html = '';
+  if (!aiChat.messages.length && !aiChat.busy && !aiChat.lastError) {
+    html = aiEmptyHTML();
+  } else {
+    html = aiChat.messages.map(function (m) {
+      return m.role === 'user'
+        ? '<div class="ai-msg user"><span class="av" aria-hidden="true">🙋</span><div class="bub">' + esc(m.text) + '</div></div>'
+        : '<div class="ai-msg"><span class="av" aria-hidden="true">🌱</span><div class="bub">' + esc(m.text) + '</div></div>';
+    }).join('');
+  }
+  if (aiChat.busy) {
+    html += '<div class="ai-msg" id="aiTyping"><span class="av" aria-hidden="true">🌱</span><div class="bub"><span class="typing"><i></i><i></i><i></i></span> 考えています…</div></div>';
+  }
+  if (aiChat.lastError) {
+    html += '<div class="ai-msg err"><span class="av" aria-hidden="true">⚠️</span><div class="bub">' + esc(aiChat.lastError) + '\n\n下のボタンで、内蔵アドバイザーに切りかえて答えることもできます。</div></div>'
+      + '<div class="ai-retry"><button type="button" data-ai-retry="1">もう一度</button><button type="button" data-ai-builtin="1">内蔵アドバイザーで答える</button></div>';
+  }
+  log.innerHTML = html;
+  var sb = $('#aiSend');
+  if (sb) sb.disabled = !!aiChat.busy;
+  try { log.scrollTop = log.scrollHeight; } catch (e) { }
+}
+
+function aiSendInput() {
+  var el = $('#aiInput');
+  var q = el ? String(el.value || '').trim() : '';
+  if (!q) {
+    aiVoiceNote('聞きたいことを入れてから送ってください。下のボタンから選ぶこともできます。');
+    if (el) { try { el.focus(); } catch (e) { } }
+    return;
+  }
+  aiSend(q);
+}
+
+function aiSend(text) {
+  var q = String(text || '').trim();
+  if (!q) return;
+  if (aiChat.busy) { toast('回答を待っています…', '⏳'); return; }
+  if (aiChat.listening) aiStopVoice();
+  var inp = $('#aiInput');
+  if (inp) { inp.value = ''; aiAutoGrow(inp); }
+  aiVoiceNote('');
+  aiChat.messages.push({ role: 'user', text: q });
+  aiChat.lastError = '';
+  aiRenderLog();
+  if (!aiStore().key) { aiAskBuiltin(q); return; }
+  aiAskApi(q);
+}
+
+function aiAskBuiltin(q) {
+  var ans = builtinAnswer(q, aiContext(aiChat.cropId));
+  aiChat.busy = true;
+  aiRenderLog();
+  setTimeout(function () {
+    aiChat.busy = false;
+    aiChat.messages.push({ role: 'assistant', text: ans });
+    aiRenderLog();
+    aiUpdateSource();
+  }, 240);
+}
+
+function aiAskApi(q) {
+  var st = aiStore();
+  if (!st.key) { aiAskBuiltin(q); return; }
+  var ctx = aiContext(aiChat.cropId);
+  var system = aiSystemPrompt(ctx);
+  var msgs = aiChat.messages.map(function (m) { return { role: m.role, text: m.text }; });
+  aiChat.busy = true;
+  aiChat.lastError = '';
+  aiRenderLog();
+  var p = st.provider === 'openai'
+    ? aiCallOpenAI(st.key, system, msgs, 0)
+    : aiCallGemini(st.key, system, msgs, 0);
+  p.then(function (ans) {
+    aiChat.busy = false;
+    var t = String(ans || '').trim();
+    aiChat.messages.push({ role: 'assistant', text: t || '（うまく答えを受け取れませんでした。もう一度お試しください）' });
+    aiRenderLog();
+    aiUpdateSource();
+  }).catch(function (err) {
+    aiChat.busy = false;
+    aiChat.lastError = aiErrorText(err);
+    aiRenderLog();
+  });
+}
+
+function aiLastUser() {
+  for (var i = aiChat.messages.length - 1; i >= 0; i--) {
+    if (aiChat.messages[i].role === 'user') return aiChat.messages[i].text;
+  }
+  return '';
+}
+function aiRetry() {
+  var q = aiLastUser();
+  if (!q || aiChat.busy) return;
+  aiChat.lastError = '';
+  aiRenderLog();
+  if (!aiStore().key) { aiAskBuiltin(q); return; }
+  aiAskApi(q);
+}
+function aiFallback() {
+  var q = aiLastUser();
+  if (!q) return;
+  aiChat.lastError = '';
+  aiAskBuiltin(q);
+}
+
+function aiResetChat() {
+  if (aiChat.listening) aiStopVoice();
+  aiChat.messages = [];
+  aiChat.lastError = '';
+  aiRenderLog();
+  aiVoiceNote('');
+  toast('会話をリセットしました', '↩️');
+}
+
+function aiUpdateSource() {
+  var el = $('#aiSrc');
+  if (!el) return;
+  var st = aiStore();
+  el.innerHTML = st.key
+    ? '<b>' + esc(aiProviderLabel(st.provider)) + '</b> の回答です。APIキーはこの端末にだけ保存されています。'
+    : '<b>内蔵の菜園アドバイザー</b>：アプリ内の畑データ・連作履歴・天気・関西の月別目安から作成しています。土と葉の様子を見て調整してください。';
+  var sub = $('#aiSub');
+  if (sub) sub.textContent = aiSubTitle();
+}
+
+function aiCopyPrompt() {
+  var last = aiChat.messages.length && aiChat.messages[aiChat.messages.length - 1].role === 'user'
+    ? aiChat.messages[aiChat.messages.length - 1].text : '';
+  copyText(aiPromptText(last), $('#aiCopy'));
+}
+
+function aiAutoGrow(el) {
+  if (!el) return;
+  try {
+    el.style.height = 'auto';
+    el.style.height = Math.min(118, Math.max(46, el.scrollHeight)) + 'px';
+  } catch (e) { }
+}
+
+/* ---------- 音声認識（Web Speech API） ---------- */
+function aiSRClass() {
+  return window.SpeechRecognition || window.webkitSpeechRecognition || null;
+}
+
+function aiVoiceNote(text, kind) {
+  var el = $('#aiVoiceNote');
+  if (!el) return;
+  el.textContent = text || '';
+  el.className = 'ai-voice-note' + (text ? ' on' : '') + (kind === 'warn' ? ' warn' : kind === 'live' ? ' live' : '');
+}
+
+function aiMicUI() {
+  var b = $('#aiMic');
+  if (!b) return;
+  b.classList.toggle('rec', !!aiChat.listening);
+  b.textContent = aiChat.listening ? '⏹' : '🎤';
+  b.setAttribute('aria-pressed', aiChat.listening ? 'true' : 'false');
+  b.setAttribute('aria-label', aiChat.listening ? '音声入力を停止' : '音声で入力');
+}
+
+function aiUpdateVoiceHint() {
+  var btn = $('#aiMic');
+  if (!btn) return;
+  if (!aiSRClass()) {
+    btn.style.opacity = '.55';
+    aiVoiceNote('このブラウザは音声入力（Web Speech API）に対応していません。キーボードのマイク（Gboard の🎤）から話すと、同じように入力できます。');
+  } else {
+    btn.style.opacity = '';
+  }
+}
+
+function aiToggleVoice() {
+  if (aiChat.listening) { aiStopVoice(); return; }
+  aiStartVoice();
+}
+
+function aiStartVoice() {
+  var SR = aiSRClass();
+  if (!SR) {
+    aiVoiceNote('このブラウザは音声入力（Web Speech API）に対応していません。キーボードのマイク（Gboard の🎤）から話すと、同じように入力できます。', 'warn');
+    return;
+  }
+  var rec;
+  try { rec = new SR(); } catch (e) {
+    aiVoiceNote('音声入力を開始できませんでした。ページを再読み込みしてから試してください。', 'warn');
+    return;
+  }
+  var inp = $('#aiInput');
+  aiChat.rec = rec;
+  aiChat.voiceBase = inp ? String(inp.value || '') : '';
+  aiChat.voiceFinal = '';
+  aiChat.listening = false;
+  rec.lang = 'ja-JP';
+  rec.interimResults = true;
+  rec.continuous = false;
+  rec.maxAlternatives = 1;
+
+  rec.onstart = function () {
+    aiChat.listening = true;
+    aiMicUI();
+    aiVoiceNote('聞き取り中… 話し終えると自動で止まります。止めるときは🎤をもう一度押してください。', 'live');
+  };
+  rec.onresult = function (e) {
+    var finalTxt = '', interim = '';
+    try {
+      for (var i = e.resultIndex; i < e.results.length; i++) {
+        var r = e.results[i];
+        var txt = (r && r[0] && r[0].transcript) ? r[0].transcript : '';
+        if (r && r.isFinal) finalTxt += txt; else interim += txt;
+      }
+    } catch (err) { }
+    if (finalTxt) aiChat.voiceFinal = (aiChat.voiceFinal || '') + finalTxt;
+    var t = (aiChat.voiceBase ? aiChat.voiceBase + ' ' : '') + (aiChat.voiceFinal || '') + interim;
+    var el = $('#aiInput');
+    if (el) { el.value = t; aiAutoGrow(el); }
+  };
+  rec.onerror = function (e) {
+    aiChat.listening = false;
+    aiMicUI();
+    var code = (e && e.error) ? String(e.error) : '';
+    if (code === 'not-allowed' || code === 'service-not-allowed') {
+      aiVoiceNote('マイクの使用が許可されていません。Chromeの「サイトの設定 → マイク」でこのページを許可してから、もう一度🎤を押してください。', 'warn');
+    } else if (code === 'no-speech') {
+      aiVoiceNote('声が聞き取れませんでした。マイクに近づいて、もう一度🎤を押してください。', 'warn');
+    } else if (code === 'network') {
+      aiVoiceNote('音声認識の通信に失敗しました。電波の良い場所で試すか、キーボードで入力してください。', 'warn');
+    } else if (code === 'audio-capture') {
+      aiVoiceNote('マイクが見つかりませんでした。イヤホンやマイクの接続を確認してください。', 'warn');
+    } else if (code !== 'aborted') {
+      aiVoiceNote('音声入力を続けられませんでした（' + code + '）。キーボード入力も使えます。', 'warn');
+    }
+  };
+  rec.onend = function () {
+    aiChat.listening = false;
+    aiMicUI();
+    if (aiChat.rec === rec) aiChat.rec = null;
+  };
+  try {
+    rec.start();
+    aiVoiceNote('マイクを準備しています… 許可の確認が出たら「許可」を押してください。');
+  } catch (e) {
+    aiVoiceNote('音声入力を開始できませんでした。少し待ってから、もう一度🎤を押してください。', 'warn');
+  }
+}
+
+function aiStopVoice() {
+  var rec = aiChat.rec;
+  aiChat.listening = false;
+  aiChat.rec = null;
+  aiMicUI();
+  if (rec) {
+    try { rec.stop(); } catch (e) { }
+  }
+}
+
+/* ---------- 設定画面のキー管理 ---------- */
+function renderAiKeyStatus() {
+  var host = $('#aiKeyStatus');
+  if (!host) return;
+  var st = aiStore();
+  var sel = $('#setAiProvider');
+  if (sel) sel.value = st.provider;
+  if (st.key) {
+    host.innerHTML = '<b>' + esc(aiProviderLabel(st.provider)) + ' のキーを保存済み</b><br>'
+      + '末尾 ' + esc(aiMaskKey(st.key)) + '（この端末のブラウザにだけ保存。バックアップJSONには入りません）<br>'
+      + 'AI相談コーナーでは、このキーで本物のAIが答えます。';
+  } else {
+    host.innerHTML = '<b>キーは未設定です</b><br>内蔵の菜園アドバイザーが答えます。キーを入れると、Gemini / OpenAI と会話できます。';
+  }
+}
+
+function saveAiKeyFromSettings() {
+  var p = $('#setAiProvider') ? $('#setAiProvider').value : 'gemini';
+  var el = $('#setAiKey');
+  var k = el ? String(el.value || '').trim() : '';
+  if (!k) { toast('APIキーを入れてください', '🔑'); if (el) el.focus(); return; }
+  if (!/^[\x21-\x7E]{16,}$/.test(k)) { toast('APIキーの形式を確認してください（16文字以上の英数字）', '⚠️'); if (el) el.focus(); return; }
+  if (!aiSaveKey(p, k)) { toast('保存できませんでした（空き容量を確認してください）', '⚠️'); return; }
+  el.value = '';
+  renderAiKeyStatus();
+  toast(aiProviderLabel(p) + ' のキーをこの端末に保存しました', '🔑');
+}
+
+function askClearAiKey() {
+  var st = aiStore();
+  if (!st.key) { toast('保存されたキーはありません', '🔑'); return; }
+  confirmSheet({
+    title: 'APIキーを削除しますか？',
+    body: esc(aiProviderLabel(st.provider)) + ' のキー（末尾 ' + esc(aiMaskKey(st.key)) + '）を、この端末から削除します。削除後は内蔵アドバイザーが答えます。',
+    ok: '削除する',
+    onOk: function () {
+      aiClearKey();
+      renderAiKeyStatus();
+      toast('APIキーを削除しました', '🗑️');
     }
   });
 }
@@ -4393,6 +5578,18 @@ function renderAll() {
 function handleClick(e) {
   var t = e.target;
   if (!t || !t.closest) return;
+
+  var aiChatEl = t.closest('[data-ai-chat]');
+  if (aiChatEl) { e.preventDefault(); openAiChat(null); return; }
+
+  var aiCropEl = t.closest('[data-ai-crop]');
+  if (aiCropEl) {
+    e.preventDefault();
+    var aiCropId = aiCropEl.getAttribute('data-ai-crop');
+    closeSheet();
+    setTimeout(function () { openAiChat(aiCropId); }, 70);
+    return;
+  }
 
   var navEl = t.closest('[data-nav]');
   if (navEl) { e.preventDefault(); switchTab(navEl.getAttribute('data-nav')); return; }
@@ -4577,6 +5774,12 @@ function bindStatic() {
 
   var demo = $('#btnDemo');
   if (demo) demo.addEventListener('click', addInitialCrops);
+
+  var aiSave = $('#btnAiKeySave');
+  if (aiSave) aiSave.addEventListener('click', saveAiKeyFromSettings);
+
+  var aiClear = $('#btnAiKeyClear');
+  if (aiClear) aiClear.addEventListener('click', askClearAiKey);
 
   var reset = $('#btnReset');
   if (reset) reset.addEventListener('click', resetAll);
