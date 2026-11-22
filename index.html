@@ -657,6 +657,50 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
 .rot-warn-line.ok{background:var(--green-wash);border-color:#DCE8CC;color:#33582E}
 .cell-tag{display:inline-flex;align-items:center;font-size:9.5px;font-weight:700;letter-spacing:.03em;padding:1px 5px;border-radius:5px;background:#EFEAD9;color:#7A705B;border:1px solid #E4DDC8;margin-left:3px;vertical-align:1px}
 
+/* ========== v1.6.0 形をかえる（結合・通路） ========== */
+.map-head{flex-wrap:wrap;row-gap:5px}
+.map-shape-btn{flex:0 0 auto;min-height:30px;padding:0 9px;font-size:11px;gap:3px;letter-spacing:0}
+.map-shape-btn.on{background:var(--green);color:#FBFDF7;border-color:var(--green)}
+.map-shape-btn.on svg{color:#FBFDF7}
+.map-grid.editing .map-cell{cursor:pointer}
+.map-cell .mc-span{position:absolute;bottom:3px;right:5px;font-size:8px;font-weight:700;color:var(--ink-3);letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.map-cell.sel{outline:2.5px solid var(--green);outline-offset:1px;box-shadow:0 0 0 4px rgba(127,160,95,.16)}
+.map-cell.sel .mc-label{color:var(--green);font-weight:700}
+.map-cell.path{border-style:dotted;border-color:#DCD6C6;background:repeating-linear-gradient(45deg,#F6F3EA,#F6F3EA 6px,#EFEBDD 6px,#EFEBDD 12px);color:#A9A28E}
+.map-cell.path .mc-path{font-size:9px;letter-spacing:.14em;color:#AFA894}
+.map-cell.path.sel{outline-color:#8C9F8A}
+.map-legend [hidden]{display:none}
+.map-legend .lg.path{border-color:#D9D3C2;background:repeating-linear-gradient(45deg,#F6F3EA,#F6F3EA 2px,#E9E4D4 2px,#E9E4D4 4px)}
+.ledit{margin-top:10px;padding:13px 13px 12px}
+.ledit-head{display:flex;align-items:baseline;gap:6px}
+.ledit-head b{font-size:12.5px;font-weight:700;color:var(--ink);letter-spacing:.02em}
+.ledit-head span{margin-left:auto;font-size:10px;color:var(--ink-3)}
+.ledit-status{margin-top:8px;font-size:11.5px;color:var(--ink-2);background:var(--card-2);border:1px solid var(--line-2);border-radius:9px;padding:7px 9px;line-height:1.5}
+.ledit-status b{font-weight:700;color:var(--ink)}
+.ledit-name{display:flex;gap:6px;margin-top:9px}
+.ledit-name .field{min-height:38px;font-size:13px;flex:1;min-width:0}
+.ledit-name .btn{flex:0 0 58px;min-height:38px;font-size:12px;padding:0}
+.ledit-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:7px}
+.ledit-row.three{grid-template-columns:1fr 1fr 1fr}
+.ledit-row .btn{min-height:40px;font-size:11.5px;padding:0 3px;letter-spacing:0}
+.ledit-label{font-size:10px;color:var(--ink-3);letter-spacing:.06em;margin:13px 0 0}
+.ledit-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.ledit-chips .chip-mini{min-height:30px;font-size:11px;padding:0 9px}
+.ledit-size{display:flex;align-items:center;gap:6px;margin-top:6px;flex-wrap:wrap}
+.ledit-size span{font-size:11px;color:var(--ink-3)}
+.ledit-size span.sep{margin-left:8px}
+.ledit-size b{min-width:16px;text-align:center;font-variant-numeric:tabular-nums;font-size:13px;font-weight:700}
+.ledit-size .step{width:34px;min-height:34px;border-radius:9px;border:1px solid var(--line);background:var(--card);font-size:15px;font-weight:700;color:var(--ink-2);line-height:1}
+.ledit-size .step:active{background:var(--green-wash)}
+.btn[disabled],.map-cell[disabled]{opacity:.42}
+/* 列が多いときは名前を2行まで折り返して読めるようにする */
+.map-grid[data-cols="5"] .map-cell,.map-grid[data-cols="6"] .map-cell{min-height:78px;padding:11px 3px 5px}
+.map-grid[data-cols="5"] .map-cell.planted .mc-emoji,.map-grid[data-cols="6"] .map-cell.planted .mc-emoji{font-size:19px}
+.map-grid[data-cols="5"] .map-cell.planted .mc-name,.map-grid[data-cols="6"] .map-cell.planted .mc-name{white-space:normal;font-size:9.5px;line-height:1.15;word-break:break-all;display:block;max-height:22px;overflow:hidden}
+.map-grid[data-cols="5"] .map-cell.planted .mc-fam,.map-grid[data-cols="6"] .map-cell.planted .mc-fam{font-size:8px}
+.map-grid[data-cols="5"] .map-cell .mc-label,.map-grid[data-cols="6"] .map-cell .mc-label{font-size:8.5px;top:3px;left:4px}
+.map-grid[data-cols="5"] .map-cell .mc-rest,.map-grid[data-cols="6"] .map-cell .mc-rest{font-size:8px}
+
 /* ========== AI相談 ========== */
 .fab{
   position:fixed;z-index:60;
@@ -883,14 +927,17 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
             区割りを編集
           </button>
         </div>
-        <p class="section-note">マスをタップすると、その区画に植える・手入れする・片付けるができます。</p>
+        <p class="section-note" id="mapNote">マスをタップすると、その区画に植える・手入れする・片付けるができます。</p>
         <div class="chip-row" id="mapPlaceRow" aria-label="マップの場所を選ぶ"></div>
         <div class="card map-card">
-          <div class="map-head"><b id="mapPlaceName">1番</b><span id="mapSummary"></span></div>
+          <div class="map-head"><b id="mapPlaceName">1番</b><span id="mapSummary"></span>
+            <button type="button" class="btn-mini map-shape-btn" id="btnLayoutEdit" aria-pressed="false"><span data-ico aria-hidden="true">✏️</span> <span data-lbl>形をかえる</span></button>
+          </div>
           <div class="map-grid" id="mapGrid"></div>
-          <p class="map-legend"><span><span class="lg planted"></span>栽培中</span><span><span class="lg ok"></span>連作OK</span><span><span class="lg rest"></span>あける年数待ち</span><span><span class="lg warn"></span>連作に注意</span></p>
+          <p class="map-legend"><span><span class="lg planted"></span>栽培中</span><span><span class="lg ok"></span>連作OK</span><span><span class="lg rest"></span>あける年数待ち</span><span><span class="lg warn"></span>連作に注意</span><span id="lgPath" hidden><span class="lg path"></span>通路</span></p>
           <div id="mapUnassigned"></div>
         </div>
+        <div id="mapLayoutPanel"></div>
       </div>
 
       <div class="section-head" style="margin-top:4px">
@@ -1168,7 +1215,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
       <div class="section">
         <div class="section-head"><h2>このアプリについて</h2></div>
         <div class="card">
-          <div class="kv"><span>バージョン</span><b id="appVersionRow">1.5.1</b></div>
+          <div class="kv"><span>バージョン</span><b id="appVersionRow">1.6.0</b></div>
           <div class="kv"><span>天気データ</span><b>Open-Meteo</b></div>
           <div class="kv"><span>保存先</span><b>この端末のブラウザ</b></div>
           <div class="divider"></div>
@@ -1225,7 +1272,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
    ========================================================= */
 
 var LS_KEY = 'my_saien_note_v1';
-var APP_VERSION = '1.5.1';
+var APP_VERSION = '1.6.0';
 var KIKU_FLAG_KEY = 'chiu_v123_kiku_added';
 
 /* ---------- tiny helpers ---------- */
@@ -1517,6 +1564,8 @@ function rotationWarnings(family, places, excludeIds, cell, name) {
   var cand = rotationOf(name || '', fam);
   if (cand.mode !== 'ng') return out;
   uniqPlaces(places).forEach(function (p) {
+    /* 合体した畝は、中のマスの履歴もこの区画の履歴として見る */
+    var sameLabels = cellLabel ? plotLabelsFor(p, cellLabel) : [];
     cropsInPlace(p).forEach(function (c) {
       if (skip.indexOf(c.id) >= 0) return;
       var cf = c.family || guessFamily(c.name);
@@ -1538,7 +1587,7 @@ function rotationWarnings(family, places, excludeIds, cell, name) {
       if (yrs < 0) yrs = 0;
       var r = hrot.rest;
       var need = Math.max(1, Math.ceil(r[0] - yrs));
-      var sameCell = !!cellLabel && (h.cell || '') === cellLabel;
+      var sameCell = !!cellLabel && sameLabels.indexOf(h.cell || '') >= 0;
       if (cellLabel && !sameCell) {
         /* 同じ場所の別の区画。あけ年数が足りないときだけ、やわらかく知らせる */
         if (yrs >= r[0]) return;
@@ -1577,6 +1626,14 @@ function familyColor(f) { return FAMILY_COLOR[f] || '#A9C08D'; }
 var MAP_MIN = 2, MAP_MAX = 6;
 var mapPlace = '';
 
+/* v1.6.0「形をかえる」：マスの結合・分割・通路を保存する自由レイアウト。
+   place.grid は左上から row*cols+col の順に並んだマスの配列。
+     {t:'p', label, cs, rs} … 畑の区画（cs/rs が2以上なら合体した畝・大きい区画）
+     {t:'c', a, label}      … 左／上の区画に含まれるマス（label はそのマス自体の名前）
+     {t:'x'}               … 通路・使わないマス
+   旧データ（labels だけ）は、すべて1マスの区画として読み込む。 */
+var layoutEdit = { on: false, multi: false, sel: [] };
+
 function defaultLabelFor(i, cols) {
   return String.fromCharCode(65 + (Math.floor(i / cols) % 26)) + ((i % cols) + 1);
 }
@@ -1591,6 +1648,67 @@ function mapBaseSize(place) {
   var i = names.indexOf(place);
   return (i >= 0 && i < 3) ? { cols: 3, rows: 3 } : { cols: 2, rows: 2 };
 }
+function mapSpan(v, max) {
+  var n = Math.round(Number(v));
+  if (!isFinite(n) || n < 1) return 1;
+  return Math.min(n, Math.max(1, max));
+}
+/* 区画の重なりをほどきながら、左上から順に形を決め直す */
+function buildLayout(cols, rows, raw, legacyLabels) {
+  var n = cols * rows;
+  var grid = new Array(n), occupied = new Array(n);
+  for (var z = 0; z < n; z++) { grid[z] = null; occupied[z] = false; }
+  for (var i = 0; i < n; i++) {
+    if (occupied[i]) continue;
+    var row = Math.floor(i / cols), col = i % cols;
+    var src = (raw && raw[i] && typeof raw[i] === 'object') ? raw[i] : null;
+    var legacy = (legacyLabels && legacyLabels[i] != null) ? String(legacyLabels[i]).trim() : '';
+    if (src && src.t === 'x') { grid[i] = { t: 'x' }; occupied[i] = true; continue; }
+    var cs = 1, rs = 1;
+    if (src && src.t !== 'c' && (Number(src.cs) > 1 || Number(src.rs) > 1)) {
+      cs = mapSpan(src.cs, cols - col);
+      rs = mapSpan(src.rs, rows - row);
+    }
+    var placeable = false;
+    while (cs >= 1 && rs >= 1) {
+      var free = true;
+      for (var rr = row; rr < row + rs && free; rr++) {
+        for (var cc = col; cc < col + cs; cc++) {
+          if (occupied[rr * cols + cc]) { free = false; break; }
+        }
+      }
+      if (free) { placeable = true; break; }
+      if (cs > 1) cs--; else if (rs > 1) rs--; else break;
+    }
+    if (!placeable) continue;
+    var label = (src && src.label != null) ? String(src.label).trim() : '';
+    if (!label) label = legacy;
+    if (!label) label = defaultLabelFor(i, cols);
+    grid[i] = { t: 'p', label: label, cs: cs, rs: rs };
+    for (var r2 = row; r2 < row + rs; r2++) {
+      for (var c2 = col; c2 < col + cs; c2++) {
+        var k = r2 * cols + c2;
+        occupied[k] = true;
+        if (k === i) continue;
+        var own = (raw && raw[k] && typeof raw[k] === 'object' && raw[k].label != null) ? String(raw[k].label).trim() : '';
+        grid[k] = { t: 'c', a: i, label: own };
+      }
+    }
+  }
+  /* 同じ名前の区画があると区別できないので、あとの方を振り直す */
+  var seen = {};
+  for (var q = 0; q < n; q++) {
+    var g = grid[q];
+    if (!g || g.t !== 'p') continue;
+    var v = g.label;
+    if (!seen[v]) { seen[v] = 1; continue; }
+    var alt = defaultLabelFor(q, cols), num = 2;
+    while (seen[alt]) { alt = defaultLabelFor(q, cols) + '-' + num; num++; }
+    g.label = alt;
+    seen[alt] = 1;
+  }
+  return grid;
+}
 function normalizeMap(m, place) {
   var base = mapBaseSize(place);
   var cols = Math.round(Number(m && m.cols));
@@ -1598,21 +1716,12 @@ function normalizeMap(m, place) {
   if (!(cols >= MAP_MIN && cols <= MAP_MAX)) cols = base.cols;
   if (!(rows >= MAP_MIN && rows <= MAP_MAX)) rows = base.rows;
   var n = cols * rows;
-  var labels = (m && Array.isArray(m.labels))
-    ? m.labels.slice(0, n).map(function (x) { return String(x == null ? '' : x).trim(); })
-    : [];
-  while (labels.length < n) labels.push('');
-  labels = labels.map(function (v, i) { return v || defaultLabelFor(i, cols); });
-  /* 同じ名前の区画があると区別できないので、あとの方を振り直す */
-  var seen = {};
-  labels = labels.map(function (v, i) {
-    if (!seen[v]) { seen[v] = 1; return v; }
-    var alt = defaultLabelFor(i, cols), k = 2;
-    while (seen[alt]) { alt = defaultLabelFor(i, cols) + '-' + k; k++; }
-    seen[alt] = 1;
-    return alt;
-  });
-  return { cols: cols, rows: rows, labels: labels };
+  var raw = (m && Array.isArray(m.grid) && m.grid.length) ? m.grid : null;
+  var legacy = (!raw && m && Array.isArray(m.labels)) ? m.labels : null;
+  var grid = buildLayout(cols, rows, raw, legacy);
+  var labels = [];
+  for (var i = 0; i < n; i++) labels.push(grid[i] && grid[i].label ? grid[i].label : '');
+  return { cols: cols, rows: rows, labels: labels, grid: grid };
 }
 function mapFor(place) {
   var maps = state.maps || {};
@@ -1623,18 +1732,101 @@ function saveMap(place, map) {
   state.maps[place] = normalizeMap(map, place);
   saveState();
 }
+
+/* ---------- 形（レイアウト）の見方 ---------- */
+function mapPlots(map) {
+  var out = [];
+  for (var i = 0; i < map.grid.length; i++) {
+    var g = map.grid[i];
+    if (g && g.t === 'p') out.push({ idx: i, label: g.label, cs: g.cs, rs: g.rs, col: i % map.cols, row: Math.floor(i / map.cols) });
+  }
+  return out;
+}
+function mapPathIdxs(map) {
+  var out = [];
+  for (var i = 0; i < map.grid.length; i++) { if (map.grid[i] && map.grid[i].t === 'x') out.push(i); }
+  return out;
+}
+function mapPlotAt(map, idx) {
+  if (idx < 0 || idx >= map.grid.length) return null;
+  var g = map.grid[idx];
+  if (!g) return null;
+  if (g.t === 'p') return { idx: idx, label: g.label, cs: g.cs, rs: g.rs, col: idx % map.cols, row: Math.floor(idx / map.cols) };
+  if (g.t === 'c') return mapPlotAt(map, g.a);
+  return null;
+}
+function mapPlotIndexForLabel(map, label) {
+  var v = String(label == null ? '' : label);
+  if (!v) return -1;
+  for (var i = 0; i < map.grid.length; i++) {
+    var g = map.grid[i];
+    if (g && g.t === 'p' && g.label === v) return i;
+  }
+  return -1;
+}
+/* 合体で名前が消えたマスからも、今の区画を引けるようにする */
+function mapIdxForAnyLabel(map, label) {
+  var v = String(label == null ? '' : label);
+  if (!v) return -1;
+  var i = mapPlotIndexForLabel(map, v);
+  if (i >= 0) return i;
+  for (var j = 0; j < map.grid.length; j++) {
+    var g = map.grid[j];
+    if (g && g.label === v) return g.t === 'c' ? g.a : j;
+  }
+  return -1;
+}
+/* その区画が使っているマス全部の名前（合体した畝は中のマスも含む） */
+function plotCellLabels(map, idx) {
+  var p = mapPlotAt(map, idx);
+  var out = [];
+  if (!p) return out;
+  for (var r = p.row; r < p.row + p.rs; r++) {
+    for (var c = p.col; c < p.col + p.cs; c++) {
+      var g = map.grid[r * map.cols + c];
+      if (g && g.label && out.indexOf(g.label) < 0) out.push(g.label);
+    }
+  }
+  if (out.indexOf(p.label) < 0) out.unshift(p.label);
+  return out;
+}
+function plotLabelsFor(place, label) {
+  var map = mapFor(place);
+  var idx = mapIdxForAnyLabel(map, label);
+  if (idx < 0) return String(label == null ? '' : label).trim() ? [String(label)] : [];
+  return plotCellLabels(map, idx);
+}
+function plotSpanNote(place, label) {
+  var map = mapFor(place);
+  var idx = mapPlotIndexForLabel(map, label);
+  if (idx < 0) return '';
+  var g = map.grid[idx];
+  if (!g || (g.cs === 1 && g.rs === 1)) return '';
+  return '<div class="rot-warn-line ok" style="margin-top:2px">' + g.cs + '×' + g.rs + 'の'
+    + (g.cs * g.rs) + 'マスをまとめた1区画です。連作はこの畝全体の履歴で見ています。</div>';
+}
+
 function cropInCell(place, label) {
+  var v = String(label == null ? '' : label);
   return state.crops.filter(function (c) {
-    return c.slots && c.slots[place] && c.slots[place] === label;
+    return c.slots && c.slots[place] && c.slots[place] === v;
   })[0] || null;
 }
+/* 区画に割り当てられていない野菜（通路になった区画・消えた区画の名前も含む） */
 function cropsWithoutCell(place) {
+  var map = mapFor(place);
+  var known = {};
+  mapPlots(map).forEach(function (p) { known[p.label] = 1; });
   return state.crops.filter(function (c) {
-    return cropPlaces(c).indexOf(place) >= 0 && !(c.slots && c.slots[place]);
+    if (cropPlaces(c).indexOf(place) < 0) return false;
+    var slot = (c.slots && c.slots[place]) ? c.slots[place] : '';
+    return !(slot && known[slot]);
   });
 }
 function cellHistory(place, label) {
-  return historyForPlace(place).filter(function (h) { return (h.cell || '') === label; });
+  var labs = plotLabelsFor(place, label);
+  if (!labs.length) return [];
+  return historyForPlace(place).filter(function (h) { return labs.indexOf(h.cell || '') >= 0; });
 }
 function restInfoFor(records) {
   var best = null;
@@ -1652,11 +1844,25 @@ function restInfoFor(records) {
   });
   return best;
 }
-/* マスの色は「そのマス自身の履歴」だけで決める（場所全体の休みは場所ガイドで伝える） */
+/* マスの色は「その区画の履歴」だけで決める（場所全体の休みは場所ガイドで伝える） */
 function cellRestInfo(place, label) {
   return restInfoFor(cellHistory(place, label));
 }
-function cellMapHTML(place, label) {
+function cellSpanStyle(cs, rs) {
+  var st = '';
+  if (cs > 1) st += 'grid-column:span ' + cs + ';';
+  if (rs > 1) st += 'grid-row:span ' + rs + ';';
+  return st;
+}
+function isLayoutSel(idx) { return layoutEdit.on && layoutEdit.sel.indexOf(idx) >= 0; }
+
+function cellMapHTML(place, idx, g) {
+  var label = g.label;
+  var big = (g.cs > 1 || g.rs > 1);
+  var sel = isLayoutSel(idx);
+  var cls = 'map-cell';
+  var aria = place + ' ' + label + (big ? '（' + g.cs + '×' + g.rs + 'マスの畝）' : '');
+  var inner;
   var c = cropInCell(place, label);
   if (c) {
     var cf = c.family || guessFamily(c.name);
@@ -1665,23 +1871,39 @@ function cellMapHTML(place, label) {
     var bad = false, mid = false;
     warns.forEach(function (w) { if (w.level === 'red') bad = true; else if (w.level === 'yellow') mid = true; });
     var okFam = crot.mode === 'ok';
-    return '<button type="button" class="map-cell planted' + (bad ? ' warn' : '') + (okFam ? ' okfam' : '') + '" data-cell="' + esc(label) + '" data-cellplace="' + esc(place) + '"'
-      + ' aria-label="' + esc(place + ' ' + label + ' ' + c.name + ' ' + familyText(cf) + (bad ? ' 連作に注意' : (okFam ? ' 連作OK' : ''))) + '">'
-      + '<span class="mc-label">' + esc(label) + '</span>'
+    cls += ' planted' + (bad ? ' warn' : '') + (okFam ? ' okfam' : '');
+    aria += ' ' + c.name + ' ' + familyText(cf) + (bad ? ' 連作に注意' : (okFam ? ' 連作OK' : ''));
+    inner = '<span class="mc-label">' + esc(label) + '</span>'
       + (bad ? '<span class="mc-badge" aria-hidden="true">⚠️</span>' : (okFam ? '<span class="mc-okbadge" aria-hidden="true">OK</span>' : (mid ? '<span class="mc-badge" aria-hidden="true">🌤️</span>' : '')))
       + '<span class="mc-emoji" aria-hidden="true">' + esc(c.emoji || '🌱') + '</span>'
       + '<span class="mc-name">' + esc(c.name) + '</span>'
-      + '<span class="mc-fam" style="--fam:' + familyColor(cf) + '">' + esc(familyText(cf)) + '</span>'
-      + '</button>';
+      + '<span class="mc-fam" style="--fam:' + familyColor(cf) + '">' + esc(familyText(cf)) + '</span>';
+  } else {
+    var rest = cellRestInfo(place, label);
+    cls += rest ? ' rest' : '';
+    aria += rest ? ' 空き・' + rest.family + ' あと約' + Math.max(1, Math.ceil(rest.remain)) + '年' : ' 空き';
+    inner = '<span class="mc-label">' + esc(label) + '</span>'
+      + (rest
+        ? '<span class="mc-rest">' + esc(rest.family) + ' あと約' + Math.max(1, Math.ceil(rest.remain)) + '年</span><span class="mc-plus" aria-hidden="true">🕓</span>'
+        : '<span class="mc-plus" aria-hidden="true">＋</span>');
   }
-  var rest = cellRestInfo(place, label);
-  return '<button type="button" class="map-cell' + (rest ? ' rest' : '') + '" data-cell="' + esc(label) + '" data-cellplace="' + esc(place) + '"'
-    + ' aria-label="' + esc(place + ' ' + label + (rest ? ' 空き・' + rest.family + ' あと約' + Math.max(1, Math.ceil(rest.remain)) + '年' : ' 空き')) + '">'
-    + '<span class="mc-label">' + esc(label) + '</span>'
-    + (rest
-      ? '<span class="mc-rest">' + esc(rest.family) + ' あと約' + Math.max(1, Math.ceil(rest.remain)) + '年</span><span class="mc-plus" aria-hidden="true">🕓</span>'
-      : '<span class="mc-plus" aria-hidden="true">＋</span>')
-    + '</button>';
+  if (big) inner += '<span class="mc-span" aria-hidden="true">' + g.cs + '×' + g.rs + '</span>';
+  if (sel) cls += ' sel';
+  return '<button type="button" class="' + cls + '" style="' + cellSpanStyle(g.cs, g.rs) + '"'
+    + ' data-cell="' + esc(label) + '" data-cellplace="' + esc(place) + '"'
+    + (layoutEdit.on ? ' data-ledit="' + idx + '" aria-pressed="' + (sel ? 'true' : 'false') + '"' : '')
+    + ' aria-label="' + esc(aria) + '">' + inner + '</button>';
+}
+function pathCellHTML(place, idx) {
+  var sel = isLayoutSel(idx);
+  if (!layoutEdit.on) {
+    return '<div class="map-cell path" aria-label="' + esc(place + ' ' + (idx + 1) + 'マス目 通路（使わないマス）') + '">'
+      + '<span class="mc-path">通路</span></div>';
+  }
+  return '<button type="button" class="map-cell path' + (sel ? ' sel' : '') + '" data-ledit="' + idx + '"'
+    + ' aria-pressed="' + (sel ? 'true' : 'false') + '"'
+    + ' aria-label="' + esc(place + ' ' + (idx + 1) + 'マス目 通路（使わないマス）' + (sel ? ' 選択中' : '')) + '">'
+    + '<span class="mc-path">通路</span></button>';
 }
 
 function renderMapPlaceRow() {
@@ -1700,16 +1922,32 @@ function renderMap() {
   if (!host) return;
   var place = mapPlace;
   var map = mapFor(place);
-  var cells = [];
-  for (var i = 0; i < map.cols * map.rows; i++) cells.push(cellMapHTML(place, map.labels[i]));
+  var html = [];
+  for (var i = 0; i < map.cols * map.rows; i++) {
+    var g = map.grid[i];
+    if (!g || g.t === 'c') continue;
+    html.push(g.t === 'x' ? pathCellHTML(place, i) : cellMapHTML(place, i, g));
+  }
   host.style.setProperty('--cols', String(map.cols));
-  host.innerHTML = cells.join('');
+  host.setAttribute('data-cols', String(map.cols));
+  if (layoutEdit.on) host.classList.add('editing'); else host.classList.remove('editing');
+  host.innerHTML = html.join('');
   var nameEl = $('#mapPlaceName');
   if (nameEl) nameEl.textContent = place;
-  var sum = $('#mapSummary');
+  var plots = mapPlots(map);
+  var paths = mapPathIdxs(map).length;
   var used = 0;
-  map.labels.forEach(function (l) { if (cropInCell(place, l)) used++; });
-  if (sum) sum.textContent = map.cols + '列×' + map.rows + '行 ・ ' + used + '/' + (map.cols * map.rows) + '区画使用中';
+  plots.forEach(function (p) { if (cropInCell(place, p.label)) used++; });
+  var sum = $('#mapSummary');
+  if (sum) sum.textContent = map.cols + '列×' + map.rows + '行 ・ ' + used + '/' + plots.length + '区画使用中' + (paths ? '・通路' + paths : '');
+  var lg = $('#lgPath');
+  if (lg) { if (paths) lg.removeAttribute('hidden'); else lg.setAttribute('hidden', ''); }
+  var note = $('#mapNote');
+  if (note) {
+    note.textContent = layoutEdit.on
+      ? '編集中：マスをタップして選び、下のボタンで合体・分割・通路・名前を変えられます。「完了」で元に戻ります。'
+      : 'マスをタップすると、その区画に植える・手入れする・片付けるができます。';
+  }
   var un = cropsWithoutCell(place);
   var uh = $('#mapUnassigned');
   if (uh) {
@@ -1721,9 +1959,421 @@ function renderMap() {
         + '</div><p class="hint" style="margin:6px 0 0">空きマスをタップして「栽培中の野菜から選ぶ」と、この区画に割り当てられます。</p>'
       : '';
   }
+  renderLayoutPanel();
+}
+
+/* ---------- 「形をかえる」モード ---------- */
+function renderLayoutButton() {
+  var b = $('#btnLayoutEdit');
+  if (!b) return;
+  if (layoutEdit.on) b.classList.add('on'); else b.classList.remove('on');
+  b.setAttribute('aria-pressed', layoutEdit.on ? 'true' : 'false');
+  var ico = $('[data-ico]', b), lbl = $('[data-lbl]', b);
+  if (ico) ico.textContent = layoutEdit.on ? '✓' : '✏️';
+  if (lbl) lbl.textContent = layoutEdit.on ? '完了' : '形をかえる';
+}
+function setLayoutEdit(on) {
+  layoutEdit.on = !!on;
+  layoutEdit.multi = false;
+  layoutEdit.sel = [];
+  renderMap();
+  if (layoutEdit.on) toast('マスをタップして選んでください。合体・通路・名前が変えられます', '✏️');
+}
+function layoutSelection(map) {
+  var plots = [], paths = [];
+  layoutEdit.sel.forEach(function (i) {
+    var g = map.grid[i];
+    if (!g) return;
+    if (g.t === 'x') { if (paths.indexOf(i) < 0) paths.push(i); return; }
+    var p = mapPlotAt(map, i);
+    if (p && !plots.some(function (x) { return x.idx === p.idx; })) plots.push(p);
+  });
+  return { plots: plots, paths: paths };
+}
+function layoutTap(idx) {
+  var map = mapFor(mapPlace);
+  var g = map.grid[idx];
+  if (!g || g.t === 'c') return;
+  var at = layoutEdit.sel.indexOf(idx);
+  if (layoutEdit.multi) {
+    if (at >= 0) layoutEdit.sel.splice(at, 1); else layoutEdit.sel.push(idx);
+  } else {
+    layoutEdit.sel = (at >= 0 && layoutEdit.sel.length === 1) ? [] : [idx];
+  }
+  renderMap();
+}
+function renderLayoutPanel() {
+  var host = $('#mapLayoutPanel');
+  if (!host) return;
+  renderLayoutButton();
+  if (!layoutEdit.on) { host.innerHTML = ''; return; }
+  var map = mapFor(mapPlace);
+  var sel = layoutSelection(map);
+  var one = (sel.plots.length === 1 && sel.paths.length === 0) ? sel.plots[0] : null;
+  var status;
+  if (!sel.plots.length && !sel.paths.length) {
+    status = 'マスをタップして選んでください。';
+  } else if (one) {
+    status = '選択中：<b>' + esc(one.label) + '</b>（' + one.cs + '列×' + one.rs + '行）';
+  } else {
+    status = '選択中：<b>' + (sel.plots.length + sel.paths.length) + 'マス</b>'
+      + (sel.paths.length ? '（うち通路' + sel.paths.length + '）' : '');
+  }
+  var canR = !!one && one.col + one.cs < map.cols;
+  var canD = !!one && one.row + one.rs < map.rows;
+  var canSplit = !!one && (one.cs > 1 || one.rs > 1);
+  host.innerHTML = '<div class="card ledit">'
+    + '<div class="ledit-head"><b>✏️ 形をかえる</b><span>' + (layoutEdit.multi ? '複数選択中' : '1マスずつ選択') + '</span></div>'
+    + '<div class="ledit-status">' + status + '</div>'
+    + '<div class="ledit-name">'
+    + '<input class="field" id="leditName" maxlength="12" placeholder="区画の名前（例：手前の畝）" value="' + esc(one ? one.label : '') + '"'
+    + (one ? '' : ' disabled') + ' aria-label="選んだ区画の名前">'
+    + '<button class="btn sm" data-ledit-act="rename"' + (one ? '' : ' disabled') + '>変更</button>'
+    + '</div>'
+    + '<div class="ledit-row three" style="margin-top:9px">'
+    + '<button class="btn ghost sm" data-ledit-act="right"' + (canR ? '' : ' disabled') + '>右と合体</button>'
+    + '<button class="btn ghost sm" data-ledit-act="down"' + (canD ? '' : ' disabled') + '>下と合体</button>'
+    + '<button class="btn ghost sm" data-ledit-act="split"' + (canSplit ? '' : ' disabled') + '>分ける</button>'
+    + '</div>'
+    + '<div class="ledit-row">'
+    + '<button class="btn ghost sm" data-ledit-act="path"' + (sel.plots.length ? '' : ' disabled') + '>通路にする</button>'
+    + '<button class="btn ghost sm" data-ledit-act="plot"' + (sel.paths.length ? '' : ' disabled') + '>畑に戻す</button>'
+    + '</div>'
+    + '<div class="ledit-row">'
+    + '<button class="btn ghost sm" data-ledit-act="multi">' + (layoutEdit.multi ? '✓ 複数選択をやめる' : '＋ 複数選ぶ') + '</button>'
+    + '<button class="btn sm" data-ledit-act="merge"' + (sel.plots.length > 1 ? '' : ' disabled') + '>選んだマスを合体</button>'
+    + '</div>'
+    + '<div class="ledit-label">地形プリセット（1タップで形を入れ替え）</div>'
+    + '<div class="ledit-chips">'
+    + '<button type="button" class="chip-mini" data-map-preset="even">3×3 均等</button>'
+    + '<button type="button" class="chip-mini" data-map-preset="beds">細長い畝×3本</button>'
+    + '<button type="button" class="chip-mini" data-map-preset="lshape">L字の畑（通路つき）</button>'
+    + '</div>'
+    + '<div class="ledit-label">畑の大きさ</div>'
+    + '<div class="ledit-size">'
+    + '<span>列</span>'
+    + '<button type="button" class="step" data-map-size="cols-1"' + (map.cols <= MAP_MIN ? ' disabled' : '') + ' aria-label="列を減らす">−</button>'
+    + '<b>' + map.cols + '</b>'
+    + '<button type="button" class="step" data-map-size="cols+1"' + (map.cols >= MAP_MAX ? ' disabled' : '') + ' aria-label="列を増やす">＋</button>'
+    + '<span class="sep">行</span>'
+    + '<button type="button" class="step" data-map-size="rows-1"' + (map.rows <= MAP_MIN ? ' disabled' : '') + ' aria-label="行を減らす">−</button>'
+    + '<b>' + map.rows + '</b>'
+    + '<button type="button" class="step" data-map-size="rows+1"' + (map.rows >= MAP_MAX ? ' disabled' : '') + ' aria-label="行を増やす">＋</button>'
+    + '</div>'
+    + '<p class="hint" style="margin-top:9px">合体は、選んだマスが四角くなるように選ぶとまとめて1区画にできます。通路のマスは植え付けや連作提案の対象外になります。</p>'
+    + '</div>';
+}
+function layoutAction(act) {
+  var map = mapFor(mapPlace);
+  var sel = layoutSelection(map);
+  var one = (sel.plots.length === 1 && sel.paths.length === 0) ? sel.plots[0] : null;
+  if (act === 'rename') { doRenamePlot(one); return; }
+  if (act === 'right') { mergeWith(map, one, 'right'); return; }
+  if (act === 'down') { mergeWith(map, one, 'down'); return; }
+  if (act === 'split') { splitPlot(map, one); return; }
+  if (act === 'path') { makePath(sel.plots); return; }
+  if (act === 'plot') { restorePaths(sel.paths); return; }
+  if (act === 'multi') { layoutEdit.multi = !layoutEdit.multi; renderMap(); return; }
+  if (act === 'merge') { tryMerge(sel.plots.map(function (p) { return p.idx; })); return; }
+}
+
+/* ---------- 形を変える操作 ---------- */
+function remapCellSlots(place, oldMap, newMap) {
+  var moved = 0, dropped = 0, taken = {};
+  state.crops.forEach(function (c) {
+    if (!c.slots || !c.slots[place]) return;
+    var lab = c.slots[place];
+    var oldIdx = mapIdxForAnyLabel(oldMap, lab);
+    if (oldIdx < 0) { delete c.slots[place]; dropped++; return; }
+    var np = mapPlotAt(newMap, oldIdx);
+    if (!np) { delete c.slots[place]; dropped++; return; }
+    if (np.label === lab) { taken[lab] = c.id; return; }
+    if (taken[np.label]) { delete c.slots[place]; dropped++; return; }
+    c.slots[place] = np.label;
+    taken[np.label] = c.id;
+    moved++;
+  });
+  return { moved: moved, dropped: dropped };
+}
+/* 区画の名前が変わっても、その場所の栽培履歴が同じ畝についていく */
+function translateHistory(place, oldMap, newMap) {
+  allHistory().forEach(function (h) {
+    if ((h.place || '') !== place) return;
+    var idx = mapIdxForAnyLabel(oldMap, h.cell || '');
+    if (idx < 0) return;
+    var np = mapPlotAt(newMap, idx);
+    if (np && np.label !== h.cell) h.cell = np.label;
+  });
+}
+function cropsLosingCell(place, oldMap, newMap) {
+  var out = [];
+  state.crops.forEach(function (c) {
+    if (!c.slots || !c.slots[place]) return;
+    var idx = mapIdxForAnyLabel(oldMap, c.slots[place]);
+    if (idx < 0) return;
+    if (!mapPlotAt(newMap, idx)) out.push(c);
+  });
+  return out;
+}
+function applyLayoutMap(place, oldMap, raw) {
+  var next = normalizeMap(raw, place);
+  var ch = remapCellSlots(place, oldMap, next);
+  translateHistory(place, oldMap, next);
+  state.maps = state.maps || {};
+  state.maps[place] = next;
+  saveState();
+  layoutEdit.sel = [];
+  renderAll();
+  return ch;
+}
+function doRenamePlot(one) {
+  if (!one) return;
+  var el = $('#leditName');
+  renamePlot(one, el ? el.value : '');
+}
+function renamePlot(one, rawValue) {
+  if (!one) return;
+  var v = String(rawValue == null ? '' : rawValue).trim();
+  if (!v) { toast('区画の名前を入れてください', '✏️'); return; }
+  if (v === one.label) { toast('名前はまだ変わっていません', '✏️'); return; }
+  var map = mapFor(mapPlace);
+  var clash = mapPlots(map).filter(function (p) { return p.idx !== one.idx && p.label === v; });
+  if (clash.length) { toast('同じ名前の区画があります。別の名前にしてください', '⚠️'); return; }
+  var grid = map.grid.slice();
+  grid[one.idx] = { t: 'p', label: v, cs: one.cs, rs: one.rs };
+  applyLayoutMap(mapPlace, map, { cols: map.cols, rows: map.rows, grid: grid });
+  toast('区画の名前を「' + v + '」にしました', '🏷️');
+}
+function mergeWith(map, one, dir) {
+  if (!one) return;
+  var target = dir === 'right'
+    ? (one.col + one.cs < map.cols ? one.idx + one.cs : -1)
+    : (one.row + one.rs < map.rows ? one.idx + map.cols * one.rs : -1);
+  if (target < 0) {
+    toast(dir === 'right' ? '右にはマスがありません' : '下にはマスがありません', dir === 'right' ? '↔️' : '↕️');
+    return;
+  }
+  tryMerge([one.idx, target]);
+}
+function tryMerge(idxs) {
+  var map = mapFor(mapPlace);
+  var anchors = [];
+  idxs.forEach(function (i) {
+    var p = mapPlotAt(map, i);
+    if (p && anchors.indexOf(p.idx) < 0) anchors.push(p.idx);
+  });
+  if (anchors.length < 2) { toast('合体するマスを2つ以上選んでください', '🧩'); return; }
+  var minC = map.cols, maxC = -1, minR = map.rows, maxR = -1;
+  anchors.forEach(function (ai) {
+    var p = mapPlotAt(map, ai);
+    minC = Math.min(minC, p.col); maxC = Math.max(maxC, p.col + p.cs - 1);
+    minR = Math.min(minR, p.row); maxR = Math.max(maxR, p.row + p.rs - 1);
+  });
+  var inside = {}, bad = false;
+  for (var r = minR; r <= maxR && !bad; r++) {
+    for (var c = minC; c <= maxC; c++) {
+      var p2 = mapPlotAt(map, r * map.cols + c);
+      if (!p2) { bad = true; break; }
+      inside[p2.idx] = p2;
+    }
+  }
+  if (bad) { toast('通路のマスは合体できません。通路を含まない四角い範囲を選んでください', '🚧'); return; }
+  var list = Object.keys(inside).map(function (k) { return inside[k]; });
+  if (list.length < 2) return;
+  var anchorIdx = minR * map.cols + minC;
+  var anchor = mapPlotAt(map, anchorIdx);
+  var grid = map.grid.slice();
+  for (var row = minR; row <= maxR; row++) {
+    for (var col = minC; col <= maxC; col++) {
+      var k2 = row * map.cols + col;
+      if (k2 === anchorIdx) continue;
+      var prev = grid[k2];
+      grid[k2] = { t: 'c', a: anchorIdx, label: prev && prev.label ? prev.label : '' };
+    }
+  }
+  grid[anchorIdx] = { t: 'p', label: anchor.label, cs: maxC - minC + 1, rs: maxR - minR + 1 };
+  var ch = applyLayoutMap(mapPlace, map, { cols: map.cols, rows: map.rows, grid: grid });
+  toast(list.length + 'マスを「' + anchor.label + '」にまとめました'
+    + (ch.dropped ? '（' + ch.dropped + '件は区画から外れました）' : ''), '🧩');
+}
+function splitPlot(map, one) {
+  if (!one) return;
+  if (one.cs === 1 && one.rs === 1) { toast('この区画は1マスなので分けられません', '🔲'); return; }
+  var grid = map.grid.slice();
+  for (var r = one.row; r < one.row + one.rs; r++) {
+    for (var c = one.col; c < one.col + one.cs; c++) {
+      var i = r * map.cols + c;
+      var lab = (i === one.idx) ? one.label : (map.labels[i] || '');
+      grid[i] = { t: 'p', label: lab, cs: 1, rs: 1 };
+    }
+  }
+  applyLayoutMap(mapPlace, map, { cols: map.cols, rows: map.rows, grid: grid });
+  toast('「' + one.label + '」を元のマスに分けました', '✂️');
+}
+function makePath(plots) {
+  if (!plots.length) return;
+  var map = mapFor(mapPlace);
+  var names = [];
+  plots.forEach(function (p) {
+    state.crops.forEach(function (c) {
+      if (c.slots && c.slots[mapPlace] === p.label) names.push(c.name);
+    });
+  });
+  var go = function () {
+    var grid = map.grid.slice();
+    plots.forEach(function (p) {
+      for (var r = p.row; r < p.row + p.rs; r++) {
+        for (var c = p.col; c < p.col + p.cs; c++) grid[r * map.cols + c] = { t: 'x' };
+      }
+    });
+    var ch = applyLayoutMap(mapPlace, map, { cols: map.cols, rows: map.rows, grid: grid });
+    toast('通路にしました' + (ch.dropped ? '（' + ch.dropped + '件の野菜は区画から外れました）' : ''), '🚧');
+  };
+  if (names.length) {
+    confirmSheet({
+      title: '通路にしますか？',
+      body: '「' + names.join('・') + '」は栽培中のリストに残りますが、区画の割り当ては外れます。',
+      ok: '通路にする',
+      onOk: go
+    });
+  } else go();
+}
+function restorePaths(pathIdxs) {
+  if (!pathIdxs.length) return;
+  var map = mapFor(mapPlace);
+  var grid = map.grid.slice();
+  pathIdxs.forEach(function (i) { grid[i] = { t: 'p', label: '', cs: 1, rs: 1 }; });
+  applyLayoutMap(mapPlace, map, { cols: map.cols, rows: map.rows, grid: grid });
+  toast(pathIdxs.length + 'マスを畑に戻しました', '🌱');
+}
+
+/* ---------- 地形プリセット ---------- */
+function presetName(id) {
+  if (id === 'even') return '3×3 均等';
+  if (id === 'beds') return '細長い畝×3本';
+  if (id === 'lshape') return 'L字の畑（通路つき）';
+  return 'プリセット';
+}
+function presetLayout(id) {
+  if (id === 'even') {
+    var cols = 3, rows = 3, blocks = [];
+    for (var r = 0; r < rows; r++) {
+      for (var c = 0; c < cols; c++) blocks.push({ row: r, col: c, cs: 1, rs: 1, label: defaultLabelFor(r * cols + c, cols) });
+    }
+    return { cols: cols, rows: rows, blocks: blocks };
+  }
+  if (id === 'beds') {
+    return {
+      cols: 3, rows: 3, blocks: [
+        { row: 0, col: 0, cs: 3, rs: 1, label: '奥の畝' },
+        { row: 1, col: 0, cs: 3, rs: 1, label: '中の畝' },
+        { row: 2, col: 0, cs: 3, rs: 1, label: '手前の畝' }
+      ]
+    };
+  }
+  if (id === 'lshape') {
+    return {
+      cols: 3, rows: 3, blocks: [
+        { row: 0, col: 0, cs: 1, rs: 3, label: '左の畝' },
+        { row: 2, col: 1, cs: 2, rs: 1, label: '下の畝' }
+      ]
+    };
+  }
+  return null;
+}
+function applyPreset(id) {
+  var pre = presetLayout(id);
+  if (!pre) return;
+  var map = mapFor(mapPlace);
+  var n = pre.cols * pre.rows, grid = new Array(n);
+  for (var i = 0; i < n; i++) grid[i] = { t: 'x' };
+  pre.blocks.forEach(function (b) {
+    var base = b.row * pre.cols + b.col;
+    grid[base] = { t: 'p', label: b.label, cs: b.cs, rs: b.rs };
+    for (var r = b.row; r < b.row + b.rs; r++) {
+      for (var c = b.col; c < b.col + b.cs; c++) {
+        var k = r * pre.cols + c;
+        if (k !== base) grid[k] = { t: 'c', a: base, label: '' };
+      }
+    }
+  });
+  var next = normalizeMap({ cols: pre.cols, rows: pre.rows, grid: grid }, mapPlace);
+  var lost = cropsLosingCell(mapPlace, map, next);
+  var go = function () {
+    var ch = applyLayoutMap(mapPlace, map, next);
+    toast('「' + presetName(id) + '」にしました' + (ch.dropped ? '（' + ch.dropped + '件は区画から外れました）' : ''), '🗺️');
+  };
+  if (lost.length) {
+    confirmSheet({
+      title: '地形を「' + presetName(id) + '」にしますか？',
+      body: '「' + lost.map(function (c) { return c.name; }).join('・') + '」の区画はなくなります。野菜は栽培中のリストに残り、「区画に未割り当て」として表示されます。',
+      ok: 'この形にする',
+      onOk: go
+    });
+  } else go();
+}
+
+/* ---------- 畑の大きさ ---------- */
+function resizeMapData(map, place, cols, rows) {
+  var n = cols * rows, grid = new Array(n);
+  /* 通路はそのまま残す */
+  for (var i0 = 0; i0 < map.grid.length; i0++) {
+    var g0 = map.grid[i0];
+    if (!g0 || g0.t !== 'x') continue;
+    var r0i = Math.floor(i0 / map.cols), c0i = i0 % map.cols;
+    if (r0i < rows && c0i < cols) grid[r0i * cols + c0i] = { t: 'x' };
+  }
+  mapPlots(map).forEach(function (p) {
+    if (p.row >= rows || p.col >= cols) return;
+    var cs = Math.min(p.cs, cols - p.col), rs = Math.min(p.rs, rows - p.row);
+    var base = p.row * cols + p.col;
+    var placeable = false;
+    while (cs >= 1 && rs >= 1) {
+      var free = true;
+      for (var r0 = p.row; r0 < p.row + rs && free; r0++) {
+        for (var c0 = p.col; c0 < p.col + cs; c0++) {
+          if (grid[r0 * cols + c0]) { free = false; break; }
+        }
+      }
+      if (free) { placeable = true; break; }
+      if (cs > 1) cs--; else if (rs > 1) rs--; else break;
+    }
+    if (!placeable) return;
+    grid[base] = { t: 'p', label: p.label, cs: cs, rs: rs };
+    for (var r = p.row; r < p.row + rs; r++) {
+      for (var c = p.col; c < p.col + cs; c++) {
+        var k = r * cols + c;
+        if (k === base) continue;
+        grid[k] = { t: 'c', a: base, label: map.labels[r * map.cols + c] || '' };
+      }
+    }
+  });
+  for (var i = 0; i < n; i++) {
+    if (!grid[i]) grid[i] = { t: 'p', label: defaultLabelFor(i, cols), cs: 1, rs: 1 };
+  }
+  return normalizeMap({ cols: cols, rows: rows, grid: grid }, place);
+}
+function resizeMap(cols, rows) {
+  var map = mapFor(mapPlace);
+  if (cols === map.cols && rows === map.rows) return;
+  var next = resizeMapData(map, mapPlace, cols, rows);
+  var lost = cropsLosingCell(mapPlace, map, next);
+  var go = function () {
+    var ch = applyLayoutMap(mapPlace, map, next);
+    toast('畑を' + cols + '列×' + rows + '行にしました' + (ch.dropped ? '（' + ch.dropped + '件は区画から外れました）' : ''), '📐');
+  };
+  if (lost.length) {
+    confirmSheet({
+      title: '畑の大きさを変えますか？',
+      body: '「' + lost.map(function (c) { return c.name; }).join('・') + '」の区画はなくなります。野菜は栽培中のリストに残り、「区画に未割り当て」として表示されます。',
+      ok: '変える',
+      onOk: go
+    });
+  } else go();
 }
 
 /* ---------- 区画のシート ---------- */
+
 function openCellSheet(place, label) {
   var c = cropInCell(place, label);
   if (c) openCellCropSheet(c, place, label);
@@ -1746,6 +2396,7 @@ function openCellCropSheet(c, place, label) {
     '<div class="sheet-head"><div style="flex:1"><h3>' + esc(place) + ' / ' + esc(label) + ' の野菜</h3>'
     + '<p>この区画に植わっている野菜です。手入れの記録や片付けができます。</p></div>'
     + '<button class="sheet-close" aria-label="閉じる">' + CLOSE_SVG + '</button></div>'
+    + plotSpanNote(place, label)
     + '<div class="map-cellinfo"><span class="e" aria-hidden="true">' + esc(c.emoji || '🌱') + '</span>'
     + '<span class="t"><b>' + esc(c.name) + '</b><small>' + esc(familyText(cf)) + ' ・ ' + esc(fmtMD(c.plantedAt)) + 'に植付け'
     + (c.harvestAt ? ' ・ 収穫目安 ' + esc(fmtMD(c.harvestAt)) : '') + '</small></span></div>'
@@ -1818,6 +2469,7 @@ function openEmptyCellSheet(place, label) {
     '<div class="sheet-head"><div style="flex:1"><h3>' + esc(place) + ' / ' + esc(label) + ' に植える</h3>'
     + '<p>この区画に新しく植えるか、栽培中の野菜を割り当てます。連作の履歴もここで確認できます。</p></div>'
     + '<button class="sheet-close" aria-label="閉じる">' + CLOSE_SVG + '</button></div>'
+    + plotSpanNote(place, label)
     + '<div class="form-row"><label class="form-label">この区画のこれまで</label>' + histHtml + '</div>'
     + restHtml
     + suggestHTML(place, label, 4)
@@ -1864,8 +2516,9 @@ function openEmptyCellSheet(place, label) {
 }
 
 /* ---------- 区割りの編集 ---------- */
+
 function openMapEditSheet(place) {
-  var map = mapFor(place);
+  var draft = mapFor(place);
   var sizeOpts = function (cur) {
     var out = '';
     for (var n = MAP_MIN; n <= MAP_MAX; n++) out += '<option value="' + n + '"' + (n === cur ? ' selected' : '') + '>' + n + '</option>';
@@ -1873,15 +2526,15 @@ function openMapEditSheet(place) {
   };
   openSheet(
     '<div class="sheet-head"><div style="flex:1"><h3>' + esc(place) + 'の区割り</h3>'
-    + '<p>列と行の数、区画の名前を変えられます。区画は2〜6の範囲で、最大36マスです。</p></div>'
+    + '<p>列と行の数、区画の名前を変えられます。合体した畝は1つの入力欄になります（最大6×6）。</p></div>'
     + '<button class="sheet-close" aria-label="閉じる">' + CLOSE_SVG + '</button></div>'
     + '<div class="grid2 form-row">'
-    + '<div><label class="form-label" for="mCols">列の数</label><select class="field" id="mCols">' + sizeOpts(map.cols) + '</select></div>'
-    + '<div><label class="form-label" for="mRows">行の数</label><select class="field" id="mRows">' + sizeOpts(map.rows) + '</select></div>'
+    + '<div><label class="form-label" for="mCols">列の数</label><select class="field" id="mCols">' + sizeOpts(draft.cols) + '</select></div>'
+    + '<div><label class="form-label" for="mRows">行の数</label><select class="field" id="mRows">' + sizeOpts(draft.rows) + '</select></div>'
     + '</div>'
     + '<div class="form-row"><label class="form-label">区画の名前</label>'
     + '<div class="map-edit-grid" id="mLabelGrid"></div>'
-    + '<p class="hint">空のままなら A1・B2 のように自動で入ります。</p></div>'
+    + '<p class="hint">空のままなら A1・B2 のように自動で入ります。通路にしたマスはここに出ません。</p></div>'
     + '<button class="btn ghost block sm" id="mAuto">名前を自動で振り直す</button>'
     + '<div class="sheet-actions">'
     + '<button class="btn ghost" data-mx="cancel">キャンセル</button>'
@@ -1890,59 +2543,61 @@ function openMapEditSheet(place) {
     place + 'の区割り');
 
   var wrap = $('#sheetWrap');
-  var labels = map.labels.slice();
-  var cols = map.cols, rows = map.rows;
   var grid = $('#mLabelGrid', wrap);
 
+  function setDraftLabel(idx, v) {
+    var g = draft.grid[idx];
+    if (!g || g.t !== 'p') return;
+    g.label = String(v == null ? '' : v).trim();
+  }
   function buildGrid() {
-    grid.style.setProperty('--cols', String(cols));
+    grid.style.setProperty('--cols', String(draft.cols));
     grid.innerHTML = '';
-    for (var i = 0; i < cols * rows; i++) {
+    mapPlots(draft).forEach(function (p) {
       var inp = document.createElement('input');
       inp.type = 'text';
-      inp.maxLength = 6;
-      inp.value = labels[i] == null ? '' : labels[i];
-      inp.setAttribute('aria-label', (i + 1) + 'マス目の名前');
-      inp.setAttribute('data-idx', String(i));
+      inp.maxLength = 8;
+      inp.value = p.label;
+      inp.setAttribute('aria-label', p.label + 'の名前');
+      inp.setAttribute('data-idx', String(p.idx));
       inp.addEventListener('input', function () {
-        var idx = Number(this.getAttribute('data-idx'));
-        labels[idx] = this.value;
+        setDraftLabel(Number(this.getAttribute('data-idx')), this.value);
       });
       grid.appendChild(inp);
-    }
+    });
   }
   function readGrid() {
     $$('#mLabelGrid input', wrap).forEach(function (inp) {
-      labels[Number(inp.getAttribute('data-idx'))] = inp.value;
+      setDraftLabel(Number(inp.getAttribute('data-idx')), inp.value);
     });
   }
-  function resize() {
-    readGrid();
-    var next = [];
-    for (var i = 0; i < cols * rows; i++) next.push(labels[i] || '');
-    labels = next;
-    buildGrid();
-  }
   buildGrid();
-  $('#mCols', wrap).addEventListener('change', function () { cols = parseInt(this.value, 10) || 3; resize(); });
-  $('#mRows', wrap).addEventListener('change', function () { rows = parseInt(this.value, 10) || 3; resize(); });
+  $('#mCols', wrap).addEventListener('change', function () {
+    readGrid();
+    draft = resizeMapData(draft, place, parseInt(this.value, 10) || 3, draft.rows);
+    buildGrid();
+  });
+  $('#mRows', wrap).addEventListener('change', function () {
+    readGrid();
+    draft = resizeMapData(draft, place, draft.cols, parseInt(this.value, 10) || 3);
+    buildGrid();
+  });
   $('#mAuto', wrap).addEventListener('click', function () {
     readGrid();
-    labels = defaultLabels(cols, rows);
+    mapPlots(draft).forEach(function (p) { draft.grid[p.idx].label = defaultLabelFor(p.idx, draft.cols); });
+    draft = normalizeMap({ cols: draft.cols, rows: draft.rows, grid: draft.grid }, place);
     buildGrid();
     toast('区画の名前を自動で振り直しました', '🔢');
   });
   $('[data-mx="cancel"]', wrap).addEventListener('click', closeSheet);
   $('#mapSave', wrap).addEventListener('click', function () {
     readGrid();
-    saveMap(place, { cols: cols, rows: rows, labels: labels });
+    var next = normalizeMap({ cols: draft.cols, rows: draft.rows, grid: draft.grid }, place);
+    var ch = applyLayoutMap(place, mapFor(place), next);
     closeSheet();
-    renderAll();
-    toast(place + 'の区割りを保存しました', '🗺️');
+    toast(place + 'の区割りを保存しました' + (ch.dropped ? '（' + ch.dropped + '件は区画から外れました）' : ''), '🗺️');
   });
 }
-
-
 /* ---------- 「次に植えるならこれ」提案（具体的な野菜名つき） ---------- */
 var FAMILY_CROPS = {
   'マメ科': ['スナップエンドウ', '枝豆', 'そら豆', 'インゲン'],
@@ -3585,8 +4240,8 @@ function openHistorySheet(place, cell) {
     var opts = '<option value="">区画なし</option>';
     if (ps.length === 1) {
       var mp = mapFor(ps[0]);
-      opts += mp.labels.map(function (l) {
-        return '<option value="' + esc(l) + '"' + (l === keep ? ' selected' : '') + '>' + esc(l) + '</option>';
+      opts += mapPlots(mp).map(function (p) {
+        return '<option value="' + esc(p.label) + '"' + (p.label === keep ? ' selected' : '') + '>' + esc(p.label) + '</option>';
       }).join('');
     }
     sel.innerHTML = opts;
@@ -5662,7 +6317,30 @@ function handleClick(e) {
   if (addEl) { openCropSheet(null); return; }
 
   var mapPlaceEl = t.closest('[data-maplace]');
-  if (mapPlaceEl) { mapPlace = mapPlaceEl.getAttribute('data-maplace'); renderMap(); return; }
+  if (mapPlaceEl) { mapPlace = mapPlaceEl.getAttribute('data-maplace'); layoutEdit.sel = []; renderMap(); return; }
+
+  var leditEl = t.closest('[data-ledit]');
+  if (leditEl) { if (!layoutEdit.on) return; e.preventDefault(); layoutTap(Number(leditEl.getAttribute('data-ledit'))); return; }
+
+  var lactEl = t.closest('[data-ledit-act]');
+  if (lactEl) { e.preventDefault(); if (layoutEdit.on) layoutAction(lactEl.getAttribute('data-ledit-act')); return; }
+
+  var mpresetEl = t.closest('[data-map-preset]');
+  if (mpresetEl) { e.preventDefault(); if (layoutEdit.on) applyPreset(mpresetEl.getAttribute('data-map-preset')); return; }
+
+  var msizeEl = t.closest('[data-map-size]');
+  if (msizeEl) {
+    e.preventDefault();
+    if (!layoutEdit.on) return;
+    var msz = msizeEl.getAttribute('data-map-size');
+    var cmap = mapFor(mapPlace), ncols = cmap.cols, nrows = cmap.rows;
+    if (msz === 'cols-1') ncols = Math.max(MAP_MIN, ncols - 1);
+    if (msz === 'cols+1') ncols = Math.min(MAP_MAX, ncols + 1);
+    if (msz === 'rows-1') nrows = Math.max(MAP_MIN, nrows - 1);
+    if (msz === 'rows+1') nrows = Math.min(MAP_MAX, nrows + 1);
+    resizeMap(ncols, nrows);
+    return;
+  }
 
   var plantEl = t.closest('[data-plant]');
   if (plantEl) {
@@ -5761,6 +6439,26 @@ function bindStatic() {
   var mapEdit = $('#btnMapEdit');
   if (mapEdit) mapEdit.addEventListener('click', function () {
     openMapEditSheet(mapPlace || normalizePlaces(state.settings.places)[0]);
+  });
+
+  var layoutBtn = $('#btnLayoutEdit');
+  if (layoutBtn) layoutBtn.addEventListener('click', function () { setLayoutEdit(!layoutEdit.on); });
+
+  document.addEventListener('change', function (e) {
+    var el = e.target;
+    if (!el || el.id !== 'leditName' || !layoutEdit.on) return;
+    var m = mapFor(mapPlace), ss = layoutSelection(m);
+    var one = (ss.plots.length === 1 && !ss.paths.length) ? ss.plots[0] : null;
+    if (one) renamePlot(one, el.value);
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (!e || e.key !== 'Enter') return;
+    var el = e.target;
+    if (!el || el.id !== 'leditName' || !layoutEdit.on) return;
+    var m = mapFor(mapPlace), ss = layoutSelection(m);
+    var one = (ss.plots.length === 1 && !ss.paths.length) ? ss.plots[0] : null;
+    if (one) { e.preventDefault(); renamePlot(one, el.value); }
   });
 
   var cropSel = $('#mCrop');
