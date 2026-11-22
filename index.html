@@ -678,59 +678,95 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
   color:#33582E;font-size:11.5px;font-weight:600;letter-spacing:.01em;
 }
 .ai-crop-btn:active{background:#E2EED5}
-.ai-ctx{display:flex;gap:10px;align-items:flex-start;background:var(--green-wash);border:1px solid #DCE8CC;border-radius:13px;padding:10px 11px;margin-bottom:10px}
-.ai-ctx .e{font-size:23px;line-height:1.2;flex:0 0 auto}
-.ai-ctx .t{flex:1;min-width:0}
-.ai-ctx b{display:block;font-size:13px;font-weight:700;letter-spacing:.01em;line-height:1.45}
-.ai-ctx small{display:block;font-size:10.5px;color:#4A6B41;line-height:1.6;margin-top:2px}
-.ai-ctx .tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
-.ai-log{display:flex;flex-direction:column;gap:9px;max-height:42vh;max-height:42dvh;overflow-y:auto;padding:2px 2px 4px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
-.sheet-ai{display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;max-height:88dvh}
-.sheet-ai>*{flex:0 0 auto}
-.sheet-ai .ai-log{flex:1 1 auto;min-height:88px;max-height:none;overflow-y:auto}
-.sheet-ai .sheet-head{margin-bottom:10px}
-.sheet-ai .ai-src{margin-top:7px;flex:0 0 auto}
+/* --- v1.5.1: 相談シートは画面のほぼ全体を使い、会話ログを広く取る --- */
+.sheet.ai-sheet{
+  width:100%;max-width:640px;
+  height:96vh;height:96dvh;max-height:96vh;max-height:96dvh;
+  display:flex;flex-direction:column;overflow:hidden;
+  padding:4px 12px calc(8px + var(--safe-b));
+  border-radius:22px 22px 0 0;
+}
+.ai-sheet>*{flex:0 0 auto}
+.ai-sheet .sheet-grip{margin:3px auto 5px}
+.ai-head{display:flex;align-items:center;gap:5px;margin-bottom:6px}
+.ai-head h3{font-family:var(--serif);font-size:16px;line-height:1.3;letter-spacing:.02em;flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ai-head .hbtn{
+  display:inline-flex;align-items:center;gap:3px;flex:0 0 auto;
+  height:30px;padding:0 8px;border-radius:9px;
+  background:var(--card-2);border:1px solid var(--line);color:var(--ink-2);
+  font-size:10.5px;font-weight:600;letter-spacing:.01em;
+}
+.ai-head .hbtn:active{background:var(--green-wash);color:var(--green)}
+.ai-head .sheet-close{width:30px;height:30px;flex:0 0 30px;border-radius:9px}
+.ai-head .sheet-close svg{width:14px;height:14px}
+/* 対象作物チップ（指定時）：1行にまとめて横に流す */
+.ai-ctx{
+  display:flex;align-items:center;gap:7px;
+  background:var(--green-wash);border:1px solid #DCE8CC;border-radius:10px;
+  padding:0 9px;min-height:30px;margin-bottom:7px;
+}
+.ai-ctx .e{font-size:15px;line-height:1;flex:0 0 auto}
+.ai-ctx .t{
+  flex:1 1 auto;min-width:0;display:flex;align-items:center;
+  white-space:nowrap;overflow-x:auto;scrollbar-width:none;
+  font-size:10.5px;line-height:1.4;color:#4A6B41;
+}
+.ai-ctx .t::-webkit-scrollbar{display:none}
+.ai-ctx b{display:inline;font-size:12px;font-weight:700;letter-spacing:.01em;line-height:1.4;color:var(--ink)}
+.ai-ctx small{display:inline;font-size:10.5px;color:#4A6B41;line-height:1.4;margin-left:6px}
+.ai-ctx small::before{content:"・";color:#8DA97F;margin-right:2px}
+.ai-ctx .tags{display:flex;gap:4px;margin-left:6px}
+/* 会話ログ：残りの高さをすべて使う */
+.ai-log{
+  flex:1 1 auto;min-height:0;
+  display:flex;flex-direction:column;gap:10px;
+  overflow-y:auto;padding:2px 2px 6px;
+  overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+}
 .ai-msg{display:flex;gap:7px;align-items:flex-start}
 .ai-msg .av{flex:0 0 24px;width:24px;height:24px;border-radius:8px;display:grid;place-items:center;font-size:12px;background:var(--green-wash);border:1px solid #DCE8CC;margin-top:1px}
-.ai-msg .bub{max-width:86%;background:var(--card-2);border:1px solid var(--line-2);border-radius:4px 14px 14px 14px;padding:9px 11px;font-size:12.5px;line-height:1.78;white-space:pre-wrap;word-break:break-word;color:var(--ink)}
+.ai-msg .bub{max-width:87%;background:var(--card-2);border:1px solid var(--line-2);border-radius:4px 14px 14px 14px;padding:9px 12px;font-size:15px;line-height:1.62;white-space:pre-wrap;word-break:break-word;color:var(--ink)}
 .ai-msg.user{flex-direction:row-reverse}
 .ai-msg.user .av{background:var(--clay-wash);border-color:#F0DCCB}
 .ai-msg.user .bub{background:var(--green);color:#FBFDF7;border-color:#2A5333;border-radius:14px 4px 14px 14px;font-weight:500}
 .ai-msg.err .bub{background:var(--red-wash);border-color:#EFCEC4;color:#8E3628}
 .ai-msg.err .av{background:var(--red-wash);border-color:#EFCEC4}
-.ai-empty{padding:10px 4px 6px;font-size:12px;color:var(--ink-2);line-height:1.8}
-.ai-empty b{display:block;font-size:12.5px;color:var(--ink);margin-bottom:2px}
+.ai-empty{padding:6px 2px 2px;font-size:13px;color:var(--ink-2);line-height:1.75}
+.ai-empty b{display:block;font-size:13.5px;color:var(--ink);margin-bottom:2px}
 .ai-empty ul{display:grid;gap:2px;margin-top:4px}
-.ai-empty li{position:relative;padding-left:12px;font-size:11.5px;color:var(--ink-2)}
+.ai-empty li{position:relative;padding-left:12px;font-size:12.5px;color:var(--ink-2)}
 .ai-empty li::before{content:"・";position:absolute;left:0;color:var(--green-3)}
-.ai-chips{margin-top:10px}
-.ai-input-row{display:flex;gap:7px;align-items:flex-end;margin-top:9px}
+.ai-empty .hint{display:block;margin-top:5px;color:var(--ink-3);font-size:11px}
+/* クイックチップは1行だけ（横スクロール） */
+.ai-chips{display:flex;gap:6px;margin-top:7px;scrollbar-width:none}
+.chip-wrap.ai-chips{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;margin:0 -12px;padding:2px 12px 4px}
+.ai-chips::-webkit-scrollbar{display:none}
+.ai-chips .chip{flex:0 0 auto;min-height:31px;padding:0 11px;font-size:11.5px}
+.ai-input-row{display:flex;gap:6px;align-items:flex-end;margin-top:6px}
 .ai-input-row textarea{
-  flex:1;min-width:0;min-height:46px;max-height:118px;padding:11px 12px;border-radius:13px;line-height:1.5;resize:none;overflow-y:auto;
+  flex:1;min-width:0;min-height:42px;max-height:104px;padding:10px 12px;border-radius:12px;line-height:1.45;font-size:14px;resize:none;overflow-y:auto;
 }
 .mic-btn{
-  width:46px;height:46px;flex:0 0 46px;border-radius:14px;display:grid;place-items:center;
-  font-size:19px;line-height:1;background:var(--card-2);border:1px solid var(--line);color:var(--ink-2);
+  width:42px;height:42px;flex:0 0 42px;border-radius:12px;display:grid;place-items:center;
+  font-size:18px;line-height:1;background:var(--card-2);border:1px solid var(--line);color:var(--ink-2);
   transition:transform .12s ease,background .15s ease;
 }
 .mic-btn:active{transform:scale(.95)}
 .mic-btn.rec{background:var(--red);border-color:#8E3628;color:#fff;animation:micPulse 1.35s ease-out infinite}
 @keyframes micPulse{0%{box-shadow:0 0 0 0 rgba(176,74,58,.45)}70%{box-shadow:0 0 0 12px rgba(176,74,58,0)}100%{box-shadow:0 0 0 0 rgba(176,74,58,0)}}
 .ai-send{
-  width:46px;height:46px;flex:0 0 46px;border-radius:14px;display:grid;place-items:center;
+  width:42px;height:42px;flex:0 0 42px;border-radius:12px;display:grid;place-items:center;
   background:var(--green);color:#FBFDF7;border:1px solid #2A5333;
   box-shadow:0 8px 16px -12px rgba(39,80,51,.9);
 }
 .ai-send:active{transform:scale(.95)}
-.ai-send svg{width:19px;height:19px}
+.ai-send svg{width:18px;height:18px}
 .ai-send[disabled]{opacity:.55}
-.ai-voice-note{font-size:10.5px;color:var(--ink-3);line-height:1.6;margin-top:7px;display:none;background:var(--card-2);border:1px solid var(--line-2);border-radius:9px;padding:7px 9px}
+.ai-voice-note{font-size:10.5px;color:var(--ink-3);line-height:1.55;margin-top:6px;display:none;background:var(--card-2);border:1px solid var(--line-2);border-radius:9px;padding:6px 9px}
 .ai-voice-note.on{display:block}
 .ai-voice-note.warn{color:#8E3628;background:var(--red-wash);border-color:#EFCEC4}
 .ai-voice-note.live{color:#2F5E86;background:var(--water-wash);border-color:#D3E3EF}
-.ai-foot{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.ai-foot .btn-mini{min-height:32px}
-.ai-src{font-size:10px;color:var(--ink-3);line-height:1.6;margin-top:9px}
+.ai-src{font-size:10.5px;color:var(--ink-3);line-height:1.6;margin-top:10px;padding-top:8px;border-top:1px dashed var(--line-2)}
 .ai-src b{color:var(--ink-2);font-weight:600}
 .ai-retry{display:flex;gap:6px;margin:-2px 0 0 31px;flex-wrap:wrap}
 .ai-retry button{font-size:11px;font-weight:600;min-height:32px;padding:0 11px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-2)}
@@ -1132,7 +1168,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
       <div class="section">
         <div class="section-head"><h2>このアプリについて</h2></div>
         <div class="card">
-          <div class="kv"><span>バージョン</span><b id="appVersionRow">1.5.0</b></div>
+          <div class="kv"><span>バージョン</span><b id="appVersionRow">1.5.1</b></div>
           <div class="kv"><span>天気データ</span><b>Open-Meteo</b></div>
           <div class="kv"><span>保存先</span><b>この端末のブラウザ</b></div>
           <div class="divider"></div>
@@ -1189,7 +1225,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
    ========================================================= */
 
 var LS_KEY = 'my_saien_note_v1';
-var APP_VERSION = '1.5.0';
+var APP_VERSION = '1.5.1';
 var KIKU_FLAG_KEY = 'chiu_v123_kiku_added';
 
 /* ---------- tiny helpers ---------- */
@@ -5146,12 +5182,6 @@ function aiErrorText(err) {
 }
 
 /* ---------- 相談シート ---------- */
-function aiSubTitle() {
-  var st = aiStore();
-  if (st.key) return aiProviderLabel(st.provider) + ' と会話中。畑のデータを毎回わたして聞きます。';
-  return '内蔵の菜園アドバイザーが、畑の記録・連作履歴・天気を見て答えます。';
-}
-
 function aiEmptyHTML() {
   var c = aiChat.cropId ? aiCropById(aiChat.cropId) : null;
   return '<div class="ai-empty"><b>' + (c ? esc('「' + c.name + '」のことを聞けます') : '菜園のことを何でも聞けます') + '</b>'
@@ -5161,7 +5191,7 @@ function aiEmptyHTML() {
     + '<li>葉が黄色い・虫がついたときの対処</li>'
     + '<li>収穫の見きわめ方</li>'
     + '</ul>'
-    + '<span style="display:block;margin-top:6px;color:var(--ink-3);font-size:11px">下のボタンからも、1タップで聞けます。</span></div>';
+    + '<span class="hint">下のチップから1タップでも聞けます。マイク🎤で話してもOKです。</span></div>';
 }
 
 function openAiChat(cropId) {
@@ -5180,38 +5210,41 @@ function renderAiSheet() {
   var ctxHTML = '';
   if (ci) {
     ctxHTML = '<div class="ai-ctx"><span class="e" aria-hidden="true">' + esc(ci.emoji) + '</span>'
-      + '<span class="t"><b>' + esc(ci.name) + ' について聞いています</b>'
-      + '<small>' + esc(ci.familyLabel) + '・' + esc(ci.placeText || '場所未設定') + '・植えてから' + ci.days + '日</small>'
-      + '<small>水やり ' + (ci.wateredDays == null ? '記録なし' : ci.wateredDays + '日前') + '／追肥 ' + (ci.feedPauseUntil && todayISO() <= ci.feedPauseUntil ? '休み中' : (ci.fedDays == null ? '記録なし' : ci.fedDays + '日前')) + (ci.harvestAt ? '／収穫目安 ' + fmtMD(ci.harvestAt) : '') + '</small>'
+      + '<span class="t"><b>' + esc(ci.name) + '</b>'
+      + '<small>' + esc(ci.familyLabel) + '</small>'
+      + (ci.placeText ? '<small>' + esc(ci.placeText) + '</small>' : '')
+      + '<small>植えてから' + ci.days + '日</small>'
+      + '<small>水やり ' + (ci.wateredDays == null ? '記録なし' : ci.wateredDays + '日前') + '</small>'
+      + '<small>追肥 ' + (ci.feedPauseUntil && todayISO() <= ci.feedPauseUntil ? '休み中' : (ci.fedDays == null ? '記録なし' : ci.fedDays + '日前')) + '</small>'
+      + (ci.harvestAt ? '<small>収穫目安 ' + fmtMD(ci.harvestAt) + '</small>' : '')
       + (ci.note ? '<small style="color:#5E7A52">メモ：' + esc(ci.note.length > 46 ? ci.note.slice(0, 46) + '…' : ci.note) + '</small>' : '')
       + '</span></div>';
   }
   openSheet(
-    '<div class="sheet-head"><div style="flex:1"><h3>AIに相談</h3><p id="aiSub">' + esc(aiSubTitle()) + '</p></div>'
-    + '<button class="sheet-close" aria-label="閉じる">' + CLOSE_SVG + '</button></div>'
+    '<div class="ai-head">'
+    + '<h3>AIに相談</h3>'
+    + '<button type="button" class="hbtn" id="aiCopy" aria-label="今の畑データ付きで質問文をコピー" title="今の畑データ付きで質問文をコピー"><span aria-hidden="true">📋</span>コピー</button>'
+    + '<button type="button" class="hbtn" id="aiReset" aria-label="会話をリセット" title="会話をリセット"><span aria-hidden="true">🔄</span>リセット</button>'
+    + '<button class="sheet-close" aria-label="閉じる">' + CLOSE_SVG + '</button>'
+    + '</div>'
     + ctxHTML
     + '<div class="ai-log" id="aiLog" role="log" aria-live="polite" aria-label="相談のやりとり"></div>'
     + '<div class="chip-row chip-wrap ai-chips" id="aiChips">'
     + AI_CHIPS.map(function (c, i) {
-      return '<button type="button" class="chip" data-ai-chip="' + i + '" style="min-height:33px;font-size:11.5px">' + esc(c) + '</button>';
+      return '<button type="button" class="chip" data-ai-chip="' + i + '">' + esc(c) + '</button>';
     }).join('')
     + '</div>'
     + '<div class="ai-input-row">'
-    + '<textarea class="field" id="aiInput" rows="1" aria-label="聞きたいことを入力" placeholder="' + esc(ci ? ci.name + 'について聞く（例：水やりは？）' : '例：白菜の葉が黄色い。どうしたらいい？') + '"></textarea>'
+    + '<textarea class="field" id="aiInput" rows="1" aria-label="聞きたいことを入力" placeholder="' + esc(ci ? ci.name + 'について聞く…' : '菜園のことを聞く…') + '"></textarea>'
     + '<button type="button" class="mic-btn" id="aiMic" aria-label="音声で入力" aria-pressed="false" title="音声で入力">🎤</button>'
     + '<button type="button" class="ai-send" id="aiSend" aria-label="送信"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12h15"/><path d="M13 5.5 19.5 12 13 18.5"/></svg></button>'
     + '</div>'
-    + '<p class="ai-voice-note" id="aiVoiceNote"></p>'
-    + '<div class="ai-foot">'
-    + '<button type="button" class="btn-mini" id="aiCopy">📋 今の畑データ付きで質問文をコピー</button>'
-    + '<button type="button" class="btn-mini" id="aiReset">↩️ 会話をリセット</button>'
-    + '</div>'
-    + '<p class="ai-src" id="aiSrc"></p>',
+    + '<p class="ai-voice-note" id="aiVoiceNote"></p>',
     'AIに相談');
 
   var wrap = $('#sheetWrap');
   var sheetEl = $('.sheet', wrap);
-  if (sheetEl) sheetEl.classList.add('sheet-ai');
+  if (sheetEl) sheetEl.classList.add('ai-sheet');
   var inp = $('#aiInput', wrap);
   var sendBtn = $('#aiSend', wrap);
   var micBtn = $('#aiMic', wrap);
@@ -5270,6 +5303,7 @@ function aiRenderLog() {
     html += '<div class="ai-msg err"><span class="av" aria-hidden="true">⚠️</span><div class="bub">' + esc(aiChat.lastError) + '\n\n下のボタンで、内蔵アドバイザーに切りかえて答えることもできます。</div></div>'
       + '<div class="ai-retry"><button type="button" data-ai-retry="1">もう一度</button><button type="button" data-ai-builtin="1">内蔵アドバイザーで答える</button></div>';
   }
+  if (!aiChat.messages.length && !aiChat.busy && !aiChat.lastError) html += '<p class="ai-src" id="aiSrc"></p>';
   log.innerHTML = html;
   var sb = $('#aiSend');
   if (sb) sb.disabled = !!aiChat.busy;
@@ -5376,8 +5410,6 @@ function aiUpdateSource() {
   el.innerHTML = st.key
     ? '<b>' + esc(aiProviderLabel(st.provider)) + '</b> の回答です。APIキーはこの端末にだけ保存されています。'
     : '<b>内蔵の菜園アドバイザー</b>：アプリ内の畑データ・連作履歴・天気・関西の月別目安から作成しています。土と葉の様子を見て調整してください。';
-  var sub = $('#aiSub');
-  if (sub) sub.textContent = aiSubTitle();
 }
 
 function aiCopyPrompt() {
@@ -5390,7 +5422,7 @@ function aiAutoGrow(el) {
   if (!el) return;
   try {
     el.style.height = 'auto';
-    el.style.height = Math.min(118, Math.max(46, el.scrollHeight)) + 'px';
+    el.style.height = Math.min(104, Math.max(42, el.scrollHeight)) + 'px';
   } catch (e) { }
 }
 
