@@ -4807,6 +4807,18 @@ function aiSectionFeed(ctx) {
   return L;
 }
 
+function aiCompanion(name) {
+  var good = [], bad = [];
+  var n = String(name || '');
+  if (!n) return { good: good, bad: bad };
+  function hit(a, b) {
+    return n.indexOf(a) >= 0 || n.indexOf(b) >= 0 || (a.length > 1 && a.indexOf(n) >= 0) || (b.length > 1 && b.indexOf(n) >= 0);
+  }
+  COMPANION.good.forEach(function (p) { if (hit(p[0], p[1])) good.push(p[0] + '＋' + p[1] + '：' + p[2]); });
+  COMPANION.bad.forEach(function (p) { if (hit(p[0], p[1])) bad.push(p[0] + '＋' + p[1] + '：' + p[2]); });
+  return { good: good, bad: bad };
+}
+
 function aiSectionNext(ctx) {
   var L = ['🔄 次に植えるなら'];
   var ci = ctx.cropInfo;
@@ -4857,6 +4869,9 @@ function aiSectionNext(ctx) {
   } else {
     L.push('・「菜園管理 → 畑マップ」で区画をタップすると、その場所の連作に合わせた候補が出ます。');
   }
+  var comp = ci ? aiCompanion(ci.name) : { good: [], bad: [] };
+  if (comp.good.length) L.push('・一緒に植えると助け合う組み合わせ：' + comp.good[0]);
+  if (comp.bad.length) L.push('・近くに置かないほうがいい組み合わせ：' + comp.bad[0]);
   return L;
 }
 
@@ -4869,6 +4884,11 @@ function aiSectionPest(ctx, q) {
   var ci = ctx.cropInfo;
   var kn = ci ? aiKnow(ci.name) : null;
   if (kn && kn.pest) L.push('・' + ci.name + 'で気をつけたいのは ' + kn.pest);
+  if (ci) {
+    var comp = aiCompanion(ci.name);
+    if (comp.good.length) L.push('・害虫よけの味方：' + comp.good[0]);
+    if (comp.bad.length) L.push('・近くに置かないほうがいい組み合わせ：' + comp.bad[0]);
+  }
   if (!hit) L.push('・葉の表と裏、株元を見て、虫・卵・斑点の場所を特定するのが第一歩。見つけた虫は捕り、かかった葉は切って畑の外へ。');
   L.push('・薬を使うときは必ずラベルの希釈と回数を守り、収穫前日数の表示を確認してください。');
   return L;
@@ -4957,7 +4977,8 @@ function aiTopicsOf(q) {
 function builtinAnswer(q, ctx) {
   var topics = aiTopicsOf(q);
   var blocks = [];
-  var budget = 2;
+  /* 水やりと追肥はセットで聞かれることが多いので両方返す。それ以外は一番近い話題に絞る */
+  var budget = (topics.indexOf('water') >= 0 && topics.indexOf('feed') >= 0) ? 2 : 1;
   topics.forEach(function (tp) {
     if (budget <= 0) return;
     var b = null;
