@@ -554,6 +554,40 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .toast .t-ico{font-size:14px}
 
+/* ========== rotation (連作防止) ========== */
+.rot{padding:14px 14px 12px}
+.rot-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rot-head b{font-family:var(--serif);font-size:15.5px;letter-spacing:.02em;line-height:1.4}
+.rot-head .spacer{flex:1}
+.rot-head .link-btn{margin-left:auto}
+.rot-line{display:flex;gap:7px;font-size:12px;line-height:1.65;color:var(--ink-2);margin-top:7px}
+.rot-line i{font-style:normal;color:var(--ink-3);font-size:11px;flex:0 0 42px;padding-top:1px}
+.rot-line .v{flex:1;min-width:0}
+.rot-hist{margin-top:9px;padding-top:6px;border-top:1px dashed var(--line-2)}
+.rot-hist-head{font-size:11px;color:var(--ink-3);letter-spacing:.04em;margin-bottom:1px}
+.rot-next{margin-top:10px;background:var(--green-wash);border:1px solid #DCE8CC;border-radius:10px;padding:8px 10px;font-size:12px;line-height:1.65;color:#33582E}
+.rot-next b{font-weight:700;display:block;margin-bottom:1px}
+.rot-empty{font-size:11.5px;color:var(--ink-3);line-height:1.7}
+.hist-row{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px dashed var(--line-2);font-size:12px;line-height:1.6}
+.hist-row:last-child{border-bottom:0;padding-bottom:0}
+.hist-row .h-when{flex:0 0 104px;color:var(--ink-3);font-size:10.5px;line-height:1.7;font-variant-numeric:tabular-nums}
+.hist-row .h-body{flex:1;min-width:0;color:var(--ink-2)}
+.hist-row .h-body b{font-weight:600;color:var(--ink)}
+.hist-row .link-btn{flex:0 0 auto;font-size:10.5px}
+.rot-warn .w{display:flex;gap:9px;padding:10px 12px;border-radius:12px;border:1px solid;font-size:12px;line-height:1.7;margin-top:8px}
+.rot-warn .w b{font-weight:700}
+.rot-warn .w.red{background:var(--red-wash);border-color:#EFCEC4;color:#8E3628}
+.rot-warn .w.yellow{background:var(--sun-wash);border-color:#EEDFB4;color:#8A6512}
+.rot-warn .w.ok{background:var(--green-wash);border-color:#DCE8CC;color:#33582E}
+.rot-warn-head{font-size:11px;color:var(--ink-3);letter-spacing:.04em;margin:10px 2px 0}
+.finish-btn{display:flex;width:100%;align-items:center;justify-content:center;gap:5px;margin-top:10px;min-height:38px;border-radius:11px;border:1px dashed #D9D2BE;background:var(--card-2);font-size:11.5px;font-weight:600;color:var(--ink-2);letter-spacing:.01em}
+.finish-btn:active{background:var(--green-wash);color:var(--green)}
+.rot-sum{display:flex;align-items:center;gap:8px;background:var(--card-2);border:1px solid var(--line-2);border-radius:12px;padding:10px 12px;font-size:13px}
+.rot-sum .e{font-size:20px;line-height:1}
+.rot-sum .t{flex:1;min-width:0}
+.rot-sum .t b{display:block;font-weight:600;line-height:1.4}
+.rot-sum .t small{font-size:11px;color:var(--ink-3)}
+
 /* misc */
 .sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .fade-list>*{animation:itemIn .3s ease both}
@@ -649,7 +683,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
     <!-- ============ 菜園管理 ============ -->
     <section class="view" id="view-garden" data-view="garden" aria-labelledby="tab-garden">
       <h1 class="page-title">菜園管理</h1>
-      <p class="page-lead">植えた野菜とプランターの記録。カードのボタン1つで水やり・追肥・収穫を残せます。</p>
+      <p class="page-lead">植えた野菜とプランターの記録。カードのボタン1つで水やり・追肥・収穫を残せます。収穫が終わったら「収穫完了・片付け」で、場所ごとの履歴に残せます。</p>
 
       <div class="section-head" style="margin-top:4px">
         <h2>栽培中</h2>
@@ -661,6 +695,19 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
         </button>
       </div>
       <div id="cropList" class="stack fade-list"></div>
+
+      <div class="section" id="rotationSection">
+        <div class="section-head">
+          <h2>場所ごとの連作防止</h2>
+          <span class="spacer"></span>
+          <button class="btn-mini" id="btnAddHistory">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            履歴を追加
+          </button>
+        </div>
+        <p class="section-note">同じ科を同じ場所に続けると、養分が偏り病害虫が増えやすくなります。場所ごとの「これまで」を見て、次に植える科を決めましょう。</p>
+        <div id="rotationBoard" class="stack"></div>
+      </div>
 
       <div class="section">
         <div class="section-head"><h2>コンパニオンプランツ相性表</h2></div>
@@ -861,6 +908,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
         <div class="card">
           <div class="kv"><span>登録している作物</span><b id="dataCrops">0 件</b></div>
           <div class="kv"><span>お世話・収穫の記録</span><b id="dataLogs">0 件</b></div>
+          <div class="kv"><span>場所ごとの栽培履歴</span><b id="dataHistory">0 件</b></div>
           <div class="kv"><span>保存した下書き</span><b id="dataDrafts">0 件</b></div>
           <div class="divider"></div>
           <div class="grid2">
@@ -887,7 +935,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
       <div class="section">
         <div class="section-head"><h2>このアプリについて</h2></div>
         <div class="card">
-          <div class="kv"><span>バージョン</span><b>1.2.3</b></div>
+          <div class="kv"><span>バージョン</span><b>1.3.0</b></div>
           <div class="kv"><span>天気データ</span><b>Open-Meteo</b></div>
           <div class="kv"><span>保存先</span><b>この端末のブラウザ</b></div>
           <div class="divider"></div>
@@ -940,7 +988,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
    ========================================================= */
 
 var LS_KEY = 'my_saien_note_v1';
-var APP_VERSION = '1.2.3';
+var APP_VERSION = '1.3.0';
 var KIKU_FLAG_KEY = 'chiu_v123_kiku_added';
 
 /* ---------- tiny helpers ---------- */
@@ -1071,6 +1119,160 @@ var COMPANION = {
     ['イチゴ', 'キャベツ', '害虫の種類が重なり、養分の取り合いにもなりやすい。']
   ]
 };
+
+/* ---------- 連作防止（科の自動判定・推奨あけ年数・場所ごとの履歴） ---------- */
+var FAMILY_ORDER = ['アブラナ科', 'ナス科', 'マメ科', 'ウリ科', 'ヒガンバナ科', 'キク科', 'バラ科', 'セリ科', 'ヒユ科', 'イネ科', 'サトイモ科', 'ヒルガオ科', 'シソ科', 'アオイ科'];
+
+/* 作物名に含まれる言葉から科を判定する。長く一致した言葉を優先するので、
+   「ミニ白菜」は「白菜」、「ツタンカーメン豆」は「豆」でマメ科になる。 */
+var FAMILY_RULES = [
+  { f: 'ナス科', rest: [3, 4], keys: ['トマト', 'ナス', 'なす', 'ピーマン', 'パプリカ', 'シシトウ', 'トウガラシ', 'とうがらし', '唐辛子', '鷹の爪', 'ジャガイモ', 'じゃがいも', 'ペチュニア'] },
+  { f: 'マメ科', rest: [3, 4], keys: ['スナップエンドウ', 'エンドウ', 'えんどう', 'ツタンカーメン', 'そら豆', 'ソラマメ', '空豆', '枝豆', 'エダマメ', 'えだまめ', '大豆', 'インゲン', 'いんげん', '落花生', 'ラッカセイ', 'ささげ', 'レンゲ', 'クローバー', '豆'] },
+  { f: 'アブラナ科', rest: [2, 3], keys: ['ミニ白菜', '白菜', 'キャベツ', 'きゃべつ', 'ブロッコリー', 'カリフラワー', '大根', 'だいこん', 'ダイコン', 'カブ', 'かぶ', '小松菜', 'こまつな', '水菜', 'みずな', 'ラディッシュ', '二十日大根', 'ケール', 'チンゲンサイ', '青梗菜', 'からし菜', '野沢菜', 'ルッコラ', '芽キャベツ', 'ワサビ', '菜の花'] },
+  { f: 'ウリ科', rest: [2, 3], keys: ['キュウリ', 'きゅうり', '胡瓜', 'ゴーヤ', 'にがうり', '苦瓜', 'カボチャ', 'かぼちゃ', '南瓜', 'ズッキーニ', 'スイカ', 'すいか', '西瓜', 'メロン', 'ヘチマ', 'ヒョウタン', 'ユウガオ'] },
+  { f: 'ヒガンバナ科', rest: [1, 1], keys: ['たまねぎ', '玉ねぎ', 'タマネギ', 'ねぎ', 'ネギ', 'ニンニク', 'にんにく', 'ニラ', 'にら', 'ラッキョウ', 'らっきょう', 'アリウム', 'ヒガンバナ'] },
+  { f: 'キク科', rest: [1, 2], keys: ['レタス', 'サニーレタス', 'リーフレタス', '春菊', 'シュンギク', 'しゅんぎく', '菊', 'きく', 'ゴボウ', 'ごぼう', 'アーティチョーク', 'マリーゴールド', 'ヒマワリ', 'ひまわり', 'ダリア', 'キクイモ'] },
+  { f: 'バラ科', rest: [2, 3], keys: ['イチゴ', 'いちご', '苺', 'ラズベリー', 'ブラックベリー', 'リンゴ', 'さくらんぼ', 'モモ', 'バラ'] },
+  { f: 'セリ科', rest: [2, 3], keys: ['ニンジン', 'にんじん', '人参', 'セロリ', 'パセリ', '三つ葉', 'ミツバ', 'ディル', 'フェンネル', 'パクチー', 'コリアンダー', 'アシタバ'] },
+  { f: 'ヒユ科', rest: [1, 2], keys: ['ほうれん草', 'ホウレンソウ', 'ほうれんそう', 'ビート', 'スイスチャード', 'テンサイ'] },
+  { f: 'イネ科', rest: [2, 3], keys: ['とうもろこし', 'トウモロコシ', 'スイートコーン', 'コーン', '麦', 'イネ'] },
+  { f: 'サトイモ科', rest: [2, 3], keys: ['サトイモ', 'さといも', '里芋', 'コンニャク'] },
+  { f: 'ヒルガオ科', rest: [2, 3], keys: ['サツマイモ', 'さつまいも', '薩摩芋', 'アサガオ', 'ヨルガオ'] },
+  { f: 'シソ科', rest: [1, 2], keys: ['シソ', 'しそ', '大葉', 'バジル', 'ミント', 'ローズマリー', 'タイム', 'オレガノ', 'セージ', 'ラベンダー', 'レモンバーム'] },
+  { f: 'アオイ科', rest: [1, 2], keys: ['オクラ', 'おくら', 'ローゼル', 'ハイビスカス'] }
+];
+
+var FAMILY_REST = {};
+FAMILY_RULES.forEach(function (r) { if (!FAMILY_REST[r.f]) FAMILY_REST[r.f] = r.rest; });
+
+function guessFamily(name) {
+  var n = String(name == null ? '' : name).trim();
+  if (!n) return '';
+  var best = '', bestLen = 0;
+  FAMILY_RULES.forEach(function (r) {
+    r.keys.forEach(function (k) {
+      if (n.indexOf(k) >= 0 && k.length > bestLen) { bestLen = k.length; best = r.f; }
+    });
+  });
+  return best;
+}
+function familyText(f) { return f ? f : '科不明'; }
+function familyRest(f) { return FAMILY_REST[f] || [1, 2]; }
+function restText(f) { var r = familyRest(f); return r[0] === r[1] ? r[0] + '年' : r[0] + '〜' + r[1] + '年'; }
+function familyOptionsHTML(cur) {
+  var c = String(cur || '');
+  return '<option value=""' + (c ? '' : ' selected') + '>科不明（自動判定なし）</option>'
+    + FAMILY_ORDER.map(function (f) {
+      return '<option value="' + f + '"' + (f === c ? ' selected' : '') + '>' + f + '（' + restText(f) + 'あける）</option>';
+    }).join('');
+}
+
+/* 直近の科から見た「次に植えやすい科」 */
+var NEXT_FAMILY = {
+  'アブラナ科': ['マメ科', 'ヒガンバナ科'],
+  'ナス科': ['アブラナ科', 'マメ科', 'ヒガンバナ科'],
+  'マメ科': ['アブラナ科', 'ウリ科'],
+  'ウリ科': ['アブラナ科', 'マメ科', 'ヒガンバナ科'],
+  'ヒガンバナ科': ['ナス科', 'ウリ科', 'アブラナ科'],
+  'キク科': ['アブラナ科', 'マメ科'],
+  'バラ科': ['マメ科', 'アブラナ科'],
+  'セリ科': ['アブラナ科', 'マメ科'],
+  'ヒユ科': ['アブラナ科', 'マメ科'],
+  'イネ科': ['マメ科', 'アブラナ科'],
+  'サトイモ科': ['マメ科', 'アブラナ科'],
+  'ヒルガオ科': ['アブラナ科', 'マメ科'],
+  'シソ科': ['アブラナ科', 'マメ科'],
+  'アオイ科': ['アブラナ科', 'マメ科']
+};
+var NEXT_NOTE = {
+  'アブラナ科': 'アブラナ科の後は、窒素を補うマメ科や、土の病菌を抑えるといわれるネギ類（ヒガンバナ科）が向きます。',
+  'ナス科': 'ナス科は3〜4年あけたい科。アブラナ科・マメ科・ネギ類に回すと土の負担が軽くなります。',
+  'マメ科': 'マメ科は根粒菌が窒素を残すので、葉物のアブラナ科や実もののウリ科がよく育ちます。',
+  'ウリ科': 'ウリ科の後はアブラナ科やマメ科へ。ネギ類を1年はさむと土の病菌が減るといわれます。',
+  'ヒガンバナ科': 'ネギ類の後はナス科・ウリ科が元気に育ちます。同じネギ類だけは1年あけましょう。',
+  'キク科': 'レタス・菊の後はアブラナ科かマメ科へ。キク科は1〜2年あけると安心です。',
+  'バラ科': 'イチゴの後はマメ科かアブラナ科へ。バラ科は2〜3年あけたい科です。',
+  'セリ科': 'ニンジンなどの後はアブラナ科かマメ科へ。セリ科は2〜3年あけましょう。',
+  'ヒユ科': 'ほうれん草の後はアブラナ科かマメ科へ。ヒユ科は1〜2年あけると安心です。',
+  'イネ科': 'とうもろこしの後はマメ科かアブラナ科へ。イネ科は2〜3年あけましょう。',
+  'サトイモ科': 'サトイモの後はマメ科かアブラナ科へ。サトイモ科は2〜3年あけましょう。',
+  'ヒルガオ科': 'サツマイモの後はアブラナ科かマメ科へ。ヒルガオ科は2〜3年あけましょう。',
+  'シソ科': 'シソ・ハーブの後はアブラナ科かマメ科へ。シソ科は1〜2年あけると安心です。',
+  'アオイ科': 'オクラの後はアブラナ科かマメ科へ。アオイ科は1〜2年あけると安心です。'
+};
+var NEXT_NOTE_DEFAULT = '同じ科を続けず、葉物→実もの→根もののように回すと土が偏りません。';
+function nextFamilies(f) { return (f && NEXT_FAMILY[f]) ? NEXT_FAMILY[f] : ['アブラナ科', 'マメ科']; }
+
+/* ---------- 年月まわりの小さな道具 ---------- */
+function currentMonth() { return todayISO().slice(0, 7); }
+function monthOfISO(iso) {
+  var m = /^(\d{4})-(\d{1,2})/.exec(String(iso || ''));
+  return m ? m[1] + '-' + pad2(+m[2]) : '';
+}
+function monthLabel(ym) {
+  var m = /^(\d{4})-(\d{1,2})/.exec(String(ym || ''));
+  return m ? (+m[1]) + '年' + (+m[2]) + '月' : '—';
+}
+/* その月の末日を「終わった時期」として、今までの年数を返す */
+function yearsSinceMonth(ym) {
+  var m = /^(\d{4})-(\d{1,2})/.exec(String(ym || ''));
+  if (!m) return null;
+  var end = new Date(+m[1], +m[2], 0, 23, 59, 59);
+  if (isNaN(end.getTime())) return null;
+  return (Date.now() - end.getTime()) / 86400000 / 365.25;
+}
+
+/* ---------- 場所ごとの栽培履歴 ---------- */
+function allHistory() { return Array.isArray(state.rotationHistory) ? state.rotationHistory : []; }
+function byEndedDesc(a, b) { return String(b.endedAt || '').localeCompare(String(a.endedAt || '')); }
+function historyForPlace(p) {
+  return allHistory().filter(function (h) { return (h.place || '') === (p || ''); }).slice().sort(byEndedDesc);
+}
+function cropsInPlace(p) {
+  return state.crops.filter(function (c) { return cropPlaces(c).indexOf(p) >= 0; });
+}
+function historyYearText(h) { return monthLabel(h.startedAt) + '〜' + monthLabel(h.endedAt); }
+
+/* 同じ科の連作になりそうな点を集める（保存は止めず、判断材料として見せる） */
+function rotationWarnings(family, places, excludeIds) {
+  var fam = String(family || '');
+  var skip = Array.isArray(excludeIds) ? excludeIds : (excludeIds ? [excludeIds] : []);
+  var out = [];
+  if (!fam) return out;
+  uniqPlaces(places).forEach(function (p) {
+    cropsInPlace(p).forEach(function (c) {
+      if (skip.indexOf(c.id) >= 0) return;
+      var cf = c.family || guessFamily(c.name);
+      if (cf !== fam) return;
+      out.push({
+        level: 'red', place: p,
+        text: p + 'には今「' + c.name + '（' + familyText(cf) + '）」が植わっています。同じ科が重なると病害虫が増えやすいので、別の場所か別の科がおすすめです。'
+      });
+    });
+    historyForPlace(p).forEach(function (h) {
+      var hf = h.family || guessFamily(h.name);
+      if (hf !== fam) return;
+      var yrs = yearsSinceMonth(h.endedAt);
+      if (yrs === null) return;
+      if (yrs < 0) yrs = 0;
+      var r = familyRest(hf);
+      if (yrs >= r[1]) return;
+      if (yrs < r[0]) {
+        var need = Math.max(1, Math.ceil(r[0] - yrs));
+        out.push({
+          level: 'red', place: p,
+          text: p + 'では' + historyYearText(h) + 'に「' + h.name + '（' + familyText(hf) + '）」を栽培していました。' + familyText(hf) + 'は' + restText(hf) + 'あけるのがおすすめです。あと約' + need + '年あけましょう。'
+        });
+      } else {
+        out.push({
+          level: 'yellow', place: p,
+          text: p + 'では' + historyYearText(h) + 'に「' + h.name + '（' + familyText(hf) + '）」を栽培していました。' + familyText(hf) + 'は' + restText(hf) + 'が目安です。できれば別の科にすると安心です。'
+        });
+      }
+    });
+  });
+  return out;
+}
 
 /* ---------- monthly planting guide (Kansai / Kobe) ---------- */
 var PLANTING = {
@@ -1364,12 +1566,14 @@ function loadState() {
   s.crops = Array.isArray(s.crops) ? s.crops : [];
   s.logs = Array.isArray(s.logs) ? s.logs : [];
   s.drafts = Array.isArray(s.drafts) ? s.drafts : [];
+  s.rotationHistory = Array.isArray(s.rotationHistory) ? s.rotationHistory : [];
   s.crops = s.crops.map(function (c) {
     var places = cropPlaces(c);
     return {
       id: c.id || uid(),
       name: c.name || '野菜',
       emoji: c.emoji || guessEmoji(c.name),
+      family: c.family || guessFamily(c.name) || '',
       plantedAt: c.plantedAt || todayISO(),
       place: places.join('・'),
       places: places,
@@ -1443,6 +1647,7 @@ function cropFromSeed(c) {
   var places = Array.isArray(c.places) ? uniqPlaces(c.places) : [];
   return {
     id: uid(), name: c.name, emoji: c.emoji, plantedAt: c.plantedAt,
+    family: c.family || guessFamily(c.name) || '',
     place: places.join('・'), places: places, harvestAt: c.harvestAt || null, note: c.note,
     waterDays: c.waterDays > 0 ? c.waterDays : null,
     feedDays: c.feedDays > 0 ? c.feedDays : null,
@@ -2027,7 +2232,8 @@ function renderMonthTeaser() {
 function renderRecent() {
   var host = $('#recentList');
   if (!host) return;
-  var logs = state.logs.slice().sort(function (a, b) { return new Date(b.at) - new Date(a.at); }).slice(0, 5);
+  var logs = state.logs.filter(function (l) { return state.crops.some(function (c) { return c.id === l.cropId; }); })
+    .sort(function (a, b) { return new Date(b.at) - new Date(a.at); }).slice(0, 5);
   if (!logs.length) {
     host.innerHTML = '<div class="task-empty" style="padding:12px 4px">まだ記録がありません。<br>菜園管理のカードから1タップで残せます。</div>';
     return;
@@ -2094,6 +2300,7 @@ function cropCard(c) {
     + '<div class="crop-meta">'
     + '<span><i>植えた</i> ' + fmtMD(c.plantedAt) + (planted != null ? '（' + (planted + 1) + '日目）' : '') + '</span>'
     + (c.harvestAt ? '<span><i>収穫目安</i> ' + fmtMD(c.harvestAt) + '</span>' : '')
+    + '<span><i>科</i> ' + esc(familyText(c.family || guessFamily(c.name))) + '</span>'
     + '<span><i>収穫</i> ' + hCount + '回</span>'
     + '</div>'
     + (c.note ? '<div class="crop-note">' + esc(c.note) + '</div>' : '')
@@ -2102,6 +2309,7 @@ function cropCard(c) {
     + '<button class="care feed" data-care="feed" data-id="' + esc(c.id) + '"><i aria-hidden="true">🌱</i>追肥した</button>'
     + '<button class="care harvest" data-care="harvest" data-id="' + esc(c.id) + '"><i aria-hidden="true">🍅</i>収穫記録</button>'
     + '</div>'
+    + '<button class="finish-btn" data-finish="' + esc(c.id) + '">🧺 収穫完了・片付け（場所の履歴へ）</button>'
     + '<div class="crop-foot">'
     + '<span>水やり ' + relDay(c.lastWateredAt) + '</span>'
     + '<span>追肥 ' + relDay(c.lastFedAt) + '</span>'
@@ -2179,7 +2387,7 @@ function placeOptions() {
 }
 
 /* 場所を選ぶチップ（複数選択可）。リストにない場所は「その他」＋入力欄にいれる */
-function placePickerHTML(current) {
+function placePickerHTML(current, label) {
   var opts = placeOptions();
   var names = normalizePlaces(state.settings.places);
   var cur = uniqPlaces(Array.isArray(current) ? current : splitPlaces(current));
@@ -2189,7 +2397,7 @@ function placePickerHTML(current) {
     var on = p === OTHER_PLACE ? otherOn : cur.indexOf(p) >= 0;
     return '<button type="button" class="chip' + (on ? ' on' : '') + '" data-place="' + esc(p) + '" aria-pressed="' + (on ? 'true' : 'false') + '" style="min-height:40px">' + esc(p) + '</button>';
   }).join('');
-  return '<div class="form-row"><label class="form-label">植える場所（複数OK）</label>'
+  return '<div class="form-row"><label class="form-label">' + esc(label || '植える場所（複数OK）') + '</label>'
     + '<div class="chip-row chip-wrap" id="placeRow">' + chips + '</div>'
     + '<p class="hint" style="margin-top:8px">複数の場所に植えているときは、続けておして選べます。選んだ場所をもう一度おすと、その場所だけ外れます。</p>'
     + '<div id="placeCustomWrap" style="margin-top:6px"' + (otherOn ? '' : ' hidden') + '>'
@@ -2227,6 +2435,7 @@ function openCropSheet(id) {
   var planted = c ? c.plantedAt : todayISO();
   var daysVal = (c && c.harvestAt) ? diffDays(planted, c.harvestAt) : '';
   var dateVal = (c && c.harvestAt) ? c.harvestAt : '';
+  var famVal = c ? (c.family || guessFamily(c.name) || '') : '';
 
   var emojis = EMOJI_CHOICES.map(function (e) {
     return '<button type="button" class="chip' + (e === sheetEmoji ? ' on' : '') + '" data-emoji="' + e + '" style="min-height:42px;width:42px;padding:0;justify-content:center;font-size:19px">' + e + '</button>';
@@ -2239,10 +2448,14 @@ function openCropSheet(id) {
     + '<div class="form-row"><label class="form-label" for="fName">野菜・植物名 <span class="req">必須</span></label>'
     + '<input class="field" id="fName" type="text" placeholder="例: スナップエンドウ" value="' + esc(c ? c.name : '') + '" autocomplete="off">'
     + '<p class="hint" id="nameErr" style="color:#A4553F" hidden>名前を入れてください</p></div>'
+    + '<div class="form-row"><label class="form-label" for="fFamily">科（連作チェックに使います）</label>'
+    + '<select class="field" id="fFamily">' + familyOptionsHTML(famVal) + '</select>'
+    + '<p class="hint" id="familyHint">' + (famVal ? '名前から自動で「' + esc(familyText(famVal)) + '」と判定しています。違う科のときは選び直してください。' : '一覧から科を選ぶと、連作のチェックが効きます。') + '</p></div>'
     + '<div class="form-row"><label class="form-label">アイコン</label>'
     + '<div class="chip-row" id="emojiRow">' + emojis + '</div></div>'
     + '<div class="form-row"><label class="form-label" for="fPlanted">植えた日</label><input class="field" id="fPlanted" type="date" value="' + esc(planted) + '"></div>'
     + placePickerHTML(c ? cropPlaces(c) : [])
+    + '<div class="rot-warn" id="rotWarn" aria-live="polite"></div>'
     + '<div class="form-row"><label class="form-label">収穫の目安</label>'
     + '<div class="chip-row" style="margin-bottom:8px">'
     + '<button type="button" class="chip on" data-mode="days">日数で入力</button>'
@@ -2283,16 +2496,50 @@ function openCropSheet(id) {
       var on = !b.classList.contains('on');
       b.classList.toggle('on', on);
       b.setAttribute('aria-pressed', on ? 'true' : 'false');
-      if (b.getAttribute('data-place') !== OTHER_PLACE) return;
+      if (b.getAttribute('data-place') !== OTHER_PLACE) { refreshWarn(); return; }
       var customWrap = $('#placeCustomWrap', wrap);
       if (customWrap) customWrap.hidden = !on;
       if (on) {
         var inp = $('#fPlaceCustom', wrap);
         if (inp) { try { inp.focus({ preventScroll: true }); } catch (e) { } }
       }
+      refreshWarn();
     });
   });
   var nameEl = $('#fName', wrap);
+  var familyEl = $('#fFamily', wrap);
+  var familyTouched = false;
+
+  function familyHintText(f) {
+    return f ? '名前から自動で「' + familyText(f) + '」と判定しています。違う科のときは選び直してください。'
+      : '一覧から科を選ぶと、連作のチェックが効きます。';
+  }
+  /* 科と場所が決まった時点で、同じ科の連作をその場で知らせる */
+  function refreshWarn() {
+    var host = $('#rotWarn', wrap);
+    if (!host) return;
+    var fam = familyEl ? familyEl.value : '';
+    var places = pickedPlaces(wrap);
+    if (!fam || !places.length) { host.innerHTML = ''; return; }
+    var warns = rotationWarnings(fam, places, c ? [c.id] : []).slice(0, 4);
+    if (!warns.length) {
+      host.innerHTML = '<div class="w ok"><span aria-hidden="true">✅</span><span><b>' + esc(places.join('・')) + 'は連作の心配なし。</b>同じ科の野菜は、栽培中にも履歴にもありませんでした。</span></div>';
+      return;
+    }
+    host.innerHTML = '<div class="rot-warn-head">連作のチェック</div>' + warns.map(function (w) {
+      return '<div class="w ' + w.level + '"><span aria-hidden="true">' + (w.level === 'red' ? '⚠️' : '🌤️') + '</span><span>' + esc(w.text) + '</span></div>';
+    }).join('');
+  }
+  if (familyEl) {
+    familyEl.addEventListener('change', function () {
+      familyTouched = true;
+      var fh = $('#familyHint', wrap);
+      if (fh) fh.textContent = familyHintText(familyEl.value);
+      refreshWarn();
+    });
+  }
+  var customInput = $('#fPlaceCustom', wrap);
+  if (customInput) customInput.addEventListener('input', refreshWarn);
   nameEl.addEventListener('input', function () {
     var g = guessEmoji(nameEl.value);
     if (g !== '🌱') {
@@ -2302,7 +2549,15 @@ function openCropSheet(id) {
         if (on) sheetEmoji = g;
       });
     }
+    if (!familyTouched && familyEl) {
+      var gf = guessFamily(nameEl.value);
+      if (gf && gf !== familyEl.value) familyEl.value = gf;
+      var fh = $('#familyHint', wrap);
+      if (fh) fh.textContent = familyHintText(familyEl.value);
+    }
+    refreshWarn();
   });
+  refreshWarn();
   $('[data-cx="cancel"]', wrap).addEventListener('click', closeSheet);
   var delBtn = $('[data-cx="delete"]', wrap);
   if (delBtn) {
@@ -2326,6 +2581,7 @@ function openCropSheet(id) {
     var data = {
       name: name,
       emoji: sheetEmoji,
+      family: familyEl ? (familyEl.value || guessFamily(name) || '') : (guessFamily(name) || ''),
       plantedAt: p,
       places: places,
       place: places.join('・'),
@@ -2360,6 +2616,209 @@ function askDeleteCrop(c) {
       toast('削除しました', '🗑️');
     }
   });
+}
+
+/* ---------- 収穫完了・片付け（栽培履歴へ） ---------- */
+function openFinishSheet(id) {
+  var c = state.crops.filter(function (x) { return x.id === id; })[0];
+  if (!c) return;
+  var fam = c.family || guessFamily(c.name) || '';
+  var places = cropPlaces(c);
+  var startM = monthOfISO(c.plantedAt);
+  openSheet(
+    '<div class="sheet-head"><div style="flex:1"><h3>「' + esc(c.name) + '」を片付けますか？</h3>'
+    + '<p>収穫を終えた野菜を「栽培中」から外し、植えていた場所ごとの栽培履歴に残します。次の野菜を植えるときの連作チェックに使います。</p></div>'
+    + '<button class="sheet-close" aria-label="閉じる">' + CLOSE_SVG + '</button></div>'
+    + '<div class="rot-sum"><span class="e" aria-hidden="true">' + esc(c.emoji || '🌱') + '</span>'
+    + '<span class="t"><b>' + esc(c.name) + '</b><small>' + esc(familyText(fam)) + ' ・ ' + (places.length ? esc(places.join('・')) : '場所未設定') + ' ・ ' + esc(monthLabel(startM)) + 'から</small></span></div>'
+    + '<div class="form-row" style="margin-top:14px"><label class="form-label" for="fEndMonth">片付けた年月</label>'
+    + '<input class="field" id="fEndMonth" type="month" value="' + esc(currentMonth()) + '">'
+    + '<p class="hint">収穫が終わった月を選んでください。履歴には「' + esc(monthLabel(startM)) + '〜選んだ月」で残ります。</p></div>'
+    + (places.length
+      ? '<p class="hint">履歴に入る場所：' + esc(places.join('・')) + '</p>'
+      : '<p class="hint" style="color:#A4553F">場所が未設定です。履歴は「場所未設定」として残ります。次に植えるときのチェックを効かせるには、編集から場所を入れておきましょう。</p>')
+    + '<div class="sheet-actions">'
+    + '<button class="btn ghost" data-fx="cancel">キャンセル</button>'
+    + '<button class="btn clay" id="finishOk">履歴に残す</button>'
+    + '</div>', c.name + 'を片付ける');
+
+  var wrap = $('#sheetWrap');
+  $('[data-fx="cancel"]', wrap).addEventListener('click', closeSheet);
+  $('#finishOk', wrap).addEventListener('click', function () {
+    var endM = $('#fEndMonth', wrap).value;
+    if (!/^\d{4}-\d{2}$/.test(String(endM || ''))) endM = currentMonth();
+    if (startM && endM < startM) endM = startM;
+    var targets = places.length ? places : [''];
+    var now = new Date().toISOString();
+    state.rotationHistory = allHistory().concat(targets.map(function (p) {
+      return {
+        id: uid(), name: c.name, family: fam, place: p,
+        startedAt: startM, endedAt: endM, note: '', createdAt: now
+      };
+    }));
+    state.crops = state.crops.filter(function (x) { return x.id !== c.id; });
+    saveState();
+    closeSheet();
+    renderAll();
+    toast('「' + c.name + '」を履歴に残しました（' + monthLabel(startM) + '〜' + monthLabel(endM) + '）', '🧺');
+  });
+}
+
+/* ---------- 過去の栽培を手で記録（履歴の追加） ---------- */
+function openHistorySheet(place) {
+  var preset = place ? [place] : [];
+  openSheet(
+    '<div class="sheet-head"><div style="flex:1"><h3>過去の栽培を記録</h3>'
+    + '<p>アプリを使い始める前に植えていた野菜も、場所ごとに残しておくと連作の判断に使えます。</p></div>'
+    + '<button class="sheet-close" aria-label="閉じる">' + CLOSE_SVG + '</button></div>'
+    + '<div class="form-row"><label class="form-label" for="hName">野菜・植物名 <span class="req">必須</span></label>'
+    + '<input class="field" id="hName" type="text" placeholder="例: ミニ白菜" autocomplete="off">'
+    + '<p class="hint" id="hNameErr" style="color:#A4553F" hidden>名前を入れてください</p></div>'
+    + '<div class="form-row"><label class="form-label" for="hFamily">科</label>'
+    + '<select class="field" id="hFamily">' + familyOptionsHTML('') + '</select>'
+    + '<p class="hint" id="hFamilyHint">名前を入れると科を自動で選びます。</p></div>'
+    + placePickerHTML(preset, '植えていた場所（複数OK）')
+    + '<div class="grid2 form-row">'
+    + '<div><label class="form-label" for="hStart">植えた年月</label><input class="field" id="hStart" type="month" value=""></div>'
+    + '<div><label class="form-label" for="hEnd">終わった年月</label><input class="field" id="hEnd" type="month" value="' + esc(currentMonth()) + '"></div>'
+    + '</div>'
+    + '<p class="hint" style="margin-top:-4px">はっきり覚えていなければ、終わった年月だけでも大丈夫です。</p>'
+    + '<div class="form-row"><label class="form-label" for="hNote">メモ（任意）</label>'
+    + '<input class="field" id="hNote" type="text" maxlength="60" placeholder="例: よく結球した" autocomplete="off"></div>'
+    + '<div class="sheet-actions">'
+    + '<button class="btn ghost" data-hx="cancel">キャンセル</button>'
+    + '<button class="btn" id="histSave">履歴に追加</button>'
+    + '</div>', '過去の栽培を記録');
+
+  var wrap = $('#sheetWrap');
+  var nameEl = $('#hName', wrap);
+  var familyEl = $('#hFamily', wrap);
+  var touched = false;
+  familyEl.addEventListener('change', function () { touched = true; });
+  nameEl.addEventListener('input', function () {
+    if (touched) return;
+    var g = guessFamily(nameEl.value);
+    if (g) familyEl.value = g;
+    var fh = $('#hFamilyHint', wrap);
+    if (fh) fh.textContent = g ? '「' + g + '」と判定しました。違うときは選び直してください。' : '名前を入れると科を自動で選びます。';
+  });
+  $('[data-hx="cancel"]', wrap).addEventListener('click', closeSheet);
+  $('#histSave', wrap).addEventListener('click', function () {
+    var name = nameEl.value.trim();
+    if (!name) { $('#hNameErr', wrap).hidden = false; nameEl.focus(); return; }
+    var fam = familyEl.value || guessFamily(name) || '';
+    var places = pickedPlaces(wrap);
+    var startM = $('#hStart', wrap).value;
+    var endM = $('#hEnd', wrap).value;
+    if (/^\d{4}-\d{2}$/.test(startM) && /^\d{4}-\d{2}$/.test(endM) && endM < startM) {
+      toast('終わった年月が植えた年月より前です', '⚠️');
+      return;
+    }
+    var note = $('#hNote', wrap).value.trim();
+    var now = new Date().toISOString();
+    var targets = places.length ? places : [''];
+    state.rotationHistory = allHistory().concat(targets.map(function (p) {
+      return {
+        id: uid(), name: name, family: fam, place: p,
+        startedAt: monthOfISO(startM), endedAt: monthOfISO(endM), note: note, createdAt: now
+      };
+    }));
+    saveState();
+    closeSheet();
+    renderAll();
+    toast('「' + name + '」の履歴を追加しました', '📖');
+  });
+}
+
+function askDeleteHistory(hid) {
+  var h = allHistory().filter(function (x) { return x.id === hid; })[0];
+  if (!h) return;
+  confirmSheet({
+    title: 'この履歴を削除しますか？',
+    body: '「' + esc(h.name) + '（' + esc(familyText(h.family || guessFamily(h.name))) + '）」' + esc(historyYearText(h))
+      + (h.place ? ' ・ ' + esc(h.place) : ' ・ 場所未設定') + ' の記録を消します。元に戻せません。',
+    ok: '削除する',
+    onOk: function () {
+      state.rotationHistory = allHistory().filter(function (x) { return x.id !== hid; });
+      saveState();
+      renderAll();
+      toast('履歴を削除しました', '🗑️');
+    }
+  });
+}
+
+/* ---------- 場所ごとの連作防止ボード ---------- */
+function rotationPlaceCardHTML(p) {
+  var label = p || '場所未設定';
+  var now = p ? cropsInPlace(p) : [];
+  var hist = p ? historyForPlace(p) : allHistory().filter(function (h) { return !h.place; }).slice().sort(byEndedDesc);
+  var nowHtml = now.length
+    ? now.map(function (c) {
+      var cf = c.family || guessFamily(c.name);
+      return '<span class="tag">' + esc(c.name) + '（' + esc(familyText(cf)) + '）</span>';
+    }).join(' ')
+    : '<span class="rot-empty">なし</span>';
+  var histHtml = hist.length
+    ? hist.slice(0, 4).map(function (h) {
+      var hf = h.family || guessFamily(h.name);
+      return '<div class="hist-row">'
+        + '<span class="h-when">' + esc(historyYearText(h)) + '</span>'
+        + '<span class="h-body"><b>' + esc(h.name) + '</b>　' + esc(familyText(hf))
+        + (h.note ? '<br><small style="color:var(--ink-3)">' + esc(h.note) + '</small>' : '') + '</span>'
+        + '<button class="link-btn danger" data-histdel="' + esc(h.id) + '">削除</button>'
+        + '</div>';
+    }).join('') + (hist.length > 4 ? '<p class="rot-empty" style="margin-top:5px">ほか ' + (hist.length - 4) + '件</p>' : '')
+    : '<p class="rot-empty">まだ履歴がありません。' + (p ? '前に植えた野菜を入れておくと、次に植えやすい科を提案します。' : '') + '</p>';
+
+  var lastFam = now.length ? (now[0].family || guessFamily(now[0].name)) : (hist[0] ? (hist[0].family || guessFamily(hist[0].name)) : '');
+  var nextHtml = lastFam
+    ? '<div class="rot-next"><b>次に植えやすい科：' + esc(nextFamilies(lastFam).map(familyText).join('・')) + '</b>' + esc(NEXT_NOTE[lastFam] || NEXT_NOTE_DEFAULT) + '</div>'
+    : '<div class="rot-line"><i>次の科</i><span class="v rot-empty">履歴を入れると、次に植えやすい科を提案します。</span></div>';
+
+  var warnList = [];
+  if (now.length && lastFam) {
+    warnList = rotationWarnings(lastFam, p ? [p] : [''], now.map(function (c) { return c.id; }));
+  }
+  var famCount = {};
+  now.forEach(function (c) {
+    var cf = c.family || guessFamily(c.name);
+    if (!cf) return;
+    famCount[cf] = (famCount[cf] || 0) + 1;
+  });
+  Object.keys(famCount).forEach(function (f) {
+    if (famCount[f] > 1) {
+      warnList.push({ level: 'yellow', text: label + 'には同じ' + f + 'が' + famCount[f] + '品目あります。同じ科どうしは養分や病害虫を奪い合いやすいので、次は別の科にすると安心です。' });
+    }
+  });
+  var warnHtml = warnList.slice(0, 3).map(function (w) {
+    return '<div class="rot-warn-line ' + w.level + '">' + esc(w.text) + '</div>';
+  }).join('');
+
+  return '<div class="card rot">'
+    + '<div class="rot-head"><b>' + esc(label) + '</b><span class="spacer"></span>'
+    + '<button class="link-btn" data-histadd="' + esc(p) + '">＋ 履歴を追加</button></div>'
+    + '<div class="rot-line"><i>栽培中</i><span class="v">' + nowHtml + '</span></div>'
+    + '<div class="rot-hist"><div class="rot-hist-head">これまでの栽培</div>' + histHtml + '</div>'
+    + nextHtml
+    + warnHtml
+    + '</div>';
+}
+
+function renderRotation() {
+  var host = $('#rotationBoard');
+  if (!host) return;
+  var names = normalizePlaces(state.settings.places).concat([OTHER_PLACE]);
+  var extra = [];
+  state.crops.forEach(function (c) {
+    cropPlaces(c).forEach(function (p) { if (names.indexOf(p) < 0) extra.push(p); });
+  });
+  allHistory().forEach(function (h) { if (h.place && names.indexOf(h.place) < 0) extra.push(h.place); });
+  var list = names.concat(uniqPlaces(extra));
+  var html = list.map(function (p) { return rotationPlaceCardHTML(p); }).join('');
+  var hasUnset = allHistory().some(function (h) { return !h.place; })
+    || state.crops.some(function (c) { return !cropPlaces(c).length; });
+  if (hasUnset) html += rotationPlaceCardHTML('');
+  host.innerHTML = html;
 }
 
 function openLogSheet(id) {
@@ -2888,6 +3347,7 @@ function renderSettings() {
   if ($('#lastBackup')) $('#lastBackup').textContent = s.lastBackup ? fmtStamp(s.lastBackup) : 'まだありません';
   if ($('#dataCrops')) $('#dataCrops').textContent = state.crops.length + ' 件';
   if ($('#dataLogs')) $('#dataLogs').textContent = state.logs.length + ' 件';
+  if ($('#dataHistory')) $('#dataHistory').textContent = allHistory().length + ' 件';
   if ($('#dataDrafts')) $('#dataDrafts').textContent = state.drafts.length + ' 件';
   if ($('#brandSub')) $('#brandSub').textContent = s.place + 'の家庭菜園';
 }
@@ -2941,6 +3401,11 @@ function savePlaceNames() {
     c.places = dedup;
     c.place = dedup.join('・');
   });
+  /* 栽培履歴の場所も新しい名前についていく */
+  allHistory().forEach(function (h) {
+    var idx = old.indexOf(h.place || '');
+    if (idx >= 0 && next[idx] !== old[idx]) h.place = next[idx];
+  });
   state.settings.places = next;
   saveState();
   renderAll();
@@ -2985,7 +3450,8 @@ function exportData() {
     settings: state.settings,
     crops: state.crops,
     logs: state.logs,
-    drafts: state.drafts
+    drafts: state.drafts,
+    rotationHistory: allHistory()
   };
   var url;
   var json;
@@ -3017,6 +3483,7 @@ function normalizeCrops(arr) {
       id: c.id || uid(),
       name: c.name || '野菜',
       emoji: c.emoji || guessEmoji(c.name),
+      family: c.family || guessFamily(c.name) || '',
       plantedAt: c.plantedAt || todayISO(),
       place: places.join('・'),
       places: places,
@@ -3049,6 +3516,13 @@ function importFile(file) {
         state.crops = normalizeCrops(data.crops);
         state.logs = Array.isArray(data.logs) ? data.logs : [];
         state.drafts = Array.isArray(data.drafts) ? data.drafts : [];
+        state.rotationHistory = Array.isArray(data.rotationHistory) ? data.rotationHistory.map(function (h) {
+          return {
+            id: h.id || uid(), name: h.name || '野菜', family: h.family || guessFamily(h.name) || '',
+            place: h.place || '', startedAt: monthOfISO(h.startedAt), endedAt: monthOfISO(h.endedAt),
+            note: h.note || '', createdAt: h.createdAt || new Date().toISOString()
+          };
+        }) : [];
         state.weather = null;
         saveState();
         renderAll();
@@ -3066,7 +3540,7 @@ function resetAll() {
     body: '作物・記録・下書き・設定がすべて消えます。元に戻せません。先に「書き出す」でバックアップを取っておくと安心です。',
     ok: 'すべて削除',
     onOk: function () {
-      state = { version: 1, settings: Object.assign({}, DEFAULT_SETTINGS), crops: [], logs: [], drafts: [], weather: null };
+      state = { version: 1, settings: Object.assign({}, DEFAULT_SETTINGS), crops: [], logs: [], drafts: [], rotationHistory: [], weather: null };
       try { localStorage.removeItem(LS_KEY); } catch (e) { }
       saveState();
       renderAll();
@@ -3123,6 +3597,7 @@ function scrollToTasks() {
 function renderAll() {
   renderHome();
   renderGarden();
+  renderRotation();
   renderSeason();
   refreshMoneyCrops();
   renderDrafts();
@@ -3167,6 +3642,15 @@ function handleClick(e) {
 
   var logEl = t.closest('[data-log]');
   if (logEl) { openLogSheet(logEl.getAttribute('data-log')); return; }
+
+  var finEl = t.closest('[data-finish]');
+  if (finEl) { openFinishSheet(finEl.getAttribute('data-finish')); return; }
+
+  var histAddEl = t.closest('[data-histadd]');
+  if (histAddEl) { openHistorySheet(histAddEl.getAttribute('data-histadd')); return; }
+
+  var histDelEl = t.closest('[data-histdel]');
+  if (histDelEl) { askDeleteHistory(histDelEl.getAttribute('data-histdel')); return; }
 
   var wxEl = t.closest('[data-wx]');
   if (wxEl) { fetchWeather(true); return; }
@@ -3214,6 +3698,9 @@ function bindStatic() {
 
   var add2 = $('#btnAddCrop2');
   if (add2) add2.addEventListener('click', function () { openCropSheet(null); });
+
+  var addHist = $('#btnAddHistory');
+  if (addHist) addHist.addEventListener('click', function () { openHistorySheet(''); });
 
   var cropSel = $('#mCrop');
   if (cropSel) cropSel.addEventListener('change', toggleCustomRow);
