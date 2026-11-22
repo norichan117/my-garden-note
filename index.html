@@ -4144,12 +4144,12 @@ function generate(kind) {
   toast(label + 'の下書きができました', kind === 'mercari' ? '🏷️' : kind === 'note' ? '📝' : '📣');
 }
 
-function copyText(text, btn) {
+function copyText(text, btn, doneHTML) {
   function done() {
     toast('コピーしました。貼り付けて使えます', '📋');
     if (btn) {
       var old = btn.innerHTML;
-      btn.innerHTML = '✓ コピーしました';
+      btn.innerHTML = doneHTML || '✓ コピーしました';
       setTimeout(function () { btn.innerHTML = old; }, 1700);
     }
   }
@@ -5399,6 +5399,7 @@ function aiResetChat() {
   aiChat.messages = [];
   aiChat.lastError = '';
   aiRenderLog();
+  aiUpdateSource();
   aiVoiceNote('');
   toast('会話をリセットしました', '↩️');
 }
@@ -5415,7 +5416,7 @@ function aiUpdateSource() {
 function aiCopyPrompt() {
   var last = aiChat.messages.length && aiChat.messages[aiChat.messages.length - 1].role === 'user'
     ? aiChat.messages[aiChat.messages.length - 1].text : '';
-  copyText(aiPromptText(last), $('#aiCopy'));
+  copyText(aiPromptText(last), $('#aiCopy'), '✓ コピー');
 }
 
 function aiAutoGrow(el) {
