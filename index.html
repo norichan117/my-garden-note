@@ -416,6 +416,18 @@ main{padding:14px 15px calc(var(--tabbar-h) + var(--safe-b) + 78px)}
 .mk-note{font-size:11.5px;color:var(--ink-2);line-height:1.65;margin-top:8px}
 .mk-legal{font-size:11px;line-height:1.6;color:#8A5A32;background:#FDF4E9;border:1px solid #F1DFC7;border-radius:9px;padding:7px 9px;margin-top:8px;display:flex;gap:6px}
 .mk-legal .i{flex:0 0 auto}
+.mk[data-mkcard]{cursor:pointer}
+.mk[data-mkcard]:active{transform:scale(.995)}
+.mk-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.mk-actions .mk-fill,.mk-actions .mk-link{
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:32px;padding:0 11px;
+  border-radius:999px;font-family:inherit;font-size:11.5px;font-weight:600;line-height:1.3;
+  border:1px solid var(--line);background:var(--card-2);color:var(--ink-2);text-decoration:none;white-space:nowrap;
+}
+.mk-actions .mk-fill{border-color:#CFE0BC;background:#F4F8EC;color:var(--green)}
+.mk-actions .mk-fill:active{background:var(--green-wash)}
+.mk-actions .mk-link{border-color:#E3D3BE;background:#FFF9EF;color:#8A5A32}
+.mk-actions .mk-link:active{background:var(--clay-wash)}
 
 /* ========== money ========== */
 .form-row{margin-top:12px}
@@ -1044,7 +1056,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
       </div>
     </section>
 
-    <!-- ============ 今月・売れる種苗 ============ -->
+    <!-- ============ 今月の種まき・植え付け ============ -->
     <section class="view" id="view-season" data-view="season" aria-labelledby="tab-season">
       <h1 class="page-title">今月の種まき・植え付け</h1>
       <p class="page-lead">関西（神戸）の気候に合わせた目安です。月を切り替えて1年分の段取りを確認できます。</p>
@@ -1055,10 +1067,24 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
         <div class="section-head"><h2>今月まける・植えられる野菜</h2><span class="spacer"></span><span class="count" id="plantCount"></span></div>
         <div id="plantList" class="stack fade-list"></div>
       </div>
+    </section>
 
-      <div class="section">
-        <div class="section-head"><h2>メルカリで売れる種・苗ガイド</h2></div>
-        <div class="legal" style="margin-bottom:12px">
+    <!-- ============ マネタイズ ============ -->
+    <section class="view" id="view-money" data-view="money" aria-labelledby="tab-money">
+      <h1 class="page-title">マネタイズ支援</h1>
+      <p class="page-lead">記録とひとことから、メルカリ出品文・note記事・SNS投稿を1タップで下書きします。まずは下の相場一覧から売れ筋を選べます。</p>
+
+      <div class="section" id="mkSection">
+        <div class="section-head">
+          <h2>💰 売れるもの・メルカリ相場</h2>
+          <span class="spacer"></span>
+          <span class="count" id="mkCount"></span>
+        </div>
+        <p class="section-note">今よく売れている種・苗と、メルカリでの相場の目安です。カードをタップすると、すぐ下の出品フォームに作物・売る形・想定価格が入ります。「🔍 今の売値を見る」からは、実際に売り切れた価格を確認できます。</p>
+        <div class="chip-row" id="mkFilter" aria-label="出品形態で絞り込む"></div>
+        <div id="mkList" class="stack fade-list"></div>
+        <p class="section-note" style="margin-top:10px">価格はメルカリでよく見られる価格帯をもとにした<strong>目安</strong>です。写真の質・発送の速さ・説明の丁寧さで実際の成約額は変わります。</p>
+        <div class="legal" style="margin-top:12px">
           <div class="l-head"><span class="ico" aria-hidden="true">⚠️</span>種苗法のルールを先に確認</div>
           <p><strong>登録品種（ブランド苗・F1品種など）を、許諾なく増やして販売することは法律で禁止されています。</strong>2022年4月施行の改正種苗法で、登録品種は自家増殖にも育成者権者の許諾が必要になりました（許諾不要と明示された品種を除く）。</p>
           <ul>
@@ -1072,18 +1098,9 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
             <a href="https://www.maff.go.jp/j/shokusan/syubyouhou/tane_matte.html" target="_blank" rel="noopener">そのタネ、ほんとに大丈夫？（農林水産省）</a>
           </div>
         </div>
-        <div class="chip-row" id="mkFilter" aria-label="出品形態で絞り込む"></div>
-        <div id="mkList" class="stack fade-list"></div>
-        <p class="section-note" style="margin-top:10px">価格はメルカリでよく見られる価格帯をもとにした<strong>目安</strong>です。写真の質・発送の速さ・説明の丁寧さで実際の成約額は変わります。</p>
       </div>
-    </section>
 
-    <!-- ============ マネタイズ ============ -->
-    <section class="view" id="view-money" data-view="money" aria-labelledby="tab-money">
-      <h1 class="page-title">マネタイズ支援</h1>
-      <p class="page-lead">記録とひとことから、メルカリ出品文・note記事・SNS投稿を1タップで下書きします。</p>
-
-      <div class="card">
+      <div class="card" id="moneyFormCard">
         <div class="form-row">
           <label class="form-label" for="mCrop">作物</label>
           <select class="field" id="mCrop"></select>
@@ -1288,7 +1305,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
       <div class="section">
         <div class="section-head"><h2>このアプリについて</h2></div>
         <div class="card">
-          <div class="kv"><span>バージョン</span><b id="appVersionRow">1.8.0</b></div>
+          <div class="kv"><span>バージョン</span><b id="appVersionRow">1.8.1</b></div>
           <div class="kv"><span>天気データ</span><b>Open-Meteo</b></div>
           <div class="kv"><span>保存先</span><b>この端末のブラウザ</b></div>
           <div class="divider"></div>
@@ -1345,7 +1362,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
    ========================================================= */
 
 var LS_KEY = 'my_saien_note_v1';
-var APP_VERSION = '1.8.0';
+var APP_VERSION = '1.8.1';
 var KIKU_FLAG_KEY = 'chiu_v123_kiku_added';
 
 /* ---------- tiny helpers ---------- */
@@ -3073,66 +3090,77 @@ var PLANTING = {
 var MERCARI = [
   {
     n: 'ローズマリーの挿し木苗', e: '🌿', cat: '挿し木', form: '挿し木苗', price: '500〜1,500円',
+    crop: 'ローズマリー', kw: 'ローズマリー 挿し木苗',
     season: '3〜5月・9〜11月', hot: true,
     legal: '母株は園芸店で買った一般種から。『マジョルカピンク』など品種名のある登録品種は増やして売らない。',
     tips: '10〜15cmの枝を切り、下葉を落として挿し木。発根まで2〜3週間、乾かし気味に管理。'
   },
   {
     n: 'ミントの株分け・挿し木苗', e: '🌱', cat: '挿し木', form: 'ポット苗', price: '300〜800円',
+    crop: 'ミント', kw: 'ミント 苗',
     season: '4〜6月・9〜10月', hot: true,
     legal: 'スペアミント・ペパーミントなど一般種。園芸品種名のあるものは避ける。',
     tips: '地下茎でよく増えるので、鉢ごと株分けして根付いたら出品。増えすぎ注意。'
   },
   {
     n: '大葉（青じそ）の苗・自家採種の種', e: '🌿', cat: '苗', form: '苗／種', price: '苗 300〜600円 / 種 200〜400円',
+    crop: '大葉（青じそ）', kw: '大葉 苗',
     season: '5〜9月', hot: true,
     legal: '在来の青じそは自家採種OK。F1（交配種）から採った種は形質がばらつくので「自家採種」と明記。',
     tips: '花が咲く前に摘心すると葉が柔らかい。種は穂が茶色くなってから採る。'
   },
   {
     n: 'バジルの苗', e: '🍃', cat: '苗', form: 'ポット苗', price: '300〜600円',
+    crop: 'バジル', kw: 'バジル 苗',
     season: '5〜8月', hot: false,
     legal: 'スイートバジルなど一般種。登録品種の名前があるものは増殖販売しない。',
     tips: '挿し木で簡単に増える。花芽が出たら摘むと葉を長く収穫できる。'
   },
   {
     n: '多肉植物の葉挿し・挿し木苗', e: '🪴', cat: '多肉', form: '葉挿し／挿し木', price: '300〜1,500円',
+    crop: '多肉植物', kw: '多肉植物 葉挿し',
     season: '3〜5月・9〜11月', hot: true,
     legal: '多肉にも品種登録がある。名札付きの交配品種は増殖販売しない。',
     tips: '葉を根元からポロッと取り、土の上に置くだけ。発根まで水は控えめに。'
   },
   {
     n: '固定種トマトの自家採種の種', e: '🍅', cat: '種', form: '種（10〜20粒）', price: '300〜800円',
+    crop: 'トマト', kw: 'トマト 種 固定種',
     season: '12〜3月（春まき前の需要期）', hot: true,
     legal: '固定種（在来種）のみ。F1品種の種は採っても親と同じにならないので出品しない。',
     tips: '完熟果から種を取り、発酵させて洗い乾燥。品種名と採種年を明記すると信頼される。'
   },
   {
     n: '唐辛子（鷹の爪など在来種）の種', e: '🌶️', cat: '種', form: '種（20〜30粒）', price: '300〜700円',
+    crop: '唐辛子', kw: '唐辛子 種',
     season: '1〜3月', hot: false,
     legal: '在来の鷹の爪は自家採種可。登録品種（ブランド唐辛子）は不可。',
     tips: '完熟した赤い実から採種し、しっかり乾燥。辛味に触れた手で目をこすらない。'
   },
   {
     n: 'いちごのランナー苗（登録品種でないもの）', e: '🍓', cat: '苗', form: 'ポット苗', price: '400〜900円',
+    crop: 'いちご', kw: 'いちご 苗',
     season: '9〜11月', hot: false,
     legal: '「章姫」「紅ほっぺ」「あまおう」などは登録品種で、増やして売るのは禁止。一般種・登録外のものだけ。',
     tips: 'ランナーをポットで受けて発根させ、9月に切り離す。根鉢を崩さず発送。'
   },
   {
     n: 'スナップエンドウ・そら豆の自家採種の種', e: '🫛', cat: '種', form: '種（20〜30粒）', price: '200〜500円',
+    crop: 'スナップエンドウ', kw: 'スナップエンドウ 種',
     season: '10〜12月', hot: true,
     legal: '固定種・在来種のみ。登録品種の種は採種しても販売しない。',
     tips: 'さやが茶色く乾いてから採種。カビないよう風通しの良い場所で乾燥させる。'
   },
   {
     n: 'みょうがの株分け', e: '🌱', cat: '株分け', form: '株分け苗', price: '500〜1,200円',
+    crop: 'みょうが', kw: 'みょうが 株分け',
     season: '2〜3月', hot: false,
     legal: '一般種（在来のみょうが）。品種名のあるものは確認を。',
     tips: '地下茎を2〜3芽ずつに分けて。湿り気のある半日陰でよく育つ。'
   },
   {
     n: 'ハーブ苗3点セット', e: '🌿', cat: '苗', form: 'ポット苗×3', price: '1,000〜2,000円',
+    crop: 'ハーブ', kw: 'ハーブ 苗 セット',
     season: '4〜6月・9〜10月', hot: true,
     legal: '一般種の組み合わせ。品種名のある苗はラベルどおりに表記する。',
     tips: 'ローズマリー・タイム・オレガノなど乾燥に強い組み合わせは、見た目も丈夫さも◎。'
@@ -4648,6 +4676,9 @@ function renderSeason() {
   }
   var pc = $('#plantCount');
   if (pc && info) pc.textContent = info.items.length + '品目';
+}
+
+function renderMoneyMk() {
   renderMkFilter();
   renderMkList();
 }
@@ -4661,13 +4692,28 @@ function renderMkFilter() {
   }).join('');
 }
 
+function mkFormValue(it) {
+  var map = { '苗': '苗（ポット苗）', '種': '種（自家採種）', '挿し木': '挿し木・挿し芽', '株分け': '株分け苗', '多肉': '挿し木・挿し芽' };
+  return map[it.cat] || '苗（ポット苗）';
+}
+function mkPriceFrom(it) {
+  var m = String(it.price || '').replace(/,/g, '').match(/[0-9]+/);
+  return m ? m[0] : '';
+}
+function mkSoldOutUrl(it) {
+  return 'https://jp.mercari.com/search?keyword=' + encodeURIComponent(it.kw || it.crop || it.n) + '&status=sold_out';
+}
+
 function renderMkList() {
   var host = $('#mkList');
   if (!host) return;
   var items = MERCARI.filter(function (it) { return mkCat === 'すべて' || it.cat === mkCat; });
+  var cnt = $('#mkCount');
+  if (cnt) cnt.textContent = items.length + '件';
   if (!items.length) { host.innerHTML = '<div class="card"><div class="empty">該当するものはありません。</div></div>'; return; }
   host.innerHTML = items.map(function (it) {
-    return '<div class="card mk">'
+    var idx = MERCARI.indexOf(it);
+    return '<div class="card mk" data-mkcard="' + idx + '">'
       + '<div class="mk-top">'
       + '<div class="crop-emoji" style="width:42px;height:42px;flex:0 0 42px;font-size:20px;border-radius:13px" aria-hidden="true">' + it.e + '</div>'
       + '<div class="mk-id">'
@@ -4678,8 +4724,45 @@ function renderMkList() {
       + '</div>'
       + '<div class="mk-note"><b style="font-weight:600;color:var(--ink)">出品のコツ：</b>' + esc(it.tips) + '</div>'
       + '<div class="mk-legal"><span class="i" aria-hidden="true">⚖️</span><span>' + esc(it.legal) + '</span></div>'
+      + '<div class="mk-actions">'
+      + '<button type="button" class="mk-fill" data-mkfill="' + idx + '">✍️ この内容で下書き</button>'
+      + '<a class="mk-link" href="' + esc(mkSoldOutUrl(it)) + '" target="_blank" rel="noopener">🔍 今の売値を見る</a>'
+      + '</div>'
       + '</div>';
   }).join('');
+}
+
+/* 相場カード → 同じ画面の出品フォーム（作物・売る形・想定価格）へ反映 */
+function fillMoneyFromMk(idx) {
+  var it = MERCARI[idx];
+  if (!it) return;
+  var sel = $('#mCrop');
+  if (!sel) return;
+  refreshMoneyCrops();
+  var hit = state.crops.filter(function (c) {
+    return c.name === it.crop || c.name.indexOf(it.crop) >= 0 || it.crop.indexOf(c.name) >= 0;
+  })[0];
+  if (hit) {
+    sel.value = hit.id;
+    var knownName = $('#mName');
+    if (knownName) knownName.value = '';
+  } else {
+    sel.value = '__custom';
+    var nameEl = $('#mName');
+    if (nameEl) nameEl.value = it.crop;
+  }
+  toggleCustomRow();
+  var formEl = $('#mForm');
+  if (formEl) formEl.value = mkFormValue(it);
+  var priceEl = $('#mPrice');
+  if (priceEl) priceEl.value = mkPriceFrom(it);
+  updatePriceHint();
+  var card = $('#moneyFormCard');
+  if (card) {
+    try { card.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    catch (e) { card.scrollIntoView(true); }
+  }
+  toast('「' + it.crop + '」を出品フォームに入れました', '✍️');
 }
 
 /* =========================================================
@@ -6419,6 +6502,7 @@ function switchTab(name) {
   });
   try { window.scrollTo({ top: 0, behavior: 'auto' }); } catch (e) { window.scrollTo(0, 0); }
   if (name === 'season') setTimeout(scrollMonthIntoView, 30);
+  if (name === 'money') renderMoneyMk();
 }
 
 function scrollToTasks() {
@@ -6439,6 +6523,7 @@ function renderAll() {
   renderMap();
   renderRotation();
   renderSeason();
+  renderMoneyMk();
   refreshMoneyCrops();
   renderDrafts();
   renderSettings();
@@ -6584,6 +6669,16 @@ function handleClick(e) {
 
   var mkEl = t.closest('[data-mkcat]');
   if (mkEl) { mkCat = mkEl.getAttribute('data-mkcat'); renderMkFilter(); renderMkList(); return; }
+
+  /* 「🔍 今の売値を見る」はリンク本来の動き（新しいタブ）に任せ、フォーム反映はしない */
+  var mkLinkEl = t.closest('.mk-link');
+  if (mkLinkEl) return;
+
+  var mkFillEl = t.closest('[data-mkfill]');
+  if (mkFillEl) { fillMoneyFromMk(parseInt(mkFillEl.getAttribute('data-mkfill'), 10)); return; }
+
+  var mkCardEl = t.closest('[data-mkcard]');
+  if (mkCardEl) { fillMoneyFromMk(parseInt(mkCardEl.getAttribute('data-mkcard'), 10)); return; }
 
   var genEl = t.closest('[data-gen]');
   if (genEl) { generate(genEl.getAttribute('data-gen')); return; }
