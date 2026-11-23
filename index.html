@@ -1305,7 +1305,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
       <div class="section">
         <div class="section-head"><h2>このアプリについて</h2></div>
         <div class="card">
-          <div class="kv"><span>バージョン</span><b id="appVersionRow">1.8.1</b></div>
+          <div class="kv"><span>バージョン</span><b id="appVersionRow">1.8.2</b></div>
           <div class="kv"><span>天気データ</span><b>Open-Meteo</b></div>
           <div class="kv"><span>保存先</span><b>この端末のブラウザ</b></div>
           <div class="divider"></div>
@@ -1362,7 +1362,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
    ========================================================= */
 
 var LS_KEY = 'my_saien_note_v1';
-var APP_VERSION = '1.8.1';
+var APP_VERSION = '1.8.2';
 var KIKU_FLAG_KEY = 'chiu_v123_kiku_added';
 
 /* ---------- tiny helpers ---------- */
@@ -5406,7 +5406,7 @@ function addInitialCrops() {
 /* APIキーは state とは別の localStorage キーにだけ置く。
    JSONバックアップ（state.settings 等）には絶対に入らない。 */
 var AI_KEY_LS = 'chiu_ai_key_v1';
-var AI_MODELS = { gemini: ['gemini-2.5-flash', 'gemini-2.0-flash'], openai: ['gpt-4o-mini', 'gpt-4.1-mini'] };
+var AI_MODELS = { gemini: ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-flash-latest', 'gemini-2.5-flash'], openai: ['gpt-4o-mini', 'gpt-4.1-mini'] };
 var AI_CHIPS = ['水やり・追肥のコツ', '次に何を植えたらいい？', '葉が黄色い・虫対策', '収穫のタイミング'];
 var aiChat = {
   cropId: null, messages: [], busy: false, lastError: '',
@@ -6020,7 +6020,7 @@ function aiFetchJson(url, opts, ms) {
   });
 }
 
-function aiCallGemini(key, system, msgs, idx) {
+function aiCallGemini(key, system, msgs, idx, firstErr) {
   var models = AI_MODELS.gemini;
   var model = models[idx] || models[models.length - 1];
   var contents = msgs.filter(function (m) { return m.role !== 'system'; }).map(function (m) {
@@ -6031,9 +6031,9 @@ function aiCallGemini(key, system, msgs, idx) {
     contents: contents,
     generationConfig: { temperature: 0.65, maxOutputTokens: 1024, topP: 0.9 }
   };
-  var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent?key=' + encodeURIComponent(key);
+  var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent';
   return aiFetchJson(url, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body: JSON.stringify(body)
   }).then(function (j) {
     var cand = j && j.candidates && j.candidates[0];
     var parts = cand && cand.content && cand.content.parts;
@@ -6041,7 +6041,12 @@ function aiCallGemini(key, system, msgs, idx) {
     if (!txt) throw new Error('AIから空の回答が返りました');
     return txt;
   }).catch(function (err) {
-    if (err && (err.status === 404 || (err.status === 400 && /model/i.test(String(err.message || '')))) && idx + 1 < models.length) return aiCallGemini(key, system, msgs, idx + 1);
+    var st = err && err.status;
+    var msg = String((err && err.message) || '');
+    var again = st === 404 || st === 503 || st === 429 || (st === 400 && /model/i.test(msg));
+    if (again && idx + 1 < models.length) return aiCallGemini(key, system, msgs, idx + 1, firstErr || err);
+    /* 全モデルで失敗したときは、混雑（503）・レート制限（429）の案内を優先する */
+    if (firstErr && (firstErr.status === 503 || firstErr.status === 429)) throw firstErr;
     throw err;
   });
 }
@@ -6072,6 +6077,7 @@ function aiErrorText(err) {
   var st = err && err.status;
   if (st === 401 || st === 403) return '🔑 APIキーが受け付けられませんでした。設定の「AI相談のAPIキー設定」でキーをもう一度確認してください。';
   if (st === 429) return '⏳ APIの利用上限（レート制限）に達しました。少し時間をおくか、無料枠の残りを確認してください。';
+  if (st === 503) return '⏳ AIが混み合っています。少し時間をおいてもう一度お試しください。';
   if (st === 400) return '📝 リクエストが受け付けられませんでした（' + s + '）。キーの種類と、選んでいるプロバイダを確認してください。';
   if (st === 404) return '🤖 指定のモデルが見つかりませんでした（' + s + '）。';
   if (/abort/i.test(s)) return '⏱️ 応答が返ってきませんでした（時間切れ）。電波の良い場所でもう一度お試しください。';
