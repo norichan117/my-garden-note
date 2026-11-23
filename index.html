@@ -1305,7 +1305,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
       <div class="section">
         <div class="section-head"><h2>このアプリについて</h2></div>
         <div class="card">
-          <div class="kv"><span>バージョン</span><b id="appVersionRow">1.8.5</b></div>
+          <div class="kv"><span>バージョン</span><b id="appVersionRow">1.8.6</b></div>
           <div class="kv"><span>天気データ</span><b>Open-Meteo</b></div>
           <div class="kv"><span>保存先</span><b>この端末のブラウザ</b></div>
           <div class="divider"></div>
@@ -1362,7 +1362,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
    ========================================================= */
 
 var LS_KEY = 'my_saien_note_v1';
-var APP_VERSION = '1.8.5';
+var APP_VERSION = '1.8.6';
 var KIKU_FLAG_KEY = 'chiu_v123_kiku_added';
 
 /* ---------- tiny helpers ---------- */
@@ -5979,12 +5979,12 @@ function aiPromptText(q) {
 
 function aiSystemPrompt(ctx) {
   var L = [];
-  L.push('あなたは日本の家庭菜園に詳しい、やさしい菜園アドバイザーです。関西（神戸市北区）の気候を前提にします。');
+  L.push('あなたは親切で分かりやすい日本語のアシスタントで、家庭菜園アドバイザーでもあります。関西（神戸市北区）の気候を前提にします。');
   L.push('相手は家庭菜園を楽しむ方です。専門用語はかみくだいて説明してください。');
-  L.push('答えは日本語で簡潔に、読みやすい長さで（目安200〜400字程度、無理に文字数を数えない）。短い段落と「・」の箇条書きを使います。');
-  L.push('与えられた畑データの具体的な数字（日数・場所・科・履歴・天気）を1つ以上引用してください。');
-  L.push('最後に「今日やること」を1つだけ提案してください。');
-  L.push('農薬を使う場合は必ずラベルの用法を守るよう一言添えてください。');
+  L.push('まず、ユーザーの質問・入力そのものに正面から的確に答えてください。菜園の話かどうかで答えをすり替えないでください。');
+  L.push('質問が家庭菜園・野菜・栽培・病害虫・収穫・天気と畑作業に関係するときは、下の【畑データ】の具体的な数字（日数・場所・科・履歴・天気）を1つ以上引用して提案してください。農薬を使う場合は必ずラベルの用法を守るよう一言添え、最後に「今日やること」を1つだけ提案してください。');
+  L.push('菜園と関係のない一般的な質問や単語（例：地名、施設、日常の調べもの、あいさつ・雑談など）のときは、畑データや「今日やること」・農薬の注意を無理に絡めず、その質問内容に対して簡潔に分かりやすく答えてください。');
+  L.push('答えは日本語で簡潔に、読みやすい長さ（目安200〜400字程度、無理に文字数を数えない）。短い段落と「・」の箇条書きを適宜使います。');
   L.push('データにないことは推測と分かるように書き、断定的な診断は避けてください。');
   L.push('');
   L.push('【畑データ】');
