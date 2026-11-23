@@ -1305,7 +1305,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
       <div class="section">
         <div class="section-head"><h2>このアプリについて</h2></div>
         <div class="card">
-          <div class="kv"><span>バージョン</span><b id="appVersionRow">1.8.3</b></div>
+          <div class="kv"><span>バージョン</span><b id="appVersionRow">1.8.4</b></div>
           <div class="kv"><span>天気データ</span><b>Open-Meteo</b></div>
           <div class="kv"><span>保存先</span><b>この端末のブラウザ</b></div>
           <div class="divider"></div>
@@ -1362,7 +1362,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
    ========================================================= */
 
 var LS_KEY = 'my_saien_note_v1';
-var APP_VERSION = '1.8.3';
+var APP_VERSION = '1.8.4';
 var KIKU_FLAG_KEY = 'chiu_v123_kiku_added';
 
 /* ---------- tiny helpers ---------- */
@@ -5981,7 +5981,7 @@ function aiSystemPrompt(ctx) {
   var L = [];
   L.push('あなたは日本の家庭菜園に詳しい、やさしい菜園アドバイザーです。関西（神戸市北区）の気候を前提にします。');
   L.push('相手は家庭菜園を楽しむ方です。専門用語はかみくだいて説明してください。');
-  L.push('答えは日本語で200〜350字。短い段落と「・」の箇条書きを使います。');
+  L.push('答えは日本語で簡潔に、読みやすい長さで（目安200〜400字程度、無理に文字数を数えない）。短い段落と「・」の箇条書きを使います。');
   L.push('与えられた畑データの具体的な数字（日数・場所・科・履歴・天気）を1つ以上引用してください。');
   L.push('最後に「今日やること」を1つだけ提案してください。');
   L.push('農薬を使う場合は必ずラベルの用法を守るよう一言添えてください。');
@@ -6020,16 +6020,20 @@ function aiFetchJson(url, opts, ms) {
   });
 }
 
-function aiCallGemini(key, system, msgs, idx, firstErr) {
+function aiCallGemini(key, system, msgs, idx, firstErr, noThinking) {
   var models = AI_MODELS.gemini;
   var model = models[idx] || models[models.length - 1];
   var contents = msgs.filter(function (m) { return m.role !== 'system'; }).map(function (m) {
     return { role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: String(m.text) }] };
   });
+  /* 思考（thinking）を切って出力トークンを回答に回す。思考分を除いても 4096 あれば途中で切れない。
+     モデルが thinkingConfig を受け付けない場合は、同じモデルを思考設定なしで1回だけやり直す。 */
+  var gen = { temperature: 0.65, maxOutputTokens: 4096, topP: 0.9 };
+  if (!noThinking) gen.thinkingConfig = { thinkingBudget: 0 };
   var body = {
     system_instruction: { parts: [{ text: system }] },
     contents: contents,
-    generationConfig: { temperature: 0.65, maxOutputTokens: 1024, topP: 0.9 }
+    generationConfig: gen
   };
   var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent';
   return aiFetchJson(url, {
@@ -6037,14 +6041,17 @@ function aiCallGemini(key, system, msgs, idx, firstErr) {
   }, 12000).then(function (j) {
     var cand = j && j.candidates && j.candidates[0];
     var parts = cand && cand.content && cand.content.parts;
-    var txt = (parts || []).map(function (p) { return p.text || ''; }).join('').trim();
+    /* 内部の思考パート（thought: true）は画面に出さない。回答本文だけをつなぐ。 */
+    var txt = (parts || []).filter(function (p) { return !p.thought; }).map(function (p) { return p.text || ''; }).join('').trim();
     if (!txt) throw new Error('AIから空の回答が返りました');
     return txt;
   }).catch(function (err) {
     var st = err && err.status;
     var msg = String((err && err.message) || '');
     var abort = (err && err.name === 'AbortError') || /abort/i.test(msg);
-    var again = st === 404 || st === 503 || st === 429 || (st === 400 && /model/i.test(msg)) || abort;
+    /* thinkingConfig / thinkingBudget 非対応のモデルは、このモデルだけ思考設定なしで再試行 */
+    if (st === 400 && !noThinking && /thinking|thought/i.test(msg)) return aiCallGemini(key, system, msgs, idx, firstErr, true);
+    var again = st === 404 || st === 503 || st === 429 || (st === 400 && /model/i.test(msg)) || abort || /空の回答/.test(msg);
     if (again && idx + 1 < models.length) return aiCallGemini(key, system, msgs, idx + 1, firstErr || err);
     /* 全モデルで失敗したときは、混雑（503）・レート制限（429）の案内を優先する */
     if (firstErr && (firstErr.status === 503 || firstErr.status === 429)) throw firstErr;
