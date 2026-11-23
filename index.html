@@ -1305,7 +1305,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
       <div class="section">
         <div class="section-head"><h2>このアプリについて</h2></div>
         <div class="card">
-          <div class="kv"><span>バージョン</span><b id="appVersionRow">1.8.2</b></div>
+          <div class="kv"><span>バージョン</span><b id="appVersionRow">1.8.3</b></div>
           <div class="kv"><span>天気データ</span><b>Open-Meteo</b></div>
           <div class="kv"><span>保存先</span><b>この端末のブラウザ</b></div>
           <div class="divider"></div>
@@ -1362,7 +1362,7 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
    ========================================================= */
 
 var LS_KEY = 'my_saien_note_v1';
-var APP_VERSION = '1.8.2';
+var APP_VERSION = '1.8.3';
 var KIKU_FLAG_KEY = 'chiu_v123_kiku_added';
 
 /* ---------- tiny helpers ---------- */
@@ -5406,7 +5406,7 @@ function addInitialCrops() {
 /* APIキーは state とは別の localStorage キーにだけ置く。
    JSONバックアップ（state.settings 等）には絶対に入らない。 */
 var AI_KEY_LS = 'chiu_ai_key_v1';
-var AI_MODELS = { gemini: ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-flash-latest', 'gemini-2.5-flash'], openai: ['gpt-4o-mini', 'gpt-4.1-mini'] };
+var AI_MODELS = { gemini: ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.8-flash'], openai: ['gpt-4o-mini', 'gpt-4.1-mini'] };
 var AI_CHIPS = ['水やり・追肥のコツ', '次に何を植えたらいい？', '葉が黄色い・虫対策', '収穫のタイミング'];
 var aiChat = {
   cropId: null, messages: [], busy: false, lastError: '',
@@ -6034,7 +6034,7 @@ function aiCallGemini(key, system, msgs, idx, firstErr) {
   var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent';
   return aiFetchJson(url, {
     method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body: JSON.stringify(body)
-  }).then(function (j) {
+  }, 12000).then(function (j) {
     var cand = j && j.candidates && j.candidates[0];
     var parts = cand && cand.content && cand.content.parts;
     var txt = (parts || []).map(function (p) { return p.text || ''; }).join('').trim();
@@ -6043,7 +6043,8 @@ function aiCallGemini(key, system, msgs, idx, firstErr) {
   }).catch(function (err) {
     var st = err && err.status;
     var msg = String((err && err.message) || '');
-    var again = st === 404 || st === 503 || st === 429 || (st === 400 && /model/i.test(msg));
+    var abort = (err && err.name === 'AbortError') || /abort/i.test(msg);
+    var again = st === 404 || st === 503 || st === 429 || (st === 400 && /model/i.test(msg)) || abort;
     if (again && idx + 1 < models.length) return aiCallGemini(key, system, msgs, idx + 1, firstErr || err);
     /* 全モデルで失敗したときは、混雑（503）・レート制限（429）の案内を優先する */
     if (firstErr && (firstErr.status === 503 || firstErr.status === 429)) throw firstErr;
